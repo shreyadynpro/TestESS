@@ -18,6 +18,8 @@ import userModuleRoutes from './components/UserModule/usermoduleRoutes';
 import userProfileRoutes from './components/UserProfileModule/UserProfileRoutes';
 import commonRoutes from './components/commonRoutes';
 import BIDemo from './views/dashboard/BIDemo';
+import EmployeeList from './components/EmployeeList/EmployeeList';
+import Tasks from './components/ToDo/Tasks';
 
 const routes = [
   {
@@ -41,6 +43,8 @@ const routes = [
       ...localizationModuleRoutes,
       { path: commonRoutes.powerBIClient, element: <BIDemo /> },
       { path: commonRoutes.home, element: <Home /> },
+      { path: commonRoutes.employees, element: <EmployeeList /> },
+      {path: commonRoutes.tasks, element: <Tasks />},
     ],
   },
   ...sessionRoutes,

@@ -1,8 +1,7 @@
 import { createTheme } from '@mui/material';
 
 const textLight = {
-  //primary: "rgba(52, 49, 76, 1)",
-  primary: 'rgba(255, 255, 255, 1)', //og
+  primary: 'rgba(255, 255, 255, 1)', // White
   secondary: 'rgba(52, 49, 76, 0.54)',
   disabled: 'rgba(52, 49, 76, 0.38)',
   hint: 'rgba(52, 49, 76, 0.38)',
@@ -14,6 +13,7 @@ const textDark = {
   disabled: 'rgba(255, 255, 255, 0.64)',
   hint: 'rgba(255, 255, 255, 0.64)',
 };
+
 const textDark2 = {
   primary: '#000',
   secondary: 'rgba(0, 0, 0, 0.7)',
@@ -21,12 +21,14 @@ const textDark2 = {
   hint: 'rgba(0, 0, 0, 0.64)',
 };
 
+// Color palettes for different themes
 const secondaryColor = {
   light: '#f9a352',
   main: '#ff9e43',
   dark: '#ff932e',
   contrastText: textLight.primary,
 };
+
 const errorColor = {
   main: '#FF3D57',
 };
@@ -51,13 +53,11 @@ export const themeColors = {
       text: textLight,
     },
   },
-  whiteBlue: {
+  whiteblue: {
     palette: {
       type: 'light',
       primary: {
-        //main: "#222944",
-        //main: '#000000',
-        main: '#ffffff', //og
+        main: '#ffffff',
         contrastText: textLight.primary,
       },
       secondary: {
@@ -65,9 +65,7 @@ export const themeColors = {
         contrastText: '#ffffff',
       },
       background: {
-        //paper: '#fff',
         paper: '#008080',
-        //default: '#fafafa',
         default: '#008080',
       },
       text: textLight,
@@ -198,10 +196,8 @@ export const themeColors = {
       error: errorColor,
       background: {
         paper: '#fff',
-        //default: '#008080', //bg change og===>fafafa
-        default: '#fafafa', //bg change og===>fafafa
+        default: '#fafafa',
       },
-      //text: textLight,
       text: textDark2,
     },
   },
@@ -262,7 +258,7 @@ export const themeColors = {
     palette: {
       type: 'light',
       primary: {
-        main: '#1976d2',
+        main: '#a06ca9', // Emerald green
         contrastText: '#ffffff',
       },
       secondary: {
@@ -296,7 +292,7 @@ export const themeColors = {
       text: textDark2,
     },
   },
-  whiteBlue1: {
+  whiteblue1: {
     palette: {
       type: 'light',
       primary: {

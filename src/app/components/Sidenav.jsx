@@ -1,10 +1,21 @@
+// src/components/Sidenav.jsx
 import { styled } from '@mui/system';
-import { MatxVerticalNav } from 'app/components';
-import useSettings from 'app/hooks/useSettings';
-import { createSubCategory } from 'app/navigations';
-import { Fragment, memo, useMemo, useState } from 'react';
+import { Fragment, memo, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Scrollbar from 'react-perfect-scrollbar';
-import { useSelector } from 'react-redux';
+import { Box, Typography, Collapse } from '@mui/material';
+import HomeIcon from '@mui/icons-material/Home';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import DescriptionIcon from '@mui/icons-material/Description';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import GroupsIcon from '@mui/icons-material/Groups';
+import SummarizeIcon from '@mui/icons-material/Summarize';
+import CampaignIcon from '@mui/icons-material/Campaign';
+import InfoIcon from '@mui/icons-material/Info';
 
 const StyledScrollBar = styled(Scrollbar)(() => ({
   paddingLeft: '0.1rem',
@@ -24,152 +35,131 @@ const SideNavMobile = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('lg')]: { display: 'none' },
 }));
 
-const Sidenav = ({ children, looker }) => {
-  const { uaSubCategories, uaFolders, uaDashboards } = useSelector((state) => ({
-    uaSubCategories: state.userAccess.uaSubCategories,
-    uaFolders: state.userAccess.uaFolders,
-    uaDashboards: state.userAccess.uaDashboards,
-  }));
-  const { settings, updateSettings } = useSettings();
-  const [searchVal, setSearchVal] = useState('');
+const MenuItem = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: '10px 20px',
+  cursor: 'pointer',
+  '&:hover': {
+    backgroundColor: theme.palette.action.hover,
+  },
+}));
 
-  const requestSearch = (items, searchedVal) => {
-    if (typeof searchedVal !== 'string' || !searchedVal.trim()) {
-      return items;
+const MenuIcon = styled(Box)(({ theme }) => ({
+  fontSize: '24px',
+  marginRight: '16px',
+}));
+
+const MenuLabel = styled(Typography)(({ theme }) => ({
+  fontSize: '16px',
+  fontWeight: 'medium',
+}));
+
+const MenuArrow = styled(Box)(({ theme }) => ({
+  marginLeft: 'auto',
+  transition: 'transform 0.3s ease',
+}));
+
+const SubMenuItem = styled(MenuItem)(({ theme }) => ({
+  paddingLeft: '40px',
+  backgroundColor: theme.palette.action.hover,
+}));
+
+const menuItems = [
+  { title: 'Home', path: '/home', icon: <HomeIcon /> },
+  {
+    title: 'To Do',
+    path: '/todo',
+    icon: <FormatListBulletedIcon />,
+    subMenu: [
+      { title: 'Tasks', path: '/todo/tasks' },
+      { title: 'Review', path: '/todo/reviews' },
+    ],
+  },
+  {
+    title: 'Leave',
+    path: '/leave',
+    icon: <EventNoteIcon />,
+    subMenu: [
+      { title: 'Leave Type Master', path: '/leave/sick' },
+      { title: 'Leave Apply', path: '/leave/casual' },
+      { title: 'Grant Leave', path: '/leave/grant' },
+      { title: 'Leave Balance', path: '/leave/balance' },
+      { title: 'Leave Approval Tracking', path: '/leave/approval-tracking' },
+      { title: 'Leave Calendar', path: '/leave/calendar' },
+      { title: 'Manage Holiday Calendar', path: '/leave/manage-calendar' },
+      { title: 'Holiday Calendar', path: '/leave/holiday-calendar' },
+    ],
+  },
+  {
+    title: 'Attendance',
+    path: '/attendance',
+    icon: <CalendarMonthIcon />,
+    subMenu: [
+      { title: 'Daily', path: '/attendance/daily' },
+      { title: 'Monthly', path: '/attendance/monthly' },
+    ],
+  },
+  {
+    title: 'Salary',
+    path: '/salary',
+    icon: <MonetizationOnIcon />,
+    subMenu: [
+      { title: 'Payslips', path: '/salary/payslips' },
+      { title: 'IT Statements', path: '/salary/it-statements' },
+      { title: 'IT Declaration', path: '/salary/it-declaration' },
+      { title: 'Loans & Advances', path: '/salary/loans-advances' },
+      { title: 'Reimbursement', path: '/salary/reimbursement' },
+      { title: 'Salary Revision', path: '/salary/revision' },
+    ],
+  },
+  { title: 'Documents', path: '/documents', icon: <DescriptionIcon /> },
+  { title: 'Employees', path: '/EmployeeList', icon: <GroupsIcon /> },
+  { title: 'Reports', path: '/reports', icon: <SummarizeIcon /> },
+  { title: 'Activities', path: '/activities', icon: <CampaignIcon /> },
+  { title: 'Help', path: '/help', icon: <InfoIcon /> },
+];
+
+const Sidenav = () => {
+  const [openMenu, setOpenMenu] = useState(null);
+  const navigate = useNavigate(); // Initialize navigate
+
+  const handleMenuItemClick = (path, hasSubMenu) => {
+    if (hasSubMenu) {
+      setOpenMenu((prev) => (prev === path ? null : path));
+    } else {
+      navigate(path); // Navigate to the selected path
+      setOpenMenu(null); // Close the mobile nav if open
     }
-    const searchTerms = searchedVal.trim().toLowerCase().split(' ');
-    const arr = [];
-    const onlyClients = [];
-    const sortedClients = [];
-
-    const searchInClients = (clients) => {
-      if (clients && Array.isArray(clients)) {
-        for (const client of clients) {
-          const clientDashboardName = client.client_name;
-          if (
-            searchTerms.every((searchItem) =>
-              clientDashboardName.toLowerCase().includes(searchItem)
-            )
-          ) {
-            sortedClients.push({
-              ...client,
-              name: `${client.client_name}`,
-            });
-          }
-        }
-      }
-    };
-
-    items.forEach((client) => {
-      // checks in clients
-      if (!client.subcategory_id) {
-        const newClient = { ...client };
-        delete newClient.children;
-        newClient.level = 3;
-        newClient.icon = 'person';
-        newClient.client_name = `${newClient?.client_name}`;
-        newClient.dashboard_name = `Default ${newClient?.client_name} Dashboard`;
-        onlyClients.push(newClient);
-
-        client.children.forEach((dashboard) => {
-          if (dashboard.children) {
-            dashboard.children.forEach((dashboardNew) => {
-              const clientDashboardName = dashboardNew.client_name + '' + dashboardNew.name;
-              const searchTerms = searchedVal.trim().split(' ');
-              if (
-                searchTerms.every((searchItem) =>
-                  clientDashboardName.toLowerCase().includes(searchItem.toLowerCase())
-                )
-              ) {
-                arr.push({
-                  ...dashboardNew,
-                  name: `${dashboardNew.client_name} | ${dashboardNew.name}`,
-                });
-              }
-            });
-          }
-        });
-        //checks in subcategories
-      } else if (client.subcategory_id) {
-        client.children.forEach((folder) => {
-          const newClient = { ...folder };
-          delete newClient.children;
-          newClient.level = 3;
-          newClient.icon = 'person';
-          newClient.client_name = `${newClient?.client_name}`;
-          newClient.dashboard_name = `Default ${newClient?.client_name} Dashboard`;
-          onlyClients.push(newClient);
-          if (folder.children) {
-            folder.children.forEach((dashboard) => {
-              if (dashboard.children) {
-                dashboard.children.forEach((dashboardNew) => {
-                  const clientDashboardName = dashboardNew.client_name + '' + dashboardNew.name;
-                  const searchTerms = searchedVal.trim().split(' ');
-                  if (
-                    searchTerms.every((searchItem) =>
-                      clientDashboardName.toLowerCase().includes(searchItem.toLowerCase())
-                    )
-                  ) {
-                    arr.push({
-                      ...dashboardNew,
-                      name: `${dashboardNew.client_name} | ${dashboardNew.name}`,
-                    });
-                  }
-                });
-              }
-            });
-          }
-        });
-      }
-    });
-    searchInClients(onlyClients);
-    return [...sortedClients, ...arr];
   };
-
-  const updateSidebarMode = (sidebarSettings) => {
-    let activeLayoutSettingsName = settings.activeLayout + 'Settings';
-    let activeLayoutSettings = settings[activeLayoutSettingsName];
-
-    updateSettings({
-      ...settings,
-      [activeLayoutSettingsName]: {
-        ...activeLayoutSettings,
-        leftSidebar: {
-          ...activeLayoutSettings.leftSidebar,
-          ...sidebarSettings,
-        },
-      },
-    });
-  };
-
-  const searchResult = useMemo(() => {
-    return requestSearch(
-      createSubCategory(uaSubCategories || {}, uaFolders || {}, uaDashboards || {}),
-      searchVal
-    );
-  }, [uaSubCategories, searchVal]);
 
   return (
     <Fragment>
       <StyledScrollBar options={{ suppressScrollX: true }}>
-        {children}
-
-        {looker ? (
-          <MatxVerticalNav
-            items={[
-              {
-                label: 'Search Dashboards...',
-                type: 'search',
-                searchVal,
-                onSearch: (str) => setSearchVal(str),
-                totalCount: searchResult.length,
-              },
-              ...searchResult,
-            ]}
-          />
-        ) : null}
+        {menuItems.map((item) => (
+          <div key={item.title}>
+            <MenuItem onClick={() => handleMenuItemClick(item.path, item.subMenu)}>
+              <MenuIcon>{item.icon}</MenuIcon>
+              <MenuLabel>{item.title}</MenuLabel>
+              {item.subMenu && (
+                <MenuArrow>
+                  {openMenu === item.path ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                </MenuArrow>
+              )}
+            </MenuItem>
+            {item.subMenu && (
+              <Collapse in={openMenu === item.path}>
+                {item.subMenu.map((subItem) => (
+                  <SubMenuItem key={subItem.title} onClick={() => handleMenuItemClick(subItem.path, false)}>
+                    <MenuLabel>{subItem.title}</MenuLabel>
+                  </SubMenuItem>
+                ))}
+              </Collapse>
+            )}
+          </div>
+        ))}
       </StyledScrollBar>
-      <SideNavMobile onClick={() => updateSidebarMode({ mode: 'close' })} />
+      <SideNavMobile onClick={() => setOpenMenu(null)} />
     </Fragment>
   );
 };

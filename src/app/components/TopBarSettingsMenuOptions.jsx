@@ -24,13 +24,13 @@ const settingOptions = {
     level: 1,
     group: types.settingsType,
   },
-  looker: {
-    name: 'Looker',
-    path: '/lookerList',
-    icon: 'monitoring',
-    level: 1,
-    group: types.settingsType,
-  },
+  // looker: {
+  //   name: 'Looker',
+  //   path: '/lookerList',
+  //   icon: 'monitoring',
+  //   level: 1,
+  //   group: types.settingsType,
+  // },
   /*   snowflake: {
       name: 'Snowflake',
       path: '/material/buttons',

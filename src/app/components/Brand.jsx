@@ -58,17 +58,14 @@ const Brand = ({ children }) => {
             justifyContent: 'center',
           }}
         >
-          <Typography
-            variant="h4"
-            sx={{
-              color: '#25326d',
-              fontWeight: 'bold',
-              textAlign: 'center',
-              fontSize: '3rem',
+          <img
+            src="https://www.dynpro.com/wp-content/uploads/2022/01/dynpro-logo-2-1-e1641987897332.png"
+            alt="Dynpro Logo"
+            style={{
+              height: '60px',
+              marginTop: '5px',
             }}
-          >
-            Dynalytix
-          </Typography>
+          />
         </div>
         <Box className="sidenavHoverShow" sx={{ display: mode === 'compact' ? 'none' : 'block' }}>
           {children || null}

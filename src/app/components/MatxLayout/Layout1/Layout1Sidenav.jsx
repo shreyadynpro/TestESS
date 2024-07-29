@@ -3,10 +3,9 @@ import { themeShadows } from 'app/components/MatxTheme/themeColors';
 import useSettings from 'app/hooks/useSettings';
 import { sidenavCompactWidth, sideNavWidth } from 'app/utils/constant';
 import { convertHexToRGB } from 'app/utils/utils';
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Brand from '../../Brand';
 import Sidenav from '../../Sidenav';
-import { Button, FormControlLabel, Switch, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import commonRoutes from 'app/components/commonRoutes';
 import { useDispatch } from 'react-redux';
@@ -52,12 +51,9 @@ const NavListBox = styled(Box)(() => ({
 
 const Layout1Sidenav = () => {
   const theme = useTheme();
-  const { settings, updateSettings } = useSettings();
+  const { settings } = useSettings();
   const leftSidebar = settings.layout1Settings.leftSidebar;
   const { mode, bgImgURL } = leftSidebar;
-  //  const [state, dispatch] = useReducer(reducer, defaultState);
-
-  const [defaultLooker, setDefaultLooker] = useState(true);
 
   const getSidenavWidth = () => {
     switch (mode) {
@@ -67,21 +63,9 @@ const Layout1Sidenav = () => {
         return sideNavWidth;
     }
   };
+
   const primaryRGB = convertHexToRGB(theme.palette.primary.main);
 
-  /*   const updateSidebarMode = (sidebarSettings) => {
-    updateSettings({
-      layout1Settings: {
-        leftSidebar: {
-          ...sidebarSettings,
-        },
-      },
-    });
-  }; */
-
-  /*   const handleSidenavToggle = () => {
-    updateSidebarMode({ mode: mode === 'compact' ? 'full' : 'compact' });
-  }; */
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -96,42 +80,14 @@ const Layout1Sidenav = () => {
         client_id: '',
       },
     });
-    if (!defaultLooker) navigate(commonRoutes.powerBIClient);
-    else navigate(commonRoutes.home);
-  }, [defaultLooker]);
+    navigate(commonRoutes.home);
+  }, []);
 
   return (
     <SidebarNavRoot bgImgURL={bgImgURL} primaryBg={primaryRGB} width={getSidenavWidth()}>
       <NavListBox>
         <Brand />
-        <div>
-          <FormControlLabel
-            control={
-              <Switch
-                value={defaultLooker}
-                checked={defaultLooker}
-                onChange={() => setDefaultLooker((prev) => !prev)}
-                color="success"
-              />
-            }
-            label={
-              <Typography
-                style={{
-                  textTransform: 'uppercase',
-                  color: '#25326d',
-                  fontWeight: 'bold',
-                  fontSize: '1rem',
-                 
-                }}
-                variant="body1"
-              >
-                {defaultLooker ? 'Looker' : 'Power BI'}
-              </Typography>
-            }
-          />
-        </div>
-
-        <Sidenav looker={defaultLooker} />
+        <Sidenav />
       </NavListBox>
     </SidebarNavRoot>
   );

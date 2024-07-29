@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import { Box, styled, useTheme } from '@mui/system';
-import BgImg from 'app/components/AppLandingPage/assets/images/1.jpg';
+import BgImg from 'app/components/AppLandingPage/assets/images/img6.jpg';
 import { lightModeTheme } from 'app/components/MatxTheme/themeColors';
 import { Paragraph } from 'app/components/Typography';
 import commonRoutes from 'app/components/commonRoutes';
@@ -113,17 +113,11 @@ const JwtLogin = () => {
           <Grid container>
             <Grid item sm={6} xs={12}>
               <JustifyBox p={4} height="100%" sx={{ minWidth: 320 }}>
-                <Typography
-                  variant="h4"
-                  sx={{
-                    color: '#25326d',
-                    fontWeight: 'bold',
-                    textAlign: 'center',
-                    fontSize: '4rem',
-                  }}
-                >
-                  Dynalytix
-                </Typography>
+                <img
+                  src="https://www.dynpro.com/wp-content/uploads/2022/01/dynpro-logo-2-1-e1641987897332.png"
+                  alt="DynPro Logo"
+                  style={{ maxWidth: '800%', maxHeight: '800%' }}
+                />
               </JustifyBox>
             </Grid>
 

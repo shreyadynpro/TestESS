@@ -9,12 +9,12 @@ export const mainThemes = [
   'blue1',
   'purpleDark11',
   'blueDark1',
-  'whiteBlue1',
+  'whiteblue1',
 ];
 
 export const mainSidebarThemes = [
   'whitePurple',
-  'whiteBlue',
+  'whiteblue',
   'slateDark1',
   'slateDark2',
   'purpleDark1',
@@ -24,12 +24,12 @@ export const mainSidebarThemes = [
   'blue1',
   'purpleDark11',
   'blueDark1',
-  'whiteBlue1',
+  'whiteblue1',
 ];
 
 export const topbarThemes = [
   'whitePurple',
-  'whiteBlue',
+  'whiteblue',
   'slateDark1',
   'slateDark2',
   'purpleDark1',
@@ -39,5 +39,5 @@ export const topbarThemes = [
   'blue1',
   'purpleDark11',
   'blueDark1',
-  'whiteBlue1',
+  'whiteblue1',
 ];

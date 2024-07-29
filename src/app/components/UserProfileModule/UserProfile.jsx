@@ -1,20 +1,29 @@
 import { Edit, Email, Group, Work } from '@mui/icons-material';
-import { Badge, Box, Button, Card, Modal, styled, useTheme } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
+import {
+  Badge,
+  Box,
+  Button,
+  Card,
+  Modal,
+  styled,
+  Typography,
+  useTheme,
+  Tabs,
+  Tab,
+  IconButton,
+} from '@mui/material';
 import { Fragment, useEffect, useState } from 'react';
-
 import { H4, Small } from 'app/components/Typography';
 import { getAccessToken } from 'app/utils/utils';
 import axios from 'axios';
 import commonConfig from '../commonConfig';
 import EditUserProfile from './EditUserProfile';
 import ResetPassword from './ResetPassword';
-
 import SnackbarUtils from 'SnackbarUtils';
 
 const style = {
   position: 'absolute',
-  top: '45%',
+  top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 500,
@@ -85,7 +94,6 @@ const CoverPicWrapper = styled(Box)(() => ({
 const ImageWrapper = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
-
   width: 100,
   height: 100,
   margin: 'auto',
@@ -96,12 +104,38 @@ const ImageWrapper = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.primary[200],
 }));
 
+const CenteredBox = styled(Box)({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  textAlign: 'center',
+  padding: '20px',
+});
+
+const DetailBox = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  textAlign: 'center',
+  backgroundColor: theme.palette.background.default,
+  borderRadius: '10px',
+  padding: '20px',
+  margin: '10px 0',
+  boxShadow: `0 0 10px ${theme.palette.grey[300]}`,
+}));
+
 const UserProfile = () => {
   const [userObj, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('personal'); // State to manage the active tab
+  const [openModal, setOpenModal] = useState(false);
+  const [openResetPasswordModal, setOpenResetPasswordModal] = useState(false);
   const authToken = getAccessToken();
+  const theme = useTheme();
 
-  const FetchOtp = async (values) => {
+  const FetchOtp = async () => {
     setLoading(true);
     try {
       const response = await axios.post(commonConfig.urls.forget_password, {
@@ -111,10 +145,9 @@ const UserProfile = () => {
       setLoading(false);
       if (response.data && response.data.Status === 'Success') {
         SnackbarUtils.success(response.data.Message);
-        //        navigate(commonRoutes.session.change_password, { state: userObj?.email });
         setLoading(false);
       } else {
-        SnackbarUtils.error('Email Not Avaialble...!!!');
+        SnackbarUtils.error('Email Not Available...!!!');
       }
     } catch (error) {
       setLoading(false);
@@ -139,12 +172,15 @@ const UserProfile = () => {
       SnackbarUtils.error(error?.message || 'Something went wrong!!');
     }
   };
+
   useEffect(() => {
     fetchData();
   }, []);
-  const [openModal, setOpenModal] = useState(false);
-  const [openRegisterModal, setOpenRegisterModal] = useState(false);
-  const theme = useTheme();
+
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
+
   return (
     <Fragment>
       <Card sx={{ padding: 3, position: 'relative' }}>
@@ -184,72 +220,119 @@ const UserProfile = () => {
             <H4 fontWeight={600} textAlign="center">
               {userObj?.first_name} {userObj?.last_name}
             </H4>
-            <FlexBetween maxWidth={500} flexWrap="wrap" margin="auto" mt={1}>
-              <FlexBox alignItems="center" gap={1}>
-                <Email sx={{ fontSize: 16, color: 'text.disabled' }} />
-                <Small fontWeight={600} color="text.disabled">
-                  {userObj.email}
-                </Small>
-              </FlexBox>
 
-              <FlexBox alignItems="center" gap={1}>
-                <Group sx={{ fontSize: 16, color: 'text.disabled' }} />
-                <Small fontWeight={600} color="text.disabled">
-                  {userObj?.group}
-                </Small>
-              </FlexBox>
+            <Tabs value={activeTab} onChange={handleTabChange} centered>
+              <Tab label="Personal Information" value="personal" />
+              <Tab label="Professional Information" value="professional" />
+              <Tab label="Documentation" value="documentation" />
+            </Tabs>
 
-              <FlexBox alignItems="center" gap={1}>
-                <Work sx={{ fontSize: 16, color: 'text.disabled' }} />
-                <Small fontWeight={600} color="text.disabled">
-                  {userObj?.role}
-                </Small>
-              </FlexBox>
-              <FlexBox alignItems="center" gap={1}></FlexBox>
-            </FlexBetween>
-            {userObj?.email && (
-              <FlexCenter maxWidth={500} flexWrap="wrap" margin="auto" mt={1}>
-                <FlexBox alignItems="center" gap={1}>
-                  <Button
-                    variant="contained"
-                    color="success"
-                    sx={{ my: 2 }}
-                    onClick={() => {
-                      FetchOtp();
-                      setOpenRegisterModal(true);
-                    }}
-                  >
-                    Reset Password
-                  </Button>
-                </FlexBox>
-              </FlexCenter>
-            )}
+            <CenteredBox mt={2}>
+              {activeTab === 'personal' && (
+                <DetailBox>
+                  <FlexBetween>
+                    <Typography variant="h6" gutterBottom>
+                      Personal Information
+                    </Typography>
+                    <IconButton
+                      aria-label="edit personal information"
+                      component="span"
+                      onClick={() => setOpenModal(true)}
+                    >
+                      <Edit sx={{ fontSize: 16, color: theme.palette.primary.main }} />
+                    </IconButton>
+                  </FlexBetween>
+                  <Typography variant="body2" color="text.secondary">
+                    Email: {userObj.email}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Phone: {userObj.phone}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Address: {userObj.address}
+                  </Typography>
+                </DetailBox>
+              )}
+
+              {activeTab === 'professional' && (
+                <DetailBox>
+                  <FlexBetween>
+                    <Typography variant="h6" gutterBottom>
+                      Professional Information
+                    </Typography>
+                    <IconButton
+                      aria-label="edit professional information"
+                      component="span"
+                      onClick={() => setOpenModal(true)}
+                    >
+                      <Edit sx={{ fontSize: 16, color: theme.palette.primary.main }} />
+                    </IconButton>
+                  </FlexBetween>
+                  <Typography variant="body2" color="text.secondary">
+                    Group: {userObj.group}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Role: {userObj.role}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Department: {userObj.department}
+                  </Typography>
+                </DetailBox>
+              )}
+
+              {activeTab === 'documentation' && (
+                <DetailBox>
+                  <FlexBetween>
+                    <Typography variant="h6" gutterBottom>
+                      Documentation
+                    </Typography>
+                    <IconButton
+                      aria-label="edit documentation"
+                      component="span"
+                      onClick={() => setOpenModal(true)}
+                    >
+                      <Edit sx={{ fontSize: 16, color: theme.palette.primary.main }} />
+                    </IconButton>
+                  </FlexBetween>
+                  <Typography variant="body2" color="text.secondary">
+                    Documents: {userObj.documents}
+                  </Typography>
+                </DetailBox>
+              )}
+            </CenteredBox>
+
+            <Box mt={2} display="flex" justifyContent="center">
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => setOpenResetPasswordModal(true)}
+              >
+                Reset Password
+              </Button>
+            </Box>
           </Box>
         </ContentWrapper>
       </Card>
+
       <Modal
         open={openModal}
-        onClose={() => {
-          setOpenModal(false);
-        }}
+        onClose={() => setOpenModal(false)}
+        aria-labelledby="edit-user-profile"
+        aria-describedby="edit-user-profile-description"
       >
-        <Box sx={{ ...style, color: theme.palette.text.primary }}>
-          <EditUserProfile
-            onclose={() => {
-              setOpenModal(false);
-              fetchData();
-            }}
-          />
+        <Box sx={style}>
+          <EditUserProfile tab={activeTab} user={userObj} onclose={() => setOpenModal(false)} />
         </Box>
       </Modal>
+
       <Modal
-        open={openRegisterModal}
-        onClose={() => {
-          setOpenRegisterModal(false);
-        }}
+        open={openResetPasswordModal}
+        onClose={() => setOpenResetPasswordModal(false)}
+        aria-labelledby="reset-password"
+        aria-describedby="reset-password-description"
       >
-        <Box sx={{ ...style, color: theme.palette.text.primary }}>
-          <ResetPassword emailId={userObj?.email} onClose={() => setOpenRegisterModal(false)} />
+        <Box sx={style}>
+          <ResetPassword onclose={() => setOpenResetPasswordModal(false)} />
         </Box>
       </Modal>
     </Fragment>

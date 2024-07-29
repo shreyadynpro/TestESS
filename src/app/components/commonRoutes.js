@@ -2,6 +2,8 @@ const commonRoutes = {
   dashboard: '/dashboard',
   home: '/home',
   home: '/home',
+  employees: '/EmployeeList',
+  tasks: '/todo/tasks',
   session: {
     signup: '/signup',
     signin: '/signin',
@@ -73,7 +75,8 @@ const commonRoutes = {
   localizaion: {
     localizationSplitList: '/localization',
   },
-  powerBIClient: '/powerBIClient',
+
+  // powerBIClient: '/powerBIClient',
 };
 
 export default commonRoutes;
