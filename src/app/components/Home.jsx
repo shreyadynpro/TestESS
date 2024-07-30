@@ -118,7 +118,7 @@ const Home = ({ greetingPosition = 'top-left' }) => {
   return (
     <div style={{ position: 'relative', height: '100vh', backgroundColor: theme.palette.background.default, padding: '20px' }}>
       <GreetingRoot position={greetingPosition}>
-        {getGreeting()} User
+        {getGreeting()} User,
       </GreetingRoot>
       <Grid container spacing={3} style={{ marginTop: '80px' }}>
         <Grid item xs={12} md={4}>

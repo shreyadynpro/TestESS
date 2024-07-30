@@ -68,10 +68,10 @@ export default function Header() {
                     <span
                       style={{
                         marginRight: 20,
-                        color: '#B18F8F', // Dusty mauve color
+                        color: '#fff', // Dusty mauve color
                         textDecoration: 'none',
                         '&:hover': {
-                          color: '#8B6B6B', // Darker dusty mauve on hover
+                          color: '#fff', // Darker dusty mauve on hover
                           fontWeight: 'bold',
                           textDecoration: 'underline',
                         },
@@ -121,9 +121,9 @@ export default function Header() {
               <NavLink
                 style={{
                   marginRight: 20,
-                  color: '#B18F8F', // Dusty mauve color
+                  color: '#fff', // Dusty mauve color
                   textDecoration: 'none',
-                  '&:hover': { color: '#8B6B6B' }, // Darker dusty mauve on hover
+                  '&:hover': { color: '#fff' }, // Darker dusty mauve on hover
                 }}
                 variant="button"
                 underline="none"
