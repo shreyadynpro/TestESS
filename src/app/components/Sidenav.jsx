@@ -16,6 +16,10 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import SummarizeIcon from '@mui/icons-material/Summarize';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import InfoIcon from '@mui/icons-material/Info';
+import PersonIcon from '@mui/icons-material/Person';
+import GroupIcon from '@mui/icons-material/Group';
+import LockIcon from '@mui/icons-material/Lock';
+import SecurityIcon from '@mui/icons-material/Security';
 
 const StyledScrollBar = styled(Scrollbar)(() => ({
   paddingLeft: '0.1rem',
@@ -118,6 +122,10 @@ const menuItems = [
   { title: 'Reports', path: '/reports', icon: <SummarizeIcon /> },
   { title: 'Activities', path: '/activities', icon: <CampaignIcon /> },
   { title: 'Help', path: '/help', icon: <InfoIcon /> },
+  { title: 'User', path: '/splitUsers', icon: <PersonIcon /> },
+  { title: 'Roles', path: '/role', icon: <SecurityIcon /> },
+  { title: 'Group Master', path: '/group-master', icon: <GroupIcon /> },
+  { title: 'User Access Control', path: '/groups', icon: <LockIcon /> },
 ];
 
 const Sidenav = () => {
