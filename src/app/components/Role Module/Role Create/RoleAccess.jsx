@@ -92,11 +92,11 @@ export default function RoleAccess() {
       <Divider className="form-group-divider" />
 
       {/* Group */}
-      {renderFormGroup('Group', 'group_module', [
-        'group_add',
-        'group_edit',
-        'group_delete',
-        'group_view',
+      {renderFormGroup('Group', 'groups', [
+        'groups_add',
+        'groups_edit',
+        'groups_delete',
+        'groups_view',
       ])}
 
       {/* Roles */}
@@ -112,10 +112,10 @@ export default function RoleAccess() {
 
       {/* Reports */}
       {renderFormGroup('Reports', 'reports', [
-        'report_add',
-        'report_edit',
-        'report_delete',
-        'report_view',
+        'reports_add',
+        'reports_edit',
+        'reports_delete',
+        'reports_view',
       ])}
 
       {/* Generate Reports */}

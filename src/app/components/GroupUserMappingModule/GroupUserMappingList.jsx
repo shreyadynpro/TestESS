@@ -41,7 +41,7 @@ export default function GroupUserMappingList() {
   const navigate = useNavigate();
   const requestSearch = (searchedVal) =>
     data.filter((row) => {
-      return (row.group_name + ' ' + row.role + ' ' + row.name + ' ' + row.last_name)
+      return (row.group_name + ' ' + row.role + ' ' + row.first_name + ' ' + row.last_name)
         .toLowerCase()
         .includes(searchedVal.toLowerCase());
     });

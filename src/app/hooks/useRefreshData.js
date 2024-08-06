@@ -62,7 +62,7 @@ export default function useRefreshData(topbarUpdate = true) {
     });
     dispatch({
       type: 'SET_USER_NAME',
-      name: userDetails.data?.Response?.user_details[0]?.name,
+      name: userDetails.data?.Response?.user_details[0]?.first_name,
       last_name: userDetails.data?.Response?.user_details[0]?.last_name,
     });
   };

@@ -115,7 +115,7 @@ export default function AppPaginateGroupsUserMapping({
               <TableRow key={index}>
                 <TableCell align="left">{user.group_name}</TableCell>
                 <TableCell align="left">{user.role}</TableCell>
-                <TableCell align="left">{user.name + ' ' + user.last_name}</TableCell>
+                <TableCell align="left">{user.first_name + ' ' + user.last_name}</TableCell>
                 <TableCell align="left">
                   {groupUserEditPermission === 1 && (
                     <IconButton

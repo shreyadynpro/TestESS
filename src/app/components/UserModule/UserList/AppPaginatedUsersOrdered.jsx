@@ -43,6 +43,7 @@ const PaginationTable = ({ data = [] }) => {
         <TableHead>
           <TableRow>
             <TableCell align="left">Name</TableCell>
+            <TableCell align="right">User Unique Id</TableCell>
             <TableCell align="center">Group</TableCell>
             <TableCell align="center">Role</TableCell>
             <TableCell align="right">Email/UserId</TableCell>
@@ -53,7 +54,8 @@ const PaginationTable = ({ data = [] }) => {
         <TableBody>
           {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user, index) => (
             <TableRow key={index}>
-              <TableCell align="left">{user.name + ' ' + user.last_name}</TableCell>
+              <TableCell align="left">{user.first_name + ' ' + user.last_name}</TableCell>
+              <TableCell align="left">{user.unique_id}</TableCell>
               <TableCell align="center">{user.group_name}</TableCell>
               <TableCell align="center">{user.role_name}</TableCell>
               <TableCell colSpan={2} align="center">

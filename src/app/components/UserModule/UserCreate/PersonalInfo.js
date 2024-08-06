@@ -16,9 +16,7 @@ const selectOptions = {
 export default function PersonalInfo({ showPassword }) {
   const { values, handleChange, errors, touched, handleBlur, setFieldValue } = useFormikContext();
   const { data: userGroups } = useApi(commonConfig.urls.groupList);
-  const { data: userGroupRoles } = useApi(
-    commonConfig.urls.groupRoleMapping + '/' + values.personalInfo.group_id
-  );
+  const { data: userGroupRoles } = useApi(commonConfig.urls.getRole);
   const [data, setData] = useState([]);
   const authToken = getAccessToken();
   useEffect(() => {
@@ -31,15 +29,7 @@ export default function PersonalInfo({ showPassword }) {
               'Content-Type': 'application/json',
             },
           });
-          const response2 = await axios(
-            `${commonConfig.urls.getGroupRoleUser}?group_id=${values.personalInfo.group_id}&role_id=${values.personalInfo.role}`,
-            {
-              headers: {
-                Authorization: `Bearer ${authToken}`,
-                'Content-Type': 'application/json',
-              },
-            }
-          );
+
           if (response.data?.Response) {
             setData(response['data']['Response']);
             setFieldValue(
@@ -49,14 +39,6 @@ export default function PersonalInfo({ showPassword }) {
                   util.initialValues.userAccess,
                   response['data']['Response'][0]
                 )
-              )
-            );
-          }
-          if (response2.data?.Response) {
-            setFieldValue(
-              'checked',
-              util.convertDashboardAccessObjsToCheckedString(
-                response2['data']['Response']['dashboard_mapping']
               )
             );
           }
@@ -179,35 +161,7 @@ export default function PersonalInfo({ showPassword }) {
           {verifyErrors(errors, touched, 'password')}
         </div>
       )}
-      <div>
-        <AppThemeTextField
-          variant="standard"
-          required
-          defaultValue=""
-          value={values.personalInfo.permissions || ''}
-          id="personalInfo.permissions"
-          name="personalInfo.permissions"
-          select
-          label="Permissions"
-          placeholder="Select Permissions"
-          style={{ width: '100%' }}
-          onChange={handleChange('personalInfo.permissions')}
-          onBlur={handleBlur}
-          error={Boolean(
-            errors.personalInfo &&
-              touched.personalInfo &&
-              touched.personalInfo.permissions &&
-              errors.personalInfo.permissions
-          )}
-        >
-          {selectOptions.permissions.map((option, index) => (
-            <MenuItem key={index} value={option}>
-              {option.charAt(0).toUpperCase() + option.slice(1)}
-            </MenuItem>
-          ))}
-        </AppThemeTextField>
-        {verifyErrors(errors, touched, 'permissions')}
-      </div>
+
       <div>
         <AppThemeTextField
           variant="standard"

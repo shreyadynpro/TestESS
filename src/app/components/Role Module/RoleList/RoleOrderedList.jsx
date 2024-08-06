@@ -40,12 +40,12 @@ const AppTable = () => {
   const navigate = useNavigate();
   const requestSearch = (searchedVal) =>
     data.filter((row) => {
-      return (row.name + ' ' + row.last_name + ' ' + row.email)
+      return (row.first_name + ' ' + row.last_name + ' ' + row.email)
         .toLowerCase()
         .includes(searchedVal.toLowerCase());
     });
   const { data } = useApi(commonConfig.urls.getUserList);
-  
+
   return (
     <Container>
       <SimpleCard title="User List">
