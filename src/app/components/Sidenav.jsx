@@ -70,7 +70,12 @@ const SubMenuItem = styled(MenuItem)(({ theme }) => ({
 }));
 
 const menuItems = [
-  { title: 'Home', path: '/home', icon: <HomeIcon /> },
+  { title: 'Group Master', path: '/group-master', icon: <GroupIcon /> },
+  { title: 'Roles', path: '/role', icon: <SecurityIcon /> },
+  { title: 'User Access Control', path: '/groups', icon: <LockIcon /> },
+  { title: 'Users', path: '/splitUsers', icon: <PersonIcon /> },
+  { title: 'Employees', path: '/EmployeeList', icon: <GroupsIcon /> },
+  { title: 'Reports', path: '/reports', icon: <SummarizeIcon /> },
   {
     title: 'To Do',
     path: '/todo',
@@ -96,15 +101,6 @@ const menuItems = [
     ],
   },
   {
-    title: 'Attendance',
-    path: '/attendance',
-    icon: <CalendarMonthIcon />,
-    subMenu: [
-      { title: 'Daily', path: '/attendance/daily' },
-      { title: 'Monthly', path: '/attendance/monthly' },
-    ],
-  },
-  {
     title: 'Salary',
     path: '/salary',
     icon: <MonetizationOnIcon />,
@@ -118,14 +114,17 @@ const menuItems = [
     ],
   },
   { title: 'Documents', path: '/documents', icon: <DescriptionIcon /> },
-  { title: 'Employees', path: '/EmployeeList', icon: <GroupsIcon /> },
-  { title: 'Reports', path: '/reports', icon: <SummarizeIcon /> },
+  {
+    title: 'Attendance',
+    path: '/attendance',
+    icon: <CalendarMonthIcon />,
+    subMenu: [
+      { title: 'Daily', path: '/attendance/daily' },
+      { title: 'Monthly', path: '/attendance/monthly' },
+    ],
+  },
   { title: 'Activities', path: '/activities', icon: <CampaignIcon /> },
   { title: 'Help', path: '/help', icon: <InfoIcon /> },
-  { title: 'User', path: '/splitUsers', icon: <PersonIcon /> },
-  { title: 'Roles', path: '/role', icon: <SecurityIcon /> },
-  { title: 'Group Master', path: '/group-master', icon: <GroupIcon /> },
-  { title: 'User Access Control', path: '/groups', icon: <LockIcon /> },
 ];
 
 const Sidenav = () => {
