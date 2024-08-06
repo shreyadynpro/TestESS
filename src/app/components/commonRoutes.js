@@ -1,9 +1,10 @@
 const commonRoutes = {
   dashboard: '/dashboard',
   home: '/home',
-  home: '/home',
   employees: '/EmployeeList',
   tasks: '/todo/tasks',
+  payslips: '/salary/payslips',
+  payslipPDF: '/salary/payslips/PDF',
   session: {
     signup: '/signup',
     signin: '/signin',
