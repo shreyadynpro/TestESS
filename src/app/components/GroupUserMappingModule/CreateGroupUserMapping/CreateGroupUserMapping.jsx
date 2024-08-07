@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Card, styled } from '@mui/material';
 import SnackbarUtils from 'SnackbarUtils';
 import { Breadcrumb } from 'app/components';
-import AppDashboardAccess from 'app/components/ReusableComponents/AppDashboardAccess';
 import AppGoBackBtn from 'app/components/ReusableComponents/AppGoBackBtn';
 import AppthemeLoadingBtn from 'app/components/ReusableComponents/AppThemeLoadingBtn';
 import UserAccess from 'app/components/UserModule/UserCreate/UserAccess';
@@ -101,7 +100,6 @@ export default function CreateGroupUserMapping() {
                   <hr />
                   <UserAccess />
                   <hr />
-                  <AppDashboardAccess checked={values.checked} onCheck={setFieldValue} />
                   <AppthemeLoadingBtn
                     type="submit"
                     loading={loading}

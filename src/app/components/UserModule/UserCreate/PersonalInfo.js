@@ -9,9 +9,6 @@ import axios from 'axios';
 import { useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 import util from '../util';
-const selectOptions = {
-  permissions: ['viewer', 'explorer', 'schedular'],
-};
 
 export default function PersonalInfo({ showPassword }) {
   const { values, handleChange, errors, touched, handleBlur, setFieldValue } = useFormikContext();
@@ -20,15 +17,18 @@ export default function PersonalInfo({ showPassword }) {
   const [data, setData] = useState([]);
   const authToken = getAccessToken();
   useEffect(() => {
-    if (values.personalInfo.role) {
+    if (values.personalInfo.role_id) {
       const fetchData = async () => {
         try {
-          const response = await axios(commonConfig.urls.roles + '/' + values.personalInfo.role, {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-              'Content-Type': 'application/json',
-            },
-          });
+          const response = await axios(
+            commonConfig.urls.roles + '/' + values.personalInfo.role_id,
+            {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          );
 
           if (response.data?.Response) {
             setData(response['data']['Response']);
@@ -48,7 +48,7 @@ export default function PersonalInfo({ showPassword }) {
       };
       fetchData();
     }
-  }, [values.personalInfo.role]);
+  }, [values.personalInfo.role_id]);
 
   const verifyErrors = (errors, touched, fieldName) => {
     if (
@@ -196,23 +196,23 @@ export default function PersonalInfo({ showPassword }) {
           <AppThemeTextField
             required
             variant="standard"
-            id="personalInfo.role"
-            name="personalInfo.role"
+            id="personalInfo.role_id"
+            name="personalInfo.role_id"
             defaultValue={''}
-            value={values.personalInfo.role || ''}
+            value={values.personalInfo.role_id || ''}
             style={{ width: '100%' }}
             select
             label="Roles"
             placeholder="Select Roles"
             validateOnChange={false}
             validateOnBlur={false}
-            onChange={handleChange('personalInfo.role')}
+            onChange={handleChange('personalInfo.role_id')}
             onBlur={handleBlur}
             error={Boolean(
               errors.personalInfo &&
                 touched.personalInfo &&
-                touched.personalInfo.role &&
-                errors.personalInfo.role
+                touched.personalInfo.role_id &&
+                errors.personalInfo.role_id
             )}
           >
             {userGroupRoles.map((option, index) => (

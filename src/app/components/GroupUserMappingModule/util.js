@@ -58,10 +58,6 @@ const initialValues = {
     documents_delete: false,
     documents_view: false,
   },
-  dashboardAccess: {
-    dashboard_access: [],
-    Client_List: [],
-  },
   checked: [],
 };
 const initialEditValues = {
@@ -110,10 +106,7 @@ const initialEditValues = {
     documents_delete: false,
     documents_view: false,
   },
-  dashboardAccess: {
-    dashboard_access: [],
-    Client_List: [],
-  },
+
   checked: [],
 };
 
@@ -130,8 +123,6 @@ function getRoleAccess(initialObj, responseObj) {
     if (typeof responseObj[key] === 'number') newObj[key] = responseObj[key] === 1 ? true : false;
     else newObj[key] = false;
   }
-  if (responseObj['phm']) newObj['reports'] = Boolean(responseObj['phm']);
-  if (responseObj['matillion']) newObj['snowflake'] = Boolean(responseObj['matillion']);
   return newObj;
 }
 
@@ -218,13 +209,12 @@ function convertDashboardAccessObjsToCheckedString(dashboardAccessObjs) {
     .filter((item) => item !== undefined);
 }
 function createInitalValues(responseObj) {
-  if (responseObj.role_access && responseObj.dashboard_access) {
+  if (responseObj.role_access) {
     return {
       ...initialValues,
       userAccess: {
         ...compareResponseAndInitialObj(responseObj.role_access[0], initialEditValues.userAccess),
       },
-      checked: [...convertDashboardAccessObjsToCheckedString(responseObj.dashboard_access)],
     };
   }
   return null;

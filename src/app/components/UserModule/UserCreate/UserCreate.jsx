@@ -54,6 +54,8 @@ const UserCreate = () => {
   const navigate = useNavigate();
 
   async function sendDataToServer(data) {
+    console.log('Post Data', data);
+
     const authToken = getAccessToken();
     try {
       dispatch({ type: 'LOADING', bool: true });
@@ -95,7 +97,7 @@ const UserCreate = () => {
           onSubmit={(values) => {
             sendDataToServer({
               ...values.personalInfo,
-              User_Access: userModuleUtils.retUserAccessObj(values.userAccess),
+              role_access: userModuleUtils.retUserAccessObj(values.userAccess),
             });
           }}
         >

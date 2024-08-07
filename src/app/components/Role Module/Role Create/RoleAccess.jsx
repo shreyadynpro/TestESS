@@ -59,36 +59,10 @@ export default function RoleAccess() {
   return (
     <div style={{ width: '100%' }}>
       <style>{styles}</style>
-      <p>User Access</p>
+      <p>Role Access</p>
       {/* Users */}
       {renderFormGroup('Users', 'users', ['user_add', 'user_edit', 'user_delete', 'user_view'])}
 
-      {/* Approve Button */}
-      <Grid item xs={12} sm={6} md={4} lg={3}>
-        <FormControlLabel
-          control={
-            <AppThemeCheckbox
-              onChange={() => setFieldValue('approval_pending_user', !values.approval_pending_user)}
-              checked={values.approval_pending_user}
-            />
-          }
-          label="Approve User"
-        />
-      </Grid>
-      <Divider className="form-group-divider" />
-
-      {/* Permission Button */}
-      <Grid item xs={12} sm={6} md={4} lg={3}>
-        <FormControlLabel
-          control={
-            <AppThemeCheckbox
-              onChange={() => setFieldValue('permission_btn', !values.permission_btn)}
-              checked={values.permission_btn}
-            />
-          }
-          label="Switch Button Access"
-        />
-      </Grid>
       <Divider className="form-group-divider" />
 
       {/* Group */}
@@ -102,12 +76,12 @@ export default function RoleAccess() {
       {/* Roles */}
       {renderFormGroup('Roles', 'roles', ['role_add', 'role_edit', 'role_delete', 'role_view'])}
 
-      {/* Clients */}
-      {renderFormGroup('Clients', 'clients', [
-        'client_add',
-        'client_edit',
-        'client_delete',
-        'client_view',
+      {/* leaves */}
+      {renderFormGroup('Leaves', 'leaves', [
+        'leaves_add',
+        'leaves_edit',
+        'leaves_delete',
+        'leaves_view',
       ])}
 
       {/* Reports */}
@@ -119,53 +93,29 @@ export default function RoleAccess() {
       ])}
 
       {/* Generate Reports */}
-      {renderFormGroup('Generate Reports', 'generate_report', [
-        'generate_report_add',
-        'generate_report_edit',
-        'generate_report_delete',
-        'generate_report_view',
+      {renderFormGroup('Salary', 'salary', [
+        'salary_add',
+        'salary_edit',
+        'salary_delete',
+        'salary_view',
       ])}
 
-      {/* Invite User */}
-      <Grid item xs={12} sm={6} md={4} lg={3}>
-        <FormControlLabel
-          control={
-            <AppThemeCheckbox
-              onChange={() => setFieldValue('invite_user', !values.invite_user)}
-              checked={values.invite_user}
-            />
-          }
-          label="Invite User"
-        />
-      </Grid>
       <Divider className="form-group-divider" />
 
-      {/* Looker */}
-      <Grid item xs={12} sm={6} md={4} lg={3}>
-        <FormControlLabel
-          control={
-            <AppThemeCheckbox
-              onChange={() => setFieldValue('looker', !values.looker)}
-              checked={values.looker}
-            />
-          }
-          label="Looker"
-        />
-      </Grid>
-      <Divider className="form-group-divider" />
-
-      {/* Snowflake */}
-      <Grid item xs={12} sm={6} md={4} lg={3}>
-        <FormControlLabel
-          control={
-            <AppThemeCheckbox
-              onChange={() => setFieldValue('snowflake', !values.snowflake)}
-              checked={values.snowflake}
-            />
-          }
-          label="Snowflake"
-        />
-      </Grid>
+      {/* Employess */}
+      {renderFormGroup('Employess', 'employees', [
+        'employees_add',
+        'employees_edit',
+        'employees_delete',
+        'employees_view',
+      ])}
+      {/* documents */}
+      {renderFormGroup('Documents', 'documents', [
+        'documents_add',
+        'documents_edit',
+        'documents_delete',
+        'documents_view',
+      ])}
     </div>
   );
 }

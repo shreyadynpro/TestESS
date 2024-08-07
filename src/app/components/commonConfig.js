@@ -61,7 +61,7 @@ const commonConfig = {
     getparentphm: `${baseURL}/getParentPHM`,
     getschema: `${baseURL}/getSchema`,
     getlookerGroups: `${baseURL}/getLookerGroups`,
-    getUserAccessControl: `${baseURL}/users_access_control`,
+    getUserAccessControl: `${baseURL}/useraccess`,
     getGroupRoleUser: `${baseURL}/getGroupRoleUser`,
     looker: `${baseURL}/looker`,
     inviteUser: `${baseURL}/invite_user`,

@@ -31,10 +31,10 @@ export default function GroupList() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const groupViewPermission = useSelector(
-    (state) => state.userAccessPermissions?.userPermissions?.group_view
+    (state) => state.userAccessPermissions?.userPermissions?.groups_view
   );
   const groupCreatePermission = useSelector(
-    (state) => state.userAccessPermissions?.userPermissions?.group_add
+    (state) => state.userAccessPermissions?.userPermissions?.groups_add
   );
 
   const navigate = useNavigate();
