@@ -62,7 +62,7 @@ const Brand = ({ children }) => {
             src="https://www.dynpro.com/wp-content/uploads/2022/01/dynpro-logo-2-1-e1641987897332.png"
             alt="Dynpro Logo"
             style={{
-              height: '60px',
+              height: '45px',
               marginTop: '5px',
             }}
           />

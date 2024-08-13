@@ -35,7 +35,7 @@ const TopbarContainer = styled(Box)(({ theme }) => ({
   padding: '8px',
   paddingLeft: 18,
   paddingRight: 20,
-  height: '125%',
+  height: '100%',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
