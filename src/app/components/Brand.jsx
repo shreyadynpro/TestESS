@@ -5,6 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import commonRoutes from './commonRoutes';
 
+import DynpEssLT from 'app/components/AppLandingPage/assets/images/DynESS_LT.png';
+import DynpEssDT from 'app/components/AppLandingPage/assets/images/DynESS_DT.png';
+import { blue } from '@mui/material/colors';
+
 const BrandRoot = styled(Box)(({ theme }) => {
   return {
     display: 'flex',
@@ -12,6 +16,7 @@ const BrandRoot = styled(Box)(({ theme }) => {
     justifyContent: 'space-between',
     paddingTop: '5px',
     paddingBottom: '8px',
+    backgroundColor: theme.palette.text.primary,
   };
 });
 
@@ -59,11 +64,11 @@ const Brand = ({ children }) => {
           }}
         >
           <img
-            src="https://www.dynpro.com/wp-content/uploads/2022/01/dynpro-logo-2-1-e1641987897332.png"
-            alt="Dynpro Logo"
+            src={currentTheme?.activeTheme === 'slateDark1' ? DynpEssDT : DynpEssLT}
+            alt="DynESS Logo"
             style={{
-              height: '45px',
-              marginTop: '5px',
+              height: '49px',
+              marginTop: '1px',
             }}
           />
         </div>
@@ -71,7 +76,7 @@ const Brand = ({ children }) => {
           {children || null}
         </Box>
       </BrandRoot>
-      {!(currentTheme === 'Default Theme') && <AppHr />}
+      {/* {!(currentTheme === 'Default Theme') && <AppHr />} */}
     </Link>
   );
 };

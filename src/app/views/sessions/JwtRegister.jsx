@@ -6,7 +6,7 @@ import BgImg from 'app/components/AppLandingPage/assets/images/img5.jpg';
 import { lightModeTheme } from 'app/components/MatxTheme/themeColors';
 import { Paragraph } from 'app/components/Typography';
 import commonRoutes from 'app/components/commonRoutes';
-
+import DynpEssLT from 'app/components/AppLandingPage/assets/images/DynESS_LT.png';
 import useAuth from 'app/hooks/useAuth';
 import { Formik } from 'formik';
 import { useRef, useState } from 'react';
@@ -100,7 +100,13 @@ const JwtRegister = () => {
           <Grid container>
             <Grid item sm={6} xs={12}>
               <ContentBox>
-                <img width="100%" alt="Register" src="https://www.dynpro.com/wp-content/uploads/2022/01/dynpro-logo-2-1-e1641987897332.png" />
+                <img
+                  src={DynpEssLT}
+                  alt="DynESS Logo"
+                  style={{
+                    height: '71px',
+                  }}
+                />
               </ContentBox>
             </Grid>
 

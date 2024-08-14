@@ -48,7 +48,8 @@ const commonRoutes = {
   lookerDashboards: {},
   navigations: {},
   landingPage: {
-    defaultLandingPage: '/dynviz_landing',
+    // defaultLandingPage: '/dyness_landing',
+    defaultLandingPage: '/signin',
   },
   lookerPage: {
     defaultLookerList: '/lookerList',
