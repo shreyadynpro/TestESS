@@ -47,7 +47,7 @@ const PayslipPDF = () => {
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
         <img src="https://www.dynpro.com/wp-content/uploads/2022/01/dynpro-logo-2-1-e1641987897332.png" alt="Company Logo" style={{ width: '150px' }} />
         <h1>DynPro India Pvt Ltd</h1>
-        <p>Your Company Address</p>
+        <p>1st Floor, C Wing, Teerth Technospace, Sr. No. 103, Mumbai Pune Bangalore Highway Pashan Exit Teerth2Work, Baner, Pune, Maharashtra 411045</p>
       </div>
 
       {/* Employee Details Table */}
