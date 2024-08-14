@@ -74,7 +74,7 @@ const menuItems = [
   { title: 'Roles', path: '/role', icon: <SecurityIcon /> },
   { title: 'User Access Control', path: '/groups', icon: <LockIcon /> },
   { title: 'Users', path: '/splitUsers', icon: <PersonIcon /> },
-  { title: 'Employees', path: '/EmployeeList', icon: <GroupsIcon /> },
+  { title: 'Employees', path: '/employee-master', icon: <GroupsIcon /> },
   { title: 'Reports', path: '/reports', icon: <SummarizeIcon /> },
   {
     title: 'To Do',
@@ -157,7 +157,10 @@ const Sidenav = () => {
             {item.subMenu && (
               <Collapse in={openMenu === item.path}>
                 {item.subMenu.map((subItem) => (
-                  <SubMenuItem key={subItem.title} onClick={() => handleMenuItemClick(subItem.path, false)}>
+                  <SubMenuItem
+                    key={subItem.title}
+                    onClick={() => handleMenuItemClick(subItem.path, false)}
+                  >
                     <MenuLabel>{subItem.title}</MenuLabel>
                   </SubMenuItem>
                 ))}

@@ -21,34 +21,33 @@ import PayslipPDF from './PayslipPDF';
 
 // Increase card size and padding
 const StyledCard = styled(Card)(({ theme }) => ({
-    boxShadow: theme.shadows[3],
-    borderRadius: theme.shape.borderRadius,
-    overflow: 'hidden',
-    height: '100%',
-    position: 'relative',
-    width: '100%', // Ensure cards take full width of their container
-    minHeight: '300px', // Increase minimum height for visibility
-  }));
-  
-  const NetPayCard = styled(Card)(({ theme }) => ({
-    boxShadow: theme.shadows[4],
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: theme.palette.grey[50],
-    padding: theme.spacing(3), // Increase padding for more space inside
-    textAlign: 'center',
-    width: '100%', // Ensure it takes full width of its container
-    minHeight: '200px', // Increase minimum height for visibility
-  }));
-  
-  const CardHeaderStyled = styled(CardHeader)(({ theme }) => ({
-    backgroundColor: theme.palette.grey[200],
-    color: theme.palette.text.primary,
-  }));
-  
-  const CardContentStyled = styled(CardContent)(({ theme }) => ({
-    padding: theme.spacing(3), // Increase padding for more space inside
-  }));
-  
+  boxShadow: theme.shadows[3],
+  borderRadius: theme.shape.borderRadius,
+  overflow: 'hidden',
+  height: '100%',
+  position: 'relative',
+  width: '100%', // Ensure cards take full width of their container
+  minHeight: '300px', // Increase minimum height for visibility
+}));
+
+const NetPayCard = styled(Card)(({ theme }) => ({
+  boxShadow: theme.shadows[4],
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: theme.palette.grey[50],
+  padding: theme.spacing(3), // Increase padding for more space inside
+  textAlign: 'center',
+  width: '100%', // Ensure it takes full width of its container
+  minHeight: '200px', // Increase minimum height for visibility
+}));
+
+const CardHeaderStyled = styled(CardHeader)(({ theme }) => ({
+  backgroundColor: theme.palette.grey[200],
+  color: theme.palette.text.primary,
+}));
+
+const CardContentStyled = styled(CardContent)(({ theme }) => ({
+  padding: theme.spacing(3), // Increase padding for more space inside
+}));
 
 const GreenText = styled(Typography)(({ theme }) => ({
   color: theme.palette.success.main,
@@ -162,7 +161,7 @@ const Payslips = () => {
   };
 
   const employeeDetails = {
-    employeeName: 'John Doe',
+    employeeName: 'AAA BBB',
     employeeID: '12345',
     region: 'Region Name',
     bankName: 'Bank Name',

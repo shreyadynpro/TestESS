@@ -1,7 +1,7 @@
 const commonRoutes = {
   dashboard: '/dashboard',
   home: '/home',
-  employees: '/EmployeeList',
+  // employees: '/EmployeeList',
   tasks: '/todo/tasks',
   payslips: '/salary/payslips',
   payslipPDF: '/salary/payslips/PDF',
@@ -32,6 +32,12 @@ const commonRoutes = {
     groupMasterAdd: '/group-master/add',
     groupMasterDelete: '/group-master/delete',
     groupMasterEdit: '/group-master/edit',
+  },
+  employeeMaster: {
+    employeeMasterlist: '/employee-master',
+    employeeMasterAdd: '/employee-master/add',
+    employeeMasterDelete: '/employee-master/delete',
+    employeeMasterEdit: '/employee-master/edit',
   },
   groupUserMapping: {
     groupUserMappinglist: '/groups',

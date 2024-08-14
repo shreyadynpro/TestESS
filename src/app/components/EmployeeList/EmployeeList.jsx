@@ -134,11 +134,9 @@ const EmployeeList = () => {
   };
 
   const handleAddSave = () => {
-    if (newEmployee.name && newEmployee.email) { // Ensure required fields are filled
-      setEmployees([
-        ...employees,
-        { id: employees.length + 1, ...newEmployee },
-      ]);
+    if (newEmployee.name && newEmployee.email) {
+      // Ensure required fields are filled
+      setEmployees([...employees, { id: employees.length + 1, ...newEmployee }]);
       handleAddClose();
     }
   };
@@ -205,9 +203,7 @@ const EmployeeList = () => {
               label="Name"
               fullWidth
               value={currentEmployee ? currentEmployee.name : ''}
-              onChange={(e) =>
-                setCurrentEmployee({ ...currentEmployee, name: e.target.value })
-              }
+              onChange={(e) => setCurrentEmployee({ ...currentEmployee, name: e.target.value })}
               sx={{ mb: 2 }}
             />
             <TextField
@@ -215,9 +211,7 @@ const EmployeeList = () => {
               label="Email"
               fullWidth
               value={currentEmployee ? currentEmployee.email : ''}
-              onChange={(e) =>
-                setCurrentEmployee({ ...currentEmployee, email: e.target.value })
-              }
+              onChange={(e) => setCurrentEmployee({ ...currentEmployee, email: e.target.value })}
               sx={{ mb: 2 }}
             />
             <TextField
@@ -238,9 +232,7 @@ const EmployeeList = () => {
               label="Role"
               fullWidth
               value={currentEmployee ? currentEmployee.role : ''}
-              onChange={(e) =>
-                setCurrentEmployee({ ...currentEmployee, role: e.target.value })
-              }
+              onChange={(e) => setCurrentEmployee({ ...currentEmployee, role: e.target.value })}
               sx={{ mb: 2 }}
             />
             <TextField
@@ -290,9 +282,7 @@ const EmployeeList = () => {
               label="Name"
               fullWidth
               value={newEmployee.name}
-              onChange={(e) =>
-                setNewEmployee({ ...newEmployee, name: e.target.value })
-              }
+              onChange={(e) => setNewEmployee({ ...newEmployee, name: e.target.value })}
               sx={{ mb: 2 }}
             />
             <TextField
@@ -300,9 +290,7 @@ const EmployeeList = () => {
               label="Email"
               fullWidth
               value={newEmployee.email}
-              onChange={(e) =>
-                setNewEmployee({ ...newEmployee, email: e.target.value })
-              }
+              onChange={(e) => setNewEmployee({ ...newEmployee, email: e.target.value })}
               sx={{ mb: 2 }}
             />
             <TextField
@@ -323,9 +311,7 @@ const EmployeeList = () => {
               label="Role"
               fullWidth
               value={newEmployee.role}
-              onChange={(e) =>
-                setNewEmployee({ ...newEmployee, role: e.target.value })
-              }
+              onChange={(e) => setNewEmployee({ ...newEmployee, role: e.target.value })}
               sx={{ mb: 2 }}
             />
             <TextField

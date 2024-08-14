@@ -13,9 +13,6 @@ const validationEditSchema = Yup.object().shape({
 });
 
 function createInitalValues(responseObj) {
-  console.log('Response Obj======', responseObj[0]);
-  console.log('Response Obj group1======', responseObj.group_name);
-  // console.log('Response Obj grou2p======', responseObj[0].group_name);
   if (responseObj[0]) {
     return {
       ...initialValues,
@@ -44,15 +41,6 @@ function retDashboardAccessObj(checkedArray) {
 
 function convertValuesToFormat(formikValuesObj) {
   return retDashboardAccessObj(formikValuesObj);
-}
-
-function convertDashboardAccessObjsToCheckedString(dashboardAccessObjs) {
-  return dashboardAccessObjs
-    .map((item) => {
-      const { client_primary_id, client_id, folder_id, dashboard_id, subcategory_id = null } = item;
-      return `${subcategory_id}_${client_primary_id}_${client_id}_${folder_id}_${dashboard_id}`;
-    })
-    .filter((item) => item !== undefined);
 }
 
 export default {

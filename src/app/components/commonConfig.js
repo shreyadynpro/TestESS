@@ -87,6 +87,8 @@ const commonConfig = {
     getUserProfile: `${baseURL}/profile`,
     updateUserProfile: `${baseURL}/profile_update`,
     getInTouch: `${baseURL}/get_in_touch`,
+    getEmployeeList: `${baseURL}/employee`,
+    employee: `${baseURL}/employee`,
   },
 };
 
