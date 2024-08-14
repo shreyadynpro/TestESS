@@ -22,6 +22,7 @@ import { useRef, useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { NavLink, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
+import { color } from 'echarts';
 
 const verifyErrors = (errorName, touchedName) => {
   if (Boolean(touchedName && errorName)) return <div style={{ color: 'red' }}>* {errorName}</div>;
@@ -50,11 +51,14 @@ const JWTRoot = styled(JustifyBox)(() => ({
   backgroundColor: '#ffffff', // Set the entire background to white
   '& .card': {
     maxWidth: 500,
-    minHeight: 520,
+    minHeight: 530,
     margin: '10rem',
     display: 'flex',
     borderRadius: 12,
     alignItems: 'center',
+    backgroundColor: '#eff0f3',
+    color: 'black',
+    boxshadow: '1px 5px 5px 5px #64645f',
   },
   '& .h1Heading': {
     fontSize: '30px',
@@ -140,7 +144,14 @@ const JwtLogin = () => {
 
       <JWTRoot>
         <Grid container>
-          <Grid item sm={5} xs={12}>
+          <Grid
+            item
+            sm={5}
+            xs={12}
+            style={{
+              backgroundColor: '#212e7c',
+            }}
+          >
             <Card className="card">
               <ContentBox>
                 <JustifyBox p={4} height="20%%" sx={{ minWidth: 320 }}>
@@ -239,7 +250,7 @@ const JwtLogin = () => {
 
                         <NavLink
                           to={commonRoutes.session.forgot_password}
-                          style={{ color: theme.palette.primary.main }}
+                          style={{ color: 'black' }}
                         >
                           Forgot password?
                         </NavLink>
@@ -254,10 +265,10 @@ const JwtLogin = () => {
                           )
                         }
                         type="submit"
-                        color="primary"
                         loading={loading}
                         variant="contained"
                         sx={{ my: 2 }}
+                        style={{ color: '#ffffff', backgroundColor: '#212e7c' }}
                       >
                         Login
                       </LoadingButton>
@@ -265,7 +276,7 @@ const JwtLogin = () => {
                         Don't have an account?
                         <NavLink
                           to={commonRoutes.session.signup}
-                          style={{ color: theme.palette.primary.main, marginLeft: 5 }}
+                          style={{ color: 'black', marginLeft: 5 }}
                         >
                           Register
                         </NavLink>
