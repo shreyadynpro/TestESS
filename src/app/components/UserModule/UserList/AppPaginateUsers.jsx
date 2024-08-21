@@ -95,6 +95,7 @@ const PaginationTable = ({ data = [], fetchData, onPageSet, page, loading }) => 
         <TableHead>
           <TableRow>
             <TableCell align="left">Name</TableCell>
+            <TableCell align="left">User Unique Id</TableCell>
             <TableCell align="left">Group</TableCell>
             <TableCell align="left">Role</TableCell>
             <TableCell align="left">Email/UserId</TableCell>
@@ -114,7 +115,8 @@ const PaginationTable = ({ data = [], fetchData, onPageSet, page, loading }) => 
           ) : (
             data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user, index) => (
               <TableRow key={index}>
-                <TableCell align="left">{user.name + ' ' + user.last_name}</TableCell>
+                <TableCell align="left">{user.first_name + ' ' + user.last_name}</TableCell>
+                <TableCell align="left">{user.unique_id}</TableCell>
                 <TableCell align="left">{user.group_name}</TableCell>
                 <TableCell align="left">{user.role_name}</TableCell>
                 <TableCell colSpan={2} align="left" style={{ textTransform: 'none' }}>

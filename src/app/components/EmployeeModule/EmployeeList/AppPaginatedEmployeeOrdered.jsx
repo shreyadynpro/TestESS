@@ -42,30 +42,24 @@ const PaginationTable = ({ data = [] }) => {
       <StyledTable>
         <TableHead>
           <TableRow>
-            <TableCell align="left">Name</TableCell>
-            <TableCell align="right">User Unique Id</TableCell>
-            <TableCell align="center">Group</TableCell>
-            <TableCell align="center">Role</TableCell>
-            <TableCell align="right">Email/UserId</TableCell>
-            <TableCell align="center"></TableCell>
+            <TableCell align="left">Sr.no</TableCell>
+            <TableCell align="center">First Name</TableCell>
+            <TableCell align="center">Last Name</TableCell>
+            <TableCell align="center">Email</TableCell>
             <TableCell align="center">Action</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user, index) => (
+          {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((emp, index) => (
             <TableRow key={index}>
-              <TableCell align="left">{user.first_name + ' ' + user.last_name}</TableCell>
-              <TableCell align="left">{user.unique_id}</TableCell>
-              <TableCell align="center">{user.group_name}</TableCell>
-              <TableCell align="center">{user.role_name}</TableCell>
-              <TableCell colSpan={2} align="center">
-                {user.email}
-              </TableCell>
+              <TableCell align="left">{emp.first_name}</TableCell>
+              <TableCell align="center">{emp.last_name}</TableCell>
+              <TableCell align="center">{emp.email1}</TableCell>
               <TableCell align="right">
                 <IconButton onClick={() => navigate('/material/usersEdit', { state: { ...user } })}>
                   <Icon color="primary">edit_square</Icon>
                 </IconButton>
-                <IconButton onClick={() => console.log('user delete', user)}>
+                <IconButton onClick={() => console.log('user delete', emp)}>
                   <Icon color="error">delete</Icon>
                 </IconButton>
                 <IconButton>
@@ -84,7 +78,7 @@ const PaginationTable = ({ data = [] }) => {
         rowsPerPage={rowsPerPage}
         count={data.length}
         onPageChange={handleChangePage}
-        rowsPerPageOptions={[5, 10, 25, 50, 100]}
+        rowsPerPageOptions={[10, 25, 50, 100]}
         onRowsPerPageChange={handleChangeRowsPerPage}
         nextIconButtonProps={{ 'aria-label': 'Next Page' }}
         backIconButtonProps={{ 'aria-label': 'Previous Page' }}

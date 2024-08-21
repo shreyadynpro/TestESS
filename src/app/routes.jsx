@@ -18,11 +18,11 @@ import userModuleRoutes from './components/UserModule/usermoduleRoutes';
 import userProfileRoutes from './components/UserProfileModule/UserProfileRoutes';
 import commonRoutes from './components/commonRoutes';
 import BIDemo from './views/dashboard/BIDemo';
-import EmployeeList from './components/EmployeeList/EmployeeList';
+import EmployeeMasterModuleRoutes from './components/EmployeeModule/employeeModuleRoutes';
+// import EmployeeList from './components/EmployeeList/EmployeeList';
 import Tasks from './components/ToDo/Tasks';
 import Payslips from './components/Salary/Payslips';
 import PayslipPDF from './components/Salary/PayslipPDF';
-
 
 const routes = [
   {
@@ -44,12 +44,12 @@ const routes = [
       ...GroupMasterModuleRoutes,
       ...roleModuleRoutes,
       ...localizationModuleRoutes,
+      ...EmployeeMasterModuleRoutes,
       { path: commonRoutes.powerBIClient, element: <BIDemo /> },
       { path: commonRoutes.home, element: <Home /> },
-      { path: commonRoutes.employees, element: <EmployeeList /> },
-      {path: commonRoutes.tasks, element: <Tasks />},
-      {path: commonRoutes.payslips, element: <Payslips />},
-      {path: commonRoutes.payslipPDF, element: <PayslipPDF />},
+      { path: commonRoutes.tasks, element: <Tasks /> },
+      { path: commonRoutes.payslips, element: <Payslips /> },
+      { path: commonRoutes.payslipPDF, element: <PayslipPDF /> },
     ],
   },
   ...sessionRoutes,

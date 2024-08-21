@@ -20,7 +20,7 @@ const AuthGuard = ({ children }) => {
     // user
   } = useAuth();
   const { pathname } = useLocation();
-  //console.log('chekc auth', isAuthenticated, pathname);
+  console.log('chekc auth', isAuthenticated, pathname);
 
   //   const routes = flat(AllPages);
 
@@ -38,7 +38,8 @@ const AuthGuard = ({ children }) => {
       {authenticated ? (
         children
       ) : (
-        <Navigate replace to="/dyness_landing" state={{ from: pathname }} />
+        // <Navigate replace to="/dyness_landing" state={{ from: pathname }} />
+        <Navigate replace to="/signin" state={{ from: pathname }} />
       )}
     </>
   );

@@ -9,30 +9,19 @@ import axios from 'axios';
 import { useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 import util from '../util';
-const selectOptions = {
-  permissions: ['viewer', 'explorer', 'schedular'],
-};
 
 export default function PersonalInfo({ showPassword }) {
   const { values, handleChange, errors, touched, handleBlur, setFieldValue } = useFormikContext();
   const { data: userGroups } = useApi(commonConfig.urls.groupList);
-  const { data: userGroupRoles } = useApi(
-    commonConfig.urls.groupRoleMapping + '/' + values.personalInfo.group_id
-  );
+  const { data: userGroupRoles } = useApi(commonConfig.urls.getRole);
   const [data, setData] = useState([]);
   const authToken = getAccessToken();
   useEffect(() => {
-    if (values.personalInfo.role) {
+    if (values.personalInfo.role_id) {
       const fetchData = async () => {
         try {
-          const response = await axios(commonConfig.urls.roles + '/' + values.personalInfo.role, {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-              'Content-Type': 'application/json',
-            },
-          });
-          const response2 = await axios(
-            `${commonConfig.urls.getGroupRoleUser}?group_id=${values.personalInfo.group_id}&role_id=${values.personalInfo.role}`,
+          const response = await axios(
+            commonConfig.urls.roles + '/' + values.personalInfo.role_id,
             {
               headers: {
                 Authorization: `Bearer ${authToken}`,
@@ -40,6 +29,7 @@ export default function PersonalInfo({ showPassword }) {
               },
             }
           );
+
           if (response.data?.Response) {
             setData(response['data']['Response']);
             setFieldValue(
@@ -52,21 +42,13 @@ export default function PersonalInfo({ showPassword }) {
               )
             );
           }
-          if (response2.data?.Response) {
-            setFieldValue(
-              'checked',
-              util.convertDashboardAccessObjsToCheckedString(
-                response2['data']['Response']['dashboard_mapping']
-              )
-            );
-          }
         } catch (error) {
           SnackbarUtils.error(error?.message || 'Something went wrong!!');
         }
       };
       fetchData();
     }
-  }, [values.personalInfo.role]);
+  }, [values.personalInfo.role_id]);
 
   const verifyErrors = (errors, touched, fieldName) => {
     if (
@@ -179,35 +161,7 @@ export default function PersonalInfo({ showPassword }) {
           {verifyErrors(errors, touched, 'password')}
         </div>
       )}
-      <div>
-        <AppThemeTextField
-          variant="standard"
-          required
-          defaultValue=""
-          value={values.personalInfo.permissions || ''}
-          id="personalInfo.permissions"
-          name="personalInfo.permissions"
-          select
-          label="Permissions"
-          placeholder="Select Permissions"
-          style={{ width: '100%' }}
-          onChange={handleChange('personalInfo.permissions')}
-          onBlur={handleBlur}
-          error={Boolean(
-            errors.personalInfo &&
-              touched.personalInfo &&
-              touched.personalInfo.permissions &&
-              errors.personalInfo.permissions
-          )}
-        >
-          {selectOptions.permissions.map((option, index) => (
-            <MenuItem key={index} value={option}>
-              {option.charAt(0).toUpperCase() + option.slice(1)}
-            </MenuItem>
-          ))}
-        </AppThemeTextField>
-        {verifyErrors(errors, touched, 'permissions')}
-      </div>
+
       <div>
         <AppThemeTextField
           variant="standard"
@@ -242,23 +196,23 @@ export default function PersonalInfo({ showPassword }) {
           <AppThemeTextField
             required
             variant="standard"
-            id="personalInfo.role"
-            name="personalInfo.role"
+            id="personalInfo.role_id"
+            name="personalInfo.role_id"
             defaultValue={''}
-            value={values.personalInfo.role || ''}
+            value={values.personalInfo.role_id || ''}
             style={{ width: '100%' }}
             select
             label="Roles"
             placeholder="Select Roles"
             validateOnChange={false}
             validateOnBlur={false}
-            onChange={handleChange('personalInfo.role')}
+            onChange={handleChange('personalInfo.role_id')}
             onBlur={handleBlur}
             error={Boolean(
               errors.personalInfo &&
                 touched.personalInfo &&
-                touched.personalInfo.role &&
-                errors.personalInfo.role
+                touched.personalInfo.role_id &&
+                errors.personalInfo.role_id
             )}
           >
             {userGroupRoles.map((option, index) => (

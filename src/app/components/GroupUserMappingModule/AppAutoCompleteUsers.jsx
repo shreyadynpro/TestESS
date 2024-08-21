@@ -84,7 +84,7 @@ export default function AppAutoCompleteUsers({ label, placeholder, items: recdIt
         id="tags-standard"
         disableCloseOnSelect
         options={values.Userslist}
-        getOptionLabel={(option) => option.name + option.last_name}
+        getOptionLabel={(option) => option.first_name + option.last_name}
         defaultValue={defaultValue}
         renderInput={(params) => (
           <TextField
@@ -120,7 +120,7 @@ export default function AppAutoCompleteUsers({ label, placeholder, items: recdIt
               checkedIcon={checkedIcon}
               checked={selected}
             />
-            {option.name + ' ' + option.last_name}
+            {option.first_name + ' ' + option.last_name}
           </li>
         )}
       />

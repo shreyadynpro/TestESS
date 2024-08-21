@@ -1,14 +1,14 @@
 import { Box, Button, Grid, styled } from '@mui/material';
 import { Breadcrumb, SimpleCard } from 'app/components';
+import commonRoutes from 'app/components/commonRoutes';
+import AppTableSearchBox from 'app/components/ReusableComponents/AppTableSearchBox';
 import { getAccessToken } from 'app/utils/utils';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import AppTableSearchBox from '../ReusableComponents/AppTableSearchBox';
-import commonConfig from '../commonConfig';
-import commonRoutes from '../commonRoutes';
-import PaginationTable from './AppPaginateGroups';
+import commonConfig from '../../commonConfig';
+import PaginationTable from './AppPaginateEmployee';
 import SnackbarUtils from 'SnackbarUtils';
 
 const StyledButton = styled(Button)(({ theme }) => ({
@@ -20,45 +20,35 @@ const StyledButton = styled(Button)(({ theme }) => ({
 const Container = styled('div')(({ theme }) => ({
   margin: '30px',
   [theme.breakpoints.down('sm')]: { margin: '16px' },
-  '& .breadcrumb': {
-    marginBottom: '30px',
-    [theme.breakpoints.down('sm')]: { marginBottom: '16px' },
-  },
 }));
 
-export default function GroupList() {
+const EmployeeList = () => {
   const [searched, setSearched] = useState('');
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const groupViewPermission = useSelector(
-    (state) => state.userAccessPermissions?.userPermissions?.groups_view
-  );
-  const groupCreatePermission = useSelector(
-    (state) => state.userAccessPermissions?.userPermissions?.groups_add
-  );
-
   const navigate = useNavigate();
-  const [data, setData] = useState([]);
   const requestSearch = (searchedVal) =>
     data.filter((row) => {
-      return (row.group_name + ' ' + row.role).toLowerCase().includes(searchedVal.toLowerCase());
+      return (row.first_name + ' ' + row.last_name + ' ' + row.email1)
+        .toLowerCase()
+        .includes(searchedVal.toLowerCase());
     });
+  const [data, setData] = useState([]);
   const authToken = getAccessToken();
-
+  const employeeViewPermission = useSelector(
+    (state) => state.userAccessPermissions?.userPermissions?.employees_view
+  );
+  const employeeCreatePermission = useSelector(
+    (state) => state.userAccessPermissions?.userPermissions?.employees_add
+  );
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios(commonConfig.urls.groups, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
-        },
+      const response = await axios(commonConfig.urls.getEmployeeList, {
+        headers: { Authorization: `Bearer ${authToken}`, 'Content-Type': 'application/json' },
       });
       setLoading(false);
-      if (response && response['data'] && response['data']['Response']) {
-        setData(response['data']['Response']);
-        setPage(0);
-      }
+      if (response && response['data'] && response['data']) setData(response['data']);
     } catch (error) {
       setLoading(false);
       SnackbarUtils.error(error?.message || 'Something went wrong');
@@ -68,8 +58,8 @@ export default function GroupList() {
   useEffect(() => {
     fetchData();
   }, []);
+
   const handleSearch = (e) => {
-    setPage(0);
     setSearched(e.currentTarget.value);
     if (searched) {
       requestSearch(searched);
@@ -78,10 +68,10 @@ export default function GroupList() {
   return (
     <>
       <Box className="breadcrumb" sx={{ m: 1 }}>
-        <Breadcrumb routeSegments={[{ name: 'Group List' }]} />
+        <Breadcrumb routeSegments={[{ name: 'Employees List' }]} />
       </Box>
       <Container>
-        {groupViewPermission === 1 && (
+        {employeeViewPermission == 1 && (
           <SimpleCard>
             <Grid container spacing={1}>
               <Grid item xs={12} sm={6} md={6} lg={8}>
@@ -93,34 +83,38 @@ export default function GroupList() {
                     marginBottom: '16px',
                   }}
                 >
-                  Group List
+                  Employees List
                 </span>
               </Grid>
               <Grid item xs={12} sm={3} md={3} lg={2}>
                 <AppTableSearchBox onSearch={handleSearch} top="148px" />
               </Grid>
               <Grid item xs={12} sm={3} md={3} lg={2}>
-                {groupCreatePermission === 1 && (
+                {employeeCreatePermission === 1 && (
                   <StyledButton
                     variant="contained"
-                    onClick={() => navigate(commonRoutes.groupMaster.groupMasterAdd)}
+                    size="small"
+                    color="primary"
+                    onClick={() => navigate(commonRoutes.employeeMaster.employeeMasterAdd)}
                   >
-                    Create Group
+                    Create Employee
                   </StyledButton>
                 )}
               </Grid>
             </Grid>
             <PaginationTable
+              loading={loading}
               fetchData={fetchData}
               data={searched ? requestSearch(searched) : data}
               page={page}
               onPageSet={setPage}
-              loading={loading}
             />
           </SimpleCard>
         )}
-        {!(groupViewPermission === 1) && <h1>You dont have access to view this page</h1>}
+        {!(employeeViewPermission === 1) && <h1>You dont have access to view this page</h1>}
       </Container>
     </>
   );
-}
+};
+
+export default EmployeeList;

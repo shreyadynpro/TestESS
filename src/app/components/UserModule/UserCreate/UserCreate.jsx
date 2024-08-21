@@ -9,7 +9,7 @@ import userModuleUtils from '../util';
 
 import SnackbarUtils from 'SnackbarUtils';
 import { Breadcrumb } from 'app/components';
-import AppDashboardAccess from 'app/components/ReusableComponents/AppDashboardAccess';
+// import AppDashboardAccess from 'app/components/ReusableComponents/AppDashboardAccess';
 import AppGoBackBtn from 'app/components/ReusableComponents/AppGoBackBtn';
 import AppthemeLoadingBtn from 'app/components/ReusableComponents/AppThemeLoadingBtn';
 import commonRoutes from 'app/components/commonRoutes';
@@ -52,7 +52,10 @@ const UserCreate = () => {
   });
 
   const navigate = useNavigate();
+
   async function sendDataToServer(data) {
+    console.log('Post Data', data);
+
     const authToken = getAccessToken();
     try {
       dispatch({ type: 'LOADING', bool: true });
@@ -94,13 +97,12 @@ const UserCreate = () => {
           onSubmit={(values) => {
             sendDataToServer({
               ...values.personalInfo,
-              User_Access: userModuleUtils.retUserAccessObj(values.userAccess),
-              ...userModuleUtils.retDashboardAccessObj(values.checked),
+              role_access: userModuleUtils.retUserAccessObj(values.userAccess),
             });
           }}
         >
-          {({ handleSubmit, values, setFieldValue }) => {
-            return (
+          {({ handleSubmit }) => (
+            <form onSubmit={handleSubmit}>
               <Grid container spacing={2}>
                 <Grid item xs={12} lg={6}>
                   {/* First Column */}
@@ -108,16 +110,13 @@ const UserCreate = () => {
                     <Grid item>
                       <PersonalInfo showPassword={true} />
                     </Grid>
-                    <Grid item>
-                      <UserAccess />
-                    </Grid>
                   </Grid>
                 </Grid>
-                <Grid item xs={12} lg={6}>
+                <Grid item xs={12} lg={6} sx={{ pl: 2 }}>
                   {/* Second Column */}
                   <Grid container direction="column" spacing={2}>
                     <Grid item>
-                      <AppDashboardAccess checked={values.checked} onCheck={setFieldValue} />
+                      <UserAccess />
                     </Grid>
                     <Grid item>
                       <AppthemeLoadingBtn
@@ -125,7 +124,6 @@ const UserCreate = () => {
                         loading={state.loading}
                         variant="contained"
                         sx={{ my: 2 }}
-                        onClick={handleSubmit}
                       >
                         Submit
                       </AppthemeLoadingBtn>
@@ -134,8 +132,8 @@ const UserCreate = () => {
                   </Grid>
                 </Grid>
               </Grid>
-            );
-          }}
+            </form>
+          )}
         </Formik>
       </Container>
     </>

@@ -37,10 +37,10 @@ const PaginationTable = ({ data = [], fetchData, onPageSet, page, loading }) => 
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const navigate = useNavigate();
   const groupEditPermission = useSelector(
-    (state) => state.userAccessPermissions?.userPermissions?.group_edit
+    (state) => state.userAccessPermissions?.userPermissions?.groups_edit
   );
   const groupDeletePermission = useSelector(
-    (state) => state.userAccessPermissions?.userPermissions?.group_delete
+    (state) => state.userAccessPermissions?.userPermissions?.groups_delete
   );
 
   const handleChangePage = (_, newPage) => {
@@ -87,8 +87,8 @@ const PaginationTable = ({ data = [], fetchData, onPageSet, page, loading }) => 
       <StyledTable>
         <TableHead>
           <TableRow>
+            <TableCell align="left">Sr No</TableCell>
             <TableCell align="left">Group Name</TableCell>
-            <TableCell align="left">Role Name</TableCell>
             <TableCell align="left">Action</TableCell>
           </TableRow>
         </TableHead>
@@ -104,8 +104,8 @@ const PaginationTable = ({ data = [], fetchData, onPageSet, page, loading }) => 
           ) : (
             data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user, index) => (
               <TableRow key={index}>
+                <TableCell align="left">{page * rowsPerPage + index + 1}</TableCell>
                 <TableCell align="left">{user.group_name}</TableCell>
-                <TableCell align="left">{user.role}</TableCell>
                 <TableCell align="left">
                   {groupEditPermission === 1 && (
                     <IconButton
@@ -148,11 +148,7 @@ const PaginationTable = ({ data = [], fetchData, onPageSet, page, loading }) => 
           delVal={currentGroup.current?.group_name}
           open={shouldOpenConfirmationDialog}
           onConfirmDialogClose={handleDialogClose}
-          onYesClick={() =>
-            handleConfirmationResponse(
-              `${currentGroup.current?.group_id}/${currentGroup.current?.role_id}`
-            )
-          }
+          onYesClick={() => handleConfirmationResponse(`${currentGroup.current?.group_id}`)}
         />
       )}
     </Box>

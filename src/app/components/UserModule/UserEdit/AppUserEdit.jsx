@@ -3,8 +3,6 @@ import axios from 'axios';
 import { Formik } from 'formik';
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-
-import AppDashboardAccess from 'app/components/ReusableComponents/AppDashboardAccess';
 import commonConfig from '../../commonConfig';
 import PersonalInfoEdit from '../UserCreate/PersonalInfoEdit';
 import UserAccess from '../UserCreate/UserAccess';
@@ -38,6 +36,8 @@ const AppUserEditForm = () => {
   const { handleRefreshData } = useRefreshData(false);
 
   async function sendDataToServer(data) {
+    console.log('Post Data=======', data);
+
     try {
       setLoading(true);
       const authToken = getAccessToken();
@@ -78,15 +78,14 @@ const AppUserEditForm = () => {
             userModuleUtils.createInitalValues(userInfo) || userModuleUtils.initialValues
           }
           onSubmit={(values) => {
+            console.log('Submit Data', values);
             sendDataToServer({
               ...values.personalInfo,
-              User_Access: userModuleUtils.retUserAccessObj(values.userAccess),
-              ...userModuleUtils.retDashboardAccessObj(values.checked),
-              is_active: 1,
+              role_access: userModuleUtils.retUserAccessObj(values.userAccess),
             });
           }}
         >
-          {({ handleSubmit, values, setFieldValue }) => {
+          {({ handleSubmit }) => {
             return (
               <Grid container spacing={2}>
                 <Grid item xs={12} lg={6}>
@@ -95,16 +94,13 @@ const AppUserEditForm = () => {
                     <Grid item>
                       <PersonalInfoEdit showPassword={false} />
                     </Grid>
-                    <Grid item>
-                      <UserAccess />
-                    </Grid>
                   </Grid>
                 </Grid>
                 <Grid item xs={12} lg={6}>
                   {/* Second Column */}
                   <Grid container direction="column" spacing={2}>
                     <Grid item>
-                      <AppDashboardAccess checked={values.checked} onCheck={setFieldValue} />
+                      <UserAccess />
                     </Grid>
                     <Grid item>
                       <AppthemeLoadingBtn

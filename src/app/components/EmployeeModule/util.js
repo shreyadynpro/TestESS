@@ -1,49 +1,19 @@
 import * as Yup from 'yup';
 const initialValues = {
-  access_id: false,
-  users: false,
-  user_add: false,
-  user_edit: false,
-  user_delete: false,
-  user_view: false,
-  employees: false,
-  employees_add: false,
-  employees_edit: false,
-  employees_delete: false,
-  employees_view: false,
-  groups: false,
-  groups_add: false,
-  groups_edit: false,
-  groups_delete: false,
-  groups_view: false,
-  reports: false,
-  reports_add: false,
-  reports_edit: false,
-  reports_delete: false,
-  reports_view: false,
-  roles: false,
-  role_add: false,
-  role_edit: false,
-  role_delete: false,
-  role_view: false,
-  leaves: false,
-  leaves_add: false,
-  leaves_edit: false,
-  leaves_delete: false,
-  leaves_view: false,
-  salary: false,
-  salary_add: false,
-  salary_edit: false,
-  salary_delete: false,
-  salary_view: false,
-  documents: false,
-  documents_add: false,
-  documents_edit: false,
-  documents_delete: false,
-  documents_view: false,
+  id: null,
+  name: '',
+  first_name: '',
+  last_name: '',
+  mid_name: '',
+  email1: '',
+  primary_address_state: '',
+  dpro_parent_skill: '',
+  dpro_designation_offered: '',
+  marital_status: '',
 };
-const CreateRoleSchema = Yup.object().shape({
-  role: Yup.string().required('Role is Required'),
+const CreateEmployeeSchema = Yup.object().shape({
+  first_name: Yup.string().required('First Name is Required'),
+  last_name: Yup.string().required('Last Name is Required'),
 });
 
 function retRoleAccessObj(obj) {
@@ -78,10 +48,10 @@ function createInitalValues(responseObj) {
 
 const util = {
   initialValues,
-  createInitalValues,
+  CreateEmployeeSchema,
   retRoleAccessObj,
   //validationSchema,
-  CreateRoleSchema,
+  CreateEmployeeSchema,
 };
 
 export default util;

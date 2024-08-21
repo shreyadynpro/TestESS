@@ -69,19 +69,19 @@ const Layout1Sidenav = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch({
-      type: 'SET_CLIENT',
-      client: {
-        subCategory_name: '',
-        client_name: '',
-        folder_name: '',
-        dashboard_name: '',
-        client_id: '',
-      },
-    });
-    navigate(commonRoutes.home);
-  }, []);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: 'SET_CLIENT',
+  //     client: {
+  //       subCategory_name: '',
+  //       client_name: '',
+  //       folder_name: '',
+  //       dashboard_name: '',
+  //       client_id: '',
+  //     },
+  //   });
+  //   navigate(commonRoutes.dashboard);
+  // }, []);
 
   return (
     <SidebarNavRoot bgImgURL={bgImgURL} primaryBg={primaryRGB} width={getSidenavWidth()}>

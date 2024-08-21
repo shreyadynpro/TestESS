@@ -9,18 +9,18 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
+import commonConfig from 'app/components/commonConfig';
+import commonRoutes from 'app/components/commonRoutes';
+import AppConfirmationDialog from 'app/components/ReusableComponents/AppConfirmationDialog';
+import AppEditIcon from 'app/components/ReusableComponents/AppEditIcon';
+import AppPaginateTableFooter from 'app/components/ReusableComponents/AppPaginateTableFooter';
+import AppTableLinearProgress from 'app/components/ReusableComponents/AppTableLinearProgress';
 import { getAccessToken } from 'app/utils/utils';
 import axios from 'axios';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import SnackbarUtils from 'SnackbarUtils';
-import commonConfig from '../commonConfig';
-import commonRoutes from '../commonRoutes';
-import AppConfirmationDialog from '../ReusableComponents/AppConfirmationDialog';
-import AppEditIcon from '../ReusableComponents/AppEditIcon';
-import AppPaginateTableFooter from '../ReusableComponents/AppPaginateTableFooter';
-import AppTableLinearProgress from '../ReusableComponents/AppTableLinearProgress';
 
 const StyledTable = styled(Table)(() => ({
   whiteSpace: 'pre',
@@ -32,21 +32,15 @@ const StyledTable = styled(Table)(() => ({
   },
 }));
 
-export default function AppPaginateGroupsUserMapping({
-  data = [],
-  fetchData,
-  onPageSet,
-  page,
-  loading,
-}) {
-  const currentUserAccess = useRef(null);
+const PaginationTable = ({ data = [], fetchData, onPageSet, page, loading }) => {
+  const currentRole = useRef(null);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const navigate = useNavigate();
-  const groupUserEditPermission = useSelector(
-    (state) => state.userAccessPermissions?.userPermissions?.groups_edit
+  const employeeEditPermission = useSelector(
+    (state) => state.userAccessPermissions?.userPermissions?.employees_edit
   );
-  const groupUserDeletePermission = useSelector(
-    (state) => state.userAccessPermissions?.userPermissions?.groups_delete
+  const employeeDeletePermission = useSelector(
+    (state) => state.userAccessPermissions?.userPermissions?.employees_delete
   );
 
   const handleChangePage = (_, newPage) => {
@@ -58,25 +52,21 @@ export default function AppPaginateGroupsUserMapping({
     onPageSet(0);
   };
 
-  const handleConfirmationResponse = async (user_id) => {
-    if (user_id) {
+  const handleConfirmationResponse = async (empId) => {
+    if (empId) {
       const authToken = getAccessToken();
       try {
-        const response = await axios.delete(
-          commonConfig.urls.getUserAccessControl + '/' + user_id,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+        const response = await axios.delete(commonConfig.urls.employee + '/' + empId, {
+          headers: { Authorization: `Bearer ${authToken}`, 'Content-Type': 'application/json' },
+        });
         if (response && response.data.Status === 'Success') {
           fetchData();
           SnackbarUtils.success(response.data.Message);
-          navigate(commonRoutes.groupUserMapping.groupUserMappinglist);
+          navigate(commonRoutes.employeeMaster.employeeMasterlist, {
+            state: { openSnackbar: true, msgSnackbar: 'DELETION SUCCESSFUL' },
+          });
         }
-        currentUserAccess.current = null;
+        currentRole.current = null;
         handleDialogClose();
       } catch (error) {
         SnackbarUtils.error(error?.message || 'Something went wrong!!');
@@ -89,50 +79,53 @@ export default function AppPaginateGroupsUserMapping({
     setShouldOpenConfirmationDialog(false);
   };
 
-  const handleUserDelete = () => setShouldOpenConfirmationDialog(true);
+  const handleDeleteEmployee = () => {
+    setShouldOpenConfirmationDialog(true);
+  };
+
   return (
     <Box width="100%" overflow="auto">
       <StyledTable>
         <TableHead>
           <TableRow>
-            <TableCell align="left">Group Name</TableCell>
-            <TableCell align="left">Role Name</TableCell>
-            <TableCell align="left">User Name</TableCell>
+            <TableCell align="left">First Name</TableCell>
+            <TableCell align="left">Last Name</TableCell>
+            <TableCell align="left">Email</TableCell>
             <TableCell align="left">Action</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell align="left" colSpan={4}>
+              <TableCell align="left" colSpan={3}>
                 <AppTableLinearProgress />
               </TableCell>
             </TableRow>
           ) : data.length === 0 ? (
             <p>No Records found</p>
           ) : (
-            data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user, index) => (
+            data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((emp, index) => (
               <TableRow key={index}>
-                <TableCell align="left">{user.group_name}</TableCell>
-                <TableCell align="left">{user.role}</TableCell>
-                <TableCell align="left">{user.first_name + ' ' + user.last_name}</TableCell>
+                <TableCell align="left">{emp.first_name}</TableCell>
+                <TableCell align="left">{emp.last_name}</TableCell>
+                <TableCell align="left">{emp.email1}</TableCell>
                 <TableCell align="left">
-                  {groupUserEditPermission === 1 && (
+                  {employeeEditPermission === 1 && (
                     <IconButton
                       onClick={() =>
-                        navigate(commonRoutes.groupUserMapping.groupUserMappingEdit, {
-                          state: { ...user },
+                        navigate(commonRoutes.employeeMaster.employeeMasterEdit, {
+                          state: { ...emp },
                         })
                       }
                     >
                       <AppEditIcon />
                     </IconButton>
                   )}
-                  {groupUserDeletePermission === 1 && (
+                  {employeeDeletePermission === 1 && (
                     <IconButton
                       onClick={() => {
-                        handleUserDelete();
-                        currentUserAccess.current = user;
+                        handleDeleteEmployee();
+                        currentRole.current = emp;
                       }}
                     >
                       <Icon color="error">delete</Icon>
@@ -144,6 +137,7 @@ export default function AppPaginateGroupsUserMapping({
           )}
         </TableBody>
       </StyledTable>
+
       <AppPaginateTableFooter
         page={page}
         data={data}
@@ -154,12 +148,14 @@ export default function AppPaginateGroupsUserMapping({
       {shouldOpenConfirmationDialog && (
         <AppConfirmationDialog
           text="Are you sure to delete"
-          delVal={`${currentUserAccess.current?.group_name} - ${currentUserAccess.current?.role} - ${currentUserAccess.current?.name} ${currentUserAccess.current?.last_name}`}
+          delVal={currentRole.current?.role}
           open={shouldOpenConfirmationDialog}
           onConfirmDialogClose={handleDialogClose}
-          onYesClick={() => handleConfirmationResponse(currentUserAccess.current?.user_id)}
+          onYesClick={() => handleConfirmationResponse(currentRole.current?.role_id)}
         />
       )}
     </Box>
   );
-}
+};
+
+export default PaginationTable;

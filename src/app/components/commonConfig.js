@@ -1,5 +1,6 @@
 const serverIp = '44.199.193.239';
-const baseURL = 'https://hcaapi.kairosrp.com/api';
+const baseURL = 'http://192.168.1.239/api';
+// const baseURL = 'http://127.0.0.1:8000/api';
 
 const commonConfig = {
   tokens: {
@@ -60,7 +61,7 @@ const commonConfig = {
     getparentphm: `${baseURL}/getParentPHM`,
     getschema: `${baseURL}/getSchema`,
     getlookerGroups: `${baseURL}/getLookerGroups`,
-    getUserAccessControl: `${baseURL}/users_access_control`,
+    getUserAccessControl: `${baseURL}/useraccess`,
     getGroupRoleUser: `${baseURL}/getGroupRoleUser`,
     looker: `${baseURL}/looker`,
     inviteUser: `${baseURL}/invite_user`,
@@ -86,6 +87,8 @@ const commonConfig = {
     getUserProfile: `${baseURL}/profile`,
     updateUserProfile: `${baseURL}/profile_update`,
     getInTouch: `${baseURL}/get_in_touch`,
+    getEmployeeList: `${baseURL}/employee`,
+    employee: `${baseURL}/employee`,
   },
 };
 

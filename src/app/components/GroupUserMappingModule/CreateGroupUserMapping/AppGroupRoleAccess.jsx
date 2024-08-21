@@ -16,9 +16,7 @@ export default function AppGroupRoleAccess() {
     useFormikContext();
   const { data: users } = useApiOnce(commonConfig.urls.user);
   const { data: userGroups } = useApiOnce(commonConfig.urls.groupList);
-  const { data: userGroupRoles } = useApi(
-    commonConfig.urls.groupRoleMapping + '/' + values.group_id
-  );
+  const { data: userGroupRoles } = useApi(commonConfig.urls.getRole);
 
   const authToken = getAccessToken();
   const verifyErrors = (errors, touched, fieldName) => {
@@ -58,12 +56,6 @@ export default function AppGroupRoleAccess() {
             groupUserMappingUtils.getRoleAccess(
               values.userAccess,
               response['data']['Response']['role_access'][0] || []
-            )
-          );
-          setFieldValue(
-            'checked',
-            groupUserMappingUtils.retDashboardAccessObjsToCheckedString(
-              response['data']['Response']['dashboard_mapping']
             )
           );
         }

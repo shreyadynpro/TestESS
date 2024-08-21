@@ -11,17 +11,18 @@ import {
   Typography,
 } from '@mui/material';
 import { Box, styled, useTheme } from '@mui/system';
-import BgImg from 'app/components/AppLandingPage/assets/images/img6.jpg';
+import BgImg from 'app/components/AppLandingPage/assets/images/img12.jpg';
 import { lightModeTheme } from 'app/components/MatxTheme/themeColors';
 import { Paragraph } from 'app/components/Typography';
 import commonRoutes from 'app/components/commonRoutes';
-
+import DynpEssLT from 'app/components/AppLandingPage/assets/images/DynESS_LT.png';
 import useAuth from 'app/hooks/useAuth';
 import { Formik } from 'formik';
 import { useRef, useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { NavLink, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
+import { color } from 'echarts';
 
 const verifyErrors = (errorName, touchedName) => {
   if (Boolean(touchedName && errorName)) return <div style={{ color: 'red' }}>* {errorName}</div>;
@@ -35,26 +36,46 @@ const FlexBox = styled(Box)(() => ({
 const JustifyBox = styled(FlexBox)(() => ({
   justifyContent: 'center',
 }));
+
 const ContentBox = styled(Box)(() => ({
   height: '100%',
-  padding: '32px',
+  padding: '37px',
   position: 'relative',
-  background: 'rgba(0, 0, 0, 0.01)',
+  // background: 'rgba(0, 0, 0, 0.01)',
+  background: 'rgba(0, 0, 0, 0.0)',
 }));
 
 const JWTRoot = styled(JustifyBox)(() => ({
-  backgroundImage: `url(${BgImg})`,
-  backgroundSize: 'cover',
-  backgroundRepeat: 'no-repeat',
-  minHeight: '100% !important',
+  minHeight: '91vh',
+  margin: 0,
+  backgroundColor: '#ffffff', // Set the entire background to white
   '& .card': {
-    maxWidth: 800,
-    minHeight: 400,
-    margin: '1rem',
+    maxWidth: 500,
+    minHeight: 530,
+    margin: '10rem',
     display: 'flex',
     borderRadius: 12,
     alignItems: 'center',
+    backgroundColor: '#eff0f3',
+    color: 'black',
+    boxshadow: '1px 5px 5px 5px #64645f',
   },
+  '& .h1Heading': {
+    fontSize: '30px',
+    color: '#212e7c',
+    fontFamily: 'serif',
+    marginLeft: '11%',
+    marginBottom: '0px',
+    marginTop: '0px',
+  },
+}));
+
+const BackgroundImageBox = styled(Box)(() => ({
+  backgroundImage: `url(${BgImg})`,
+  backgroundSize: 'cover',
+  backgroundRepeat: 'no-repeat',
+  width: '100%',
+  height: '85%',
 }));
 
 // initial login credentials
@@ -108,21 +129,41 @@ const JwtLogin = () => {
 
   return (
     <ThemeProvider theme={lightModeTheme}>
-      <JWTRoot>
-        <Card className="card">
-          <Grid container>
-            <Grid item sm={6} xs={12}>
-              <JustifyBox p={4} height="100%" sx={{ minWidth: 320 }}>
-                <img
-                  src="https://www.dynpro.com/wp-content/uploads/2022/01/dynpro-logo-2-1-e1641987897332.png"
-                  alt="DynPro Logo"
-                  style={{ maxWidth: '800%', maxHeight: '800%' }}
-                />
-              </JustifyBox>
-            </Grid>
+      <div
+        className="topLogo"
+        style={{
+          backgroundColor: '#ffffff',
+        }}
+      >
+        <img
+          src="https://www.dynpro.com/wp-content/uploads/2022/01/dynpro-logo-2-1-e1641987897332.png"
+          alt="DynPro Logo"
+          style={{ height: '51px', marginTop: '7px', backgroundColor: '#ffffff' }}
+        />
+      </div>
 
-            <Grid item sm={6} xs={12}>
+      <JWTRoot>
+        <Grid container>
+          <Grid
+            item
+            sm={5}
+            xs={12}
+            style={{
+              backgroundColor: '#212e7c',
+            }}
+          >
+            <Card className="card">
               <ContentBox>
+                <JustifyBox p={4} height="20%%" sx={{ minWidth: 320 }}>
+                  <img
+                    src={DynpEssLT}
+                    alt="DynESS Logo"
+                    style={{
+                      height: '71px',
+                    }}
+                  />
+                </JustifyBox>
+
                 <Formik
                   onSubmit={handleFormSubmit}
                   initialValues={initialValues}
@@ -209,7 +250,7 @@ const JwtLogin = () => {
 
                         <NavLink
                           to={commonRoutes.session.forgot_password}
-                          style={{ color: theme.palette.primary.main }}
+                          style={{ color: 'black' }}
                         >
                           Forgot password?
                         </NavLink>
@@ -224,10 +265,10 @@ const JwtLogin = () => {
                           )
                         }
                         type="submit"
-                        color="primary"
                         loading={loading}
                         variant="contained"
                         sx={{ my: 2 }}
+                        style={{ color: '#ffffff', backgroundColor: '#212e7c' }}
                       >
                         Login
                       </LoadingButton>
@@ -235,7 +276,7 @@ const JwtLogin = () => {
                         Don't have an account?
                         <NavLink
                           to={commonRoutes.session.signup}
-                          style={{ color: theme.palette.primary.main, marginLeft: 5 }}
+                          style={{ color: 'black', marginLeft: 5 }}
                         >
                           Register
                         </NavLink>
@@ -244,9 +285,13 @@ const JwtLogin = () => {
                   )}
                 </Formik>
               </ContentBox>
-            </Grid>
+            </Card>
           </Grid>
-        </Card>
+          <Grid item sm={6} xs={12}>
+            <h4 className="h1Heading">Welcome to our Employee Self Service Portal "DynESS"</h4>
+            <BackgroundImageBox />
+          </Grid>
+        </Grid>
       </JWTRoot>
     </ThemeProvider>
   );

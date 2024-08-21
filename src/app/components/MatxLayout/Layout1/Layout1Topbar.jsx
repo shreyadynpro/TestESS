@@ -183,7 +183,7 @@ const Layout1Topbar = () => {
                   <UserInfo>
                     <span>
                       <strong>
-                        {user?.name || ''} {user?.last_name || ''}
+                        {user?.first_name || ''} {user?.last_name || ''}
                       </strong>
                     </span>
                     <span>{user?.group || ''}</span>{' '}
