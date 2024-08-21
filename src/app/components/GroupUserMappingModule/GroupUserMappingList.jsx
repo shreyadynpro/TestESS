@@ -32,16 +32,16 @@ export default function GroupUserMappingList() {
   const [page, setPage] = useState(0);
 
   const groupUserViewPermission = useSelector(
-    (state) => state.userAccessPermissions?.userPermissions?.group_view
+    (state) => state.userAccessPermissions?.userPermissions?.groups_view
   );
   const groupUserCreatePermission = useSelector(
-    (state) => state.userAccessPermissions?.userPermissions?.group_add
+    (state) => state.userAccessPermissions?.userPermissions?.groups_add
   );
 
   const navigate = useNavigate();
   const requestSearch = (searchedVal) =>
     data.filter((row) => {
-      return (row.group_name + ' ' + row.role + ' ' + row.name + ' ' + row.last_name)
+      return (row.group_name + ' ' + row.role + ' ' + row.first_name + ' ' + row.last_name)
         .toLowerCase()
         .includes(searchedVal.toLowerCase());
     });

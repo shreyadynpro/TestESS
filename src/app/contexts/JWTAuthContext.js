@@ -104,7 +104,6 @@ export const AuthProvider = ({ children }) => {
       const accessToken = response.data.Response.access_token;
       const user = response.data.Response.user;
       const userPermissions = response.data.Response.user_access;
-
       dispatchX({ type: 'SET_TOKEN', accessToken });
       dispatchX({ type: 'SET_USER', user });
       dispatchX({ type: 'SET_USERACCESS_PERMISSIONS', userPermissions });
@@ -117,39 +116,12 @@ export const AuthProvider = ({ children }) => {
             user: {
               avatar: '/assets/images/face-6.jpg',
               email: user.email,
-              name: `${user.name} ${user.last_name}`,
+              name: `${user.first_name} ${user.last_name}`,
               id: user.id,
               role: user.role,
               group: user.group,
             },
           },
-        });
-
-        const [uaClients, uaFolders, uaDashboards, uaSubCategories] = await Promise.all([
-          axios(commonConfig.urls.getUserAccessClients, {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }),
-          await axios(commonConfig.urls.getUserAccessFolders, {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }),
-          axios(commonConfig.urls.getUserAccessdashboards, {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }),
-
-          axios(commonConfig.urls.getClientCateWiseUserAccesAllsNew, {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }),
-        ]);
-
-        dispatchX({ type: 'SET_USERACCESS_CLIENTS', uaClients: uaClients['data']['data'] });
-        dispatchX({ type: 'SET_USERACCESS_FOLDERS', uaFolders: uaFolders['data']['data'] });
-        dispatchX({
-          type: 'SET_USERACCESS_DASHBOARDS',
-          uaDashboards: uaDashboards['data']['data'],
-        });
-        dispatchX({
-          type: 'SET_USERACCESS_SUBCATEGORIES',
-          uaSubCategories: uaSubCategories['data']['data'],
         });
       }
     }

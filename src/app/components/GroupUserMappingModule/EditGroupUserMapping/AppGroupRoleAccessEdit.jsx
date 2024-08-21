@@ -15,9 +15,7 @@ export default function AppGroupRoleAccessEdit({ userMappingId }) {
   const [isMounted, setIsMounted] = useState(false);
   const { setFieldValue, values, handleBlur, handleChange, errors, touched } = useFormikContext();
   const { data: userGroups } = useApiOnce(commonConfig.urls.groupList);
-  const { data: userGroupRoles } = useApi(
-    commonConfig.urls.groupRoleMapping + '/' + values.group_id
-  );
+  const { data: userGroupRoles } = useApi(commonConfig.urls.getRole);
   const verifyErrors = (errors, touched, fieldName) => {
     if (Boolean(touched[fieldName] && errors[fieldName]))
       return <div style={{ color: 'red' }}>* {errors[fieldName]}</div>;
@@ -50,12 +48,6 @@ export default function AppGroupRoleAccessEdit({ userMappingId }) {
                 response['data']['Response']['role_access'][0] || []
               )
             );
-            setFieldValue(
-              'checked',
-              groupUserMappingUtils.retDashboardAccessObjsToCheckedString(
-                response['data']['Response']['dashboard_mapping']
-              )
-            );
           }
         } catch (error) {
           SnackbarUtils.error(error?.message || 'Something went wrong!!');
@@ -80,12 +72,6 @@ export default function AppGroupRoleAccessEdit({ userMappingId }) {
               groupUserMappingUtils.getRoleAccess(
                 values.userAccess,
                 response['data']['Response']['role_access'][0] || []
-              )
-            );
-            setFieldValue(
-              'checked',
-              groupUserMappingUtils.retDashboardAccessObjsToCheckedString(
-                response['data']['Response']['dashboard_access']
               )
             );
           }

@@ -9,10 +9,10 @@ export default function useRefreshData(topbarUpdate = true) {
 
   const handleRefreshData = async () => {
     const accessToken = getAccessToken();
-    const uaClients = await axios(commonConfig.urls.getUserAccessClients, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    dispatch({ type: 'SET_USERACCESS_CLIENTS', uaClients: uaClients['data']['data'] });
+    // const uaClients = await axios(commonConfig.urls.getUserAccessClients, {
+    //   headers: { Authorization: `Bearer ${accessToken}` },
+    // });
+    // dispatch({ type: 'SET_USERACCESS_CLIENTS', uaClients: uaClients['data']['data'] });
     // if (topbarUpdate)
     //   if (Array.isArray(uaClients?.data?.data) && uaClients?.data?.data?.length > 0) {
     //     const { client_id, client_name, category, subcategory } = uaClients?.data?.data[0];
@@ -27,31 +27,13 @@ export default function useRefreshData(topbarUpdate = true) {
     //       },
     //     });
     //   }
-    const [uaSubCategories, uaFolders, uaDashboards, userDetails] = await Promise.all([
-      axios(commonConfig.urls.getClientCateWiseUserAccesAllsNew, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      }),
-      await axios(commonConfig.urls.getUserAccessFolders, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      }),
-      axios(commonConfig.urls.getUserAccessdashboards, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      }),
+    const [userDetails] = await Promise.all([
       axios(commonConfig.urls.user + '/' + user?.id, {
         headers: { Authorization: `Bearer ${accessToken}` },
       }),
     ]);
     //    ]).catch((error) => SnackbarUtils.error(error?.message || 'Something went wrong!!'));
-    dispatch({
-      type: 'SET_USERACCESS_SUBCATEGORIES',
-      uaSubCategories: uaSubCategories['data']['data'],
-    });
 
-    dispatch({ type: 'SET_USERACCESS_FOLDERS', uaFolders: uaFolders['data']['data'] });
-    dispatch({
-      type: 'SET_USERACCESS_DASHBOARDS',
-      uaDashboards: uaDashboards['data']['data'],
-    });
     dispatch({
       type: 'SET_USERACCESS_PERMISSIONS',
       userPermissions: userDetails.data?.Response?.role_access[0],
@@ -62,7 +44,7 @@ export default function useRefreshData(topbarUpdate = true) {
     });
     dispatch({
       type: 'SET_USER_NAME',
-      name: userDetails.data?.Response?.user_details[0]?.name,
+      name: userDetails.data?.Response?.user_details[0]?.first_name,
       last_name: userDetails.data?.Response?.user_details[0]?.last_name,
     });
   };

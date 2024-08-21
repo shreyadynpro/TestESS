@@ -43,10 +43,10 @@ export default function AppPaginateGroupsUserMapping({
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const navigate = useNavigate();
   const groupUserEditPermission = useSelector(
-    (state) => state.userAccessPermissions?.userPermissions?.group_edit
+    (state) => state.userAccessPermissions?.userPermissions?.groups_edit
   );
   const groupUserDeletePermission = useSelector(
-    (state) => state.userAccessPermissions?.userPermissions?.group_delete
+    (state) => state.userAccessPermissions?.userPermissions?.groups_delete
   );
 
   const handleChangePage = (_, newPage) => {
@@ -115,7 +115,7 @@ export default function AppPaginateGroupsUserMapping({
               <TableRow key={index}>
                 <TableCell align="left">{user.group_name}</TableCell>
                 <TableCell align="left">{user.role}</TableCell>
-                <TableCell align="left">{user.name + ' ' + user.last_name}</TableCell>
+                <TableCell align="left">{user.first_name + ' ' + user.last_name}</TableCell>
                 <TableCell align="left">
                   {groupUserEditPermission === 1 && (
                     <IconButton

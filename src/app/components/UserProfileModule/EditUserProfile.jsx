@@ -2,15 +2,14 @@ import { Box, Icon } from '@mui/material';
 import { Formik } from 'formik';
 import { useReducer, useState } from 'react';
 import * as Yup from 'yup';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 import commonConfig from '../commonConfig';
-
 import SnackbarUtils from 'SnackbarUtils';
 import useApiOnce from 'app/hooks/useApiOnce';
 import useRefreshData from 'app/hooks/useRefreshData';
 import { getAccessToken } from 'app/utils/utils';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
 import AppthemeLoadingBtn from '../ReusableComponents/AppThemeLoadingBtn';
 import AppThemeTextField from '../ReusableComponents/AppThemeTextField';
 import AvatarUpload from './AvatarUpload';
@@ -49,7 +48,7 @@ const reducer = (state, action) => {
   }
 };
 
-function createInitalValues(responseObj) {
+const createInitialValues = (responseObj) => {
   if (responseObj.first_name && responseObj.last_name && responseObj.email) {
     return {
       ...initialValues,
@@ -59,8 +58,8 @@ function createInitalValues(responseObj) {
       file: responseObj.profile_pic,
     };
   }
-  return null;
-}
+  return initialValues;
+};
 
 const EditUserProfile = ({ onclose }) => {
   const [state, dispatch] = useReducer(reducer, {
@@ -69,15 +68,13 @@ const EditUserProfile = ({ onclose }) => {
     responseError: '',
     hasError: false,
   });
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
 
   const { data: userObj } = useApiOnce(commonConfig.urls.getUserProfile);
   const { handleRefreshData } = useRefreshData(false);
 
   const user_id = useSelector((state) => state.userDetails?.user?.id);
 
-  async function sendDataToServer(recdData = {}) {
+  const sendDataToServer = async (recdData = {}) => {
     if (recdData.file === '') {
       delete recdData.file;
     }
@@ -87,40 +84,35 @@ const EditUserProfile = ({ onclose }) => {
     const data = new FormData();
     Object.keys(recdData).forEach((item) => {
       if (Array.isArray(recdData[item])) {
-        for (const itemArr in recdData[item])
-          data.append(`${item}[${itemArr}]`, recdData[item][itemArr]);
-      } else data.append(item, recdData[item]);
+        recdData[item].forEach((val, idx) => data.append(`${item}[${idx}]`, val));
+      } else {
+        data.append(item, recdData[item]);
+      }
     });
-    setLoading(true);
-    const authToken = getAccessToken();
-    const response = await axios.post(commonConfig.urls.updateUserProfile, data, {
-      headers: { Authorization: `Bearer ${authToken}` },
-    });
-    setLoading(false);
-    if (response && response.data.Status === 'Failed') {
-      SnackbarUtils.error(Object.values(response.data.Errors).map((item) => item.toString()));
-    }
-    if (response && response.data.Status === 'Success') {
-      SnackbarUtils.success(response.data.Message);
-      handleRefreshData();
-      setOpen(true);
-      onclose();
-    }
-  }
 
-  const returnFormField = (
-    id,
-    label,
-    placeholder,
-    onChange,
-    onBlur,
-    error = false,
-    touched = false,
-    value,
-    type = 'text',
-    ...props
-  ) => (
-    <div>
+    dispatch({ type: 'LOADING', bool: true });
+    const authToken = getAccessToken();
+    try {
+      const response = await axios.post(commonConfig.urls.updateUserProfile, data, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      if (response.data.Status === 'Failed') {
+        SnackbarUtils.error(Object.values(response.data.Errors).map((item) => item.toString()));
+      } else if (response.data.Status === 'Success') {
+        SnackbarUtils.success(response.data.Message);
+        handleRefreshData();
+        dispatch({ type: 'OPEN', bool: true });
+        onclose();
+      }
+    } catch (error) {
+      SnackbarUtils.error('An error occurred while updating the profile.');
+    } finally {
+      dispatch({ type: 'LOADING', bool: false });
+    }
+  };
+
+  const renderFormField = (id, label, placeholder, value, handleChange, handleBlur, error, touched, type = 'text') => (
+    <div key={id}>
       <AppThemeTextField
         id={id}
         name={id}
@@ -129,22 +121,19 @@ const EditUserProfile = ({ onclose }) => {
         placeholder={placeholder}
         style={{ width: '80%' }}
         value={value}
-        onChange={onChange}
-        onBlur={onBlur}
+        onChange={handleChange}
+        onBlur={handleBlur}
         error={Boolean(error && touched)}
         type={type}
       />
-      {verifyErrors(error, touched)}
+      {Boolean(touched && error) && <div style={{ color: 'red' }}>* {error}</div>}
     </div>
   );
-  const verifyErrors = (errorName, touchedName) => {
-    if (Boolean(touchedName && errorName)) return <div style={{ color: 'red' }}>* {errorName}</div>;
-    return null;
-  };
+
   return (
     <Formik
-      enableReinitialize={true}
-      initialValues={createInitalValues(userObj) || initialValues}
+      enableReinitialize
+      initialValues={createInitialValues(userObj)}
       validationSchema={validationSchema}
       onSubmit={(values) => {
         const value = {
@@ -155,85 +144,54 @@ const EditUserProfile = ({ onclose }) => {
         sendDataToServer(value);
       }}
     >
-      {({ errors, touched, values, handleBlur, handleChange, handleSubmit }) => {
-        return (
-          <Box
-            component="form"
-            sx={{
-              '& .MuiTextField-root': { m: 1, width: '25ch' },
-              width: '100%',
+      {({ errors, touched, values, handleBlur, handleChange, handleSubmit }) => (
+        <Box
+          component="form"
+          sx={{
+            '& .MuiTextField-root': { m: 1, width: '25ch' },
+            width: '100%',
+          }}
+          noValidate
+          autoComplete="off"
+          onSubmit={handleSubmit}
+        >
+          <div style={{ position: 'absolute', right: 20, top: 20 }}>
+            <Icon onClick={onclose} style={{ cursor: 'pointer' }}>
+              close
+            </Icon>
+          </div>
+          <p
+            style={{
+              color: 'rgba(52, 49, 76, 0.54)',
+              textAlign: 'center',
             }}
-            noValidate
-            autoComplete="off"
           >
-            <div style={{ position: 'absolute', right: 20, top: 20 }}>
-              <Icon onClick={onclose} style={{ cursor: 'pointer' }}>
-                close
-              </Icon>
-            </div>
-            <p
-              style={{
-                color: 'rgba(52, 49, 76, 0.54)',
-                textAlign: 'center',
-              }}
-            >
-              EDIT PROFILE
-            </p>
-            <div>
-              <AvatarUpload />
-            </div>
-            <div style={{ marginLeft: '45px' }}>
-              {returnFormField(
-                'first_name',
-                'First Name',
-                'Enter First Name',
+            EDIT PROFILE
+          </p>
+          <div>
+            <AvatarUpload />
+          </div>
+          <div style={{ marginLeft: '45px' }}>
+            {['first_name', 'last_name', 'email'].map((field) =>
+              renderFormField(
+                field,
+                field.replace('_', ' ').toUpperCase(),
+                `Enter ${field.replace('_', ' ')}`,
+                values[field],
                 handleChange,
                 handleBlur,
-                errors.first_name,
-                touched.first_name,
-                values['first_name']
-              )}
-
-              {returnFormField(
-                'last_name',
-                'Last Name',
-                'Enter Last Name',
-                handleChange,
-                handleBlur,
-                errors.last_name,
-                touched.last_name,
-                values['last_name']
-              )}
-              {returnFormField(
-                'email',
-                'Email Id',
-                'Enter Email Id',
-                handleChange,
-                handleBlur,
-                errors.email,
-                touched.email,
-                values['email']
-              )}
-            </div>
-            <div
-              style={{
-                flex: 1,
-                textAlign: 'center',
-              }}
-            >
-              <AppthemeLoadingBtn
-                type="submit"
-                loading={state.loading}
-                variant="contained"
-                sx={{ my: 2 }}
-                onClick={handleSubmit}
-              >
-                Update
-              </AppthemeLoadingBtn>
-            </div>
-          </Box>
-        );
-      }}
+                errors[field],
+                touched[field]
+              )
+            )}
+          </div>
+          <div style={{ flex: 1, textAlign: 'center' }}>
+            <AppthemeLoadingBtn type="submit" loading={state.loading} variant="contained" sx={{ my: 2 }}>
+              Update
+            </AppthemeLoadingBtn>
+          </div>
+        </Box>
+      )}
     </Formik>
   );
 };

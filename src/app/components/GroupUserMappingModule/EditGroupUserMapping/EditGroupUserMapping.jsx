@@ -35,7 +35,7 @@ export default function EditGroupUserMapping() {
     try {
       setLoading(true);
       const response = await axios.put(
-        commonConfig.urls.getUserAccessControl + '/' + location.state.grp_usr_mapping_id,
+        commonConfig.urls.getUserAccessControl + '/' + location.state.access_id,
         data,
         {
           headers: { Authorization: `Bearer ${authToken}` },
@@ -82,7 +82,6 @@ export default function EditGroupUserMapping() {
               role_id: values.role_id,
               user_id: location.state.user_id,
               role_access: groupUserMappingUtils.retUserAccessObj(values.userAccess),
-              ...groupUserMappingUtils.retDashboardAccessObj(values.checked),
             });
           }}
         >
@@ -98,12 +97,11 @@ export default function EditGroupUserMapping() {
                   noValidate
                   autoComplete="off"
                 >
-                  <p>{`${location.state.name} ${location.state.last_name}`}</p>
-                  <AppGroupRoleAccessEdit userMappingId={location.state.grp_usr_mapping_id} />
+                  <p>{`${location.state.first_name} ${location.state.last_name}`}</p>
+                  <AppGroupRoleAccessEdit userMappingId={location.state.user_id} />
                   <hr />
                   <UserAccess />
                   <hr />
-                  <AppDashboardAccess checked={values.checked} onCheck={setFieldValue} />
                   <AppthemeLoadingBtn
                     type="submit"
                     loading={loading}

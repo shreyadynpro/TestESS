@@ -2,12 +2,11 @@ import { useTheme } from '@emotion/react';
 import { LoadingButton } from '@mui/lab';
 import { Card, Grid, TextField, ThemeProvider } from '@mui/material';
 import { Box, styled } from '@mui/system';
-import BgImg from 'app/components/AppLandingPage/assets/images/7.jpg';
-import DynproLT from 'app/components/AppLandingPage/assets/images/Dynviz_logo.png';
+import BgImg from 'app/components/AppLandingPage/assets/images/img5.jpg';
 import { lightModeTheme } from 'app/components/MatxTheme/themeColors';
 import { Paragraph } from 'app/components/Typography';
 import commonRoutes from 'app/components/commonRoutes';
-
+import DynpEssLT from 'app/components/AppLandingPage/assets/images/DynESS_LT.png';
 import useAuth from 'app/hooks/useAuth';
 import { Formik } from 'formik';
 import { useRef, useState } from 'react';
@@ -26,7 +25,6 @@ const ContentBox = styled(JustifyBox)(() => ({
 }));
 
 const JWTRegister = styled(JustifyBox)(() => ({
-  //background: '#1A2038',
   backgroundImage: `url(${BgImg})`,
   backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
@@ -41,7 +39,7 @@ const JWTRegister = styled(JustifyBox)(() => ({
   },
 }));
 
-// inital login credentials
+// initial login credentials
 const initialValues = {
   firstname: '',
   lastname: '',
@@ -60,7 +58,7 @@ const validationSchema = Yup.object().shape({
   password: Yup.string()
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-      'The password must be at least 8 characters.Password must contain at least one number and both uppercase and lowercase letters and one special character.'
+      'The password must be at least 8 characters. Password must contain at least one number and both uppercase and lowercase letters and one special character.'
     )
     .required('Password is required'),
   confirm_password: Yup.string()
@@ -68,6 +66,7 @@ const validationSchema = Yup.object().shape({
     .required('Confirm password is required'),
   group_code: Yup.string().required('Group code is required'),
 });
+
 const JwtRegister = () => {
   const theme = useTheme();
   const { register } = useAuth();
@@ -101,7 +100,13 @@ const JwtRegister = () => {
           <Grid container>
             <Grid item sm={6} xs={12}>
               <ContentBox>
-                <img width="100%" alt="Register" src={DynproLT} />
+                <img
+                  src={DynpEssLT}
+                  alt="DynESS Logo"
+                  style={{
+                    height: '71px',
+                  }}
+                />
               </ContentBox>
             </Grid>
 
@@ -175,7 +180,7 @@ const JwtRegister = () => {
                         size="small"
                         type="password"
                         name="confirm_password"
-                        label="ConfirmPassword"
+                        label="Confirm Password"
                         variant="outlined"
                         onBlur={handleBlur}
                         value={values.confirm_password}
@@ -192,7 +197,7 @@ const JwtRegister = () => {
                         label="Group Code"
                         variant="outlined"
                         onBlur={handleBlur}
-                        values={values.group_code}
+                        value={values.group_code}
                         onChange={handleChange}
                         helperText={touched.group_code && errors.group_code}
                         error={Boolean(errors.group_code && touched.group_code)}
@@ -225,7 +230,7 @@ const JwtRegister = () => {
                         color="primary"
                         loading={loading}
                         variant="contained"
-                        /*                       onClick={handleSubmit} */ sx={{ mb: 2, mt: 3 }}
+                        sx={{ mb: 2, mt: 3 }}
                       >
                         Register
                       </LoadingButton>

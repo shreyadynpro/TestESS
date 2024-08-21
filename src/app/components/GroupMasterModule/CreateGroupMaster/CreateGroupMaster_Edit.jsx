@@ -29,9 +29,7 @@ export default function CreateEditGroupMaster() {
   const [open, setOpen] = React.useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { data: groupInfo } = useApi(
-    commonConfig.urls.groups + '/' + location.state.group_id + '/' + location.state.role_id
-  );
+  const { data: groupInfo } = useApi(commonConfig.urls.groups + '/' + location.state.group_id);
   async function sendDataToServer(data) {
     const authToken = getAccessToken();
     try {
@@ -85,9 +83,6 @@ export default function CreateEditGroupMaster() {
             sendDataToServer({
               group_id: values.group_id,
               group_name: values.group_name,
-              role_id: values.role_id,
-              group_flag: updateOld ? 1 : 0,
-              dashboard_access: groupModuleUtils.retDashboardAccessObj(values.checked),
             });
           }}
         >

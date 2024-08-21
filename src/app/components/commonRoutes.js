@@ -1,7 +1,10 @@
 const commonRoutes = {
   dashboard: '/dashboard',
   home: '/home',
-  home: '/home',
+  // employees: '/EmployeeList',
+  tasks: '/todo/tasks',
+  payslips: '/salary/payslips',
+  payslipPDF: '/salary/payslips/PDF',
   session: {
     signup: '/signup',
     signin: '/signin',
@@ -30,6 +33,12 @@ const commonRoutes = {
     groupMasterDelete: '/group-master/delete',
     groupMasterEdit: '/group-master/edit',
   },
+  employeeMaster: {
+    employeeMasterlist: '/employee-master',
+    employeeMasterAdd: '/employee-master/add',
+    employeeMasterDelete: '/employee-master/delete',
+    employeeMasterEdit: '/employee-master/edit',
+  },
   groupUserMapping: {
     groupUserMappinglist: '/groups',
     groupUserMappingAdd: '/groups/add',
@@ -39,7 +48,8 @@ const commonRoutes = {
   lookerDashboards: {},
   navigations: {},
   landingPage: {
-    defaultLandingPage: '/dynviz_landing',
+    // defaultLandingPage: '/dyness_landing',
+    defaultLandingPage: '/signin',
   },
   lookerPage: {
     defaultLookerList: '/lookerList',
@@ -73,7 +83,8 @@ const commonRoutes = {
   localizaion: {
     localizationSplitList: '/localization',
   },
-  powerBIClient: '/powerBIClient',
+
+  // powerBIClient: '/powerBIClient',
 };
 
 export default commonRoutes;

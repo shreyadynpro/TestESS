@@ -5,6 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import commonRoutes from './commonRoutes';
 
+import DynpEssLT from 'app/components/AppLandingPage/assets/images/DynESS_LT.png';
+import DynpEssDT from 'app/components/AppLandingPage/assets/images/DynESS_DT.png';
+import { blue } from '@mui/material/colors';
+
 const BrandRoot = styled(Box)(({ theme }) => {
   return {
     display: 'flex',
@@ -12,6 +16,7 @@ const BrandRoot = styled(Box)(({ theme }) => {
     justifyContent: 'space-between',
     paddingTop: '5px',
     paddingBottom: '8px',
+    backgroundColor: theme.palette.text.primary,
   };
 });
 
@@ -58,23 +63,20 @@ const Brand = ({ children }) => {
             justifyContent: 'center',
           }}
         >
-          <Typography
-            variant="h4"
-            sx={{
-              color: '#25326d',
-              fontWeight: 'bold',
-              textAlign: 'center',
-              fontSize: '3rem',
+          <img
+            src={currentTheme?.activeTheme === 'slateDark1' ? DynpEssDT : DynpEssLT}
+            alt="DynESS Logo"
+            style={{
+              height: '49px',
+              marginTop: '1px',
             }}
-          >
-            Dynalytix
-          </Typography>
+          />
         </div>
         <Box className="sidenavHoverShow" sx={{ display: mode === 'compact' ? 'none' : 'block' }}>
           {children || null}
         </Box>
       </BrandRoot>
-      {!(currentTheme === 'Default Theme') && <AppHr />}
+      {/* {!(currentTheme === 'Default Theme') && <AppHr />} */}
     </Link>
   );
 };

@@ -9,7 +9,7 @@ import {
   ListItem,
   SwipeableDrawer,
   Toolbar,
-  Typography, // Add Typography import
+  Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
@@ -61,17 +61,6 @@ export default function Header() {
               justifyContent: 'space-between',
             }}
           >
-            <Typography
-              variant="h4"
-              sx={{
-                color: '#25326d',
-                fontWeight: 'bold',
-                textAlign: 'center',
-                fontSize: '3rem',
-              }}
-            >
-              Dynalytix
-            </Typography>
             <Hidden smDown>
               <div>
                 {navigationLinks.map((item) => (
@@ -79,10 +68,10 @@ export default function Header() {
                     <span
                       style={{
                         marginRight: 20,
-                        color: '#DA9121',
+                        color: '#fff', // Dusty mauve color
                         textDecoration: 'none',
                         '&:hover': {
-                          color: 'blue',
+                          color: '#fff', // Darker dusty mauve on hover
                           fontWeight: 'bold',
                           textDecoration: 'underline',
                         },
@@ -132,9 +121,9 @@ export default function Header() {
               <NavLink
                 style={{
                   marginRight: 20,
-                  color: 'black',
+                  color: '#fff', // Dusty mauve color
                   textDecoration: 'none',
-                  '&:hover': { color: 'blue' },
+                  '&:hover': { color: '#fff' }, // Darker dusty mauve on hover
                 }}
                 variant="button"
                 underline="none"

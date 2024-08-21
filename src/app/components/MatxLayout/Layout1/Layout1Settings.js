@@ -8,7 +8,7 @@ const Layout1Settings = {
   topbar: {
     show: true,
     fixed: true,
-    //theme: 'whiteBlue', // View all valid theme colors inside MatxTheme/themeColors.js
+    //theme: 'whiteblue', // View all valid theme colors inside MatxTheme/themeColors.js
     theme: 'purpleDark11', // View all valid theme colors inside MatxTheme/themeColors.js
   },
 };

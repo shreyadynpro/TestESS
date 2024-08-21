@@ -2,56 +2,55 @@ import * as Yup from 'yup';
 
 const initialValues = {
   personalInfo: {
-    entity_id: process.env.REACT_APP_env_entity_id,
     first_name: '',
     last_name: '',
     email: '',
     password: '',
-    permissions: '',
-    user_attributes: '',
     group_id: null,
-    role: null,
+    role_id: null,
   },
   userAccess: {
+    access_id: false,
     users: false,
     user_add: false,
     user_edit: false,
     user_delete: false,
     user_view: false,
-    looker: false,
-    snowflake: false,
-    clients: false,
-    client_add: false,
-    client_edit: false,
-    client_delete: false,
-    client_view: false,
-    group_module: false,
-    group_add: false,
-    group_edit: false,
-    group_delete: false,
-    group_view: false,
+    employees: false,
+    employees_add: false,
+    employees_edit: false,
+    employees_delete: false,
+    employees_view: false,
+    groups: false,
+    groups_add: false,
+    groups_edit: false,
+    groups_delete: false,
+    groups_view: false,
     reports: false,
-    report_add: false,
-    report_edit: false,
-    report_delete: false,
-    report_view: false,
+    reports_add: false,
+    reports_edit: false,
+    reports_delete: false,
+    reports_view: false,
     roles: false,
     role_add: false,
     role_edit: false,
     role_delete: false,
     role_view: false,
-    generate_report: false,
-    generate_report_add: false,
-    generate_report_edit: false,
-    generate_report_delete: false,
-    generate_report_view: false,
-    invite_user: false,
-    approval_pending_user: false,
-    permission_btn: false,
-  },
-  dashboardAccess: {
-    Dashboard_Access: [],
-    Client_List: [],
+    leaves: false,
+    leaves_add: false,
+    leaves_edit: false,
+    leaves_delete: false,
+    leaves_view: false,
+    salary: false,
+    salary_add: false,
+    salary_edit: false,
+    salary_delete: false,
+    salary_view: false,
+    documents: false,
+    documents_add: false,
+    documents_edit: false,
+    documents_delete: false,
+    documents_view: false,
   },
   checked: [],
 };
@@ -69,8 +68,7 @@ const EditUserSchema = Yup.object().shape({
       .required('Required')
       .label('Lastname'),
     email: Yup.string().email('Invalid email').required('Required').label('Email'),
-    permissions: Yup.string().required('Please select a Permission').label('Permission').nullable(),
-    role: Yup.number().required('Kindly select a role').label('Role').nullable(),
+    role_id: Yup.number().required('Kindly select a role').label('Role').nullable(),
     group_id: Yup.number().required('Kindly select a Group').label('Group').nullable(),
   }),
 });
@@ -99,8 +97,7 @@ const CreateUserSchema = Yup.object().shape({
       )
       .max(16)
       .label('Password'),
-    permissions: Yup.string().required('Please select a Permission').label('Permission').nullable(),
-    role: Yup.number().required('Kindly select a role').label('Role').nullable(),
+    role_id: Yup.number().required('Kindly select a role').label('Role').nullable(),
     group_id: Yup.number().required('Kindly select a Group').label('Group').nullable(),
   }),
 });
@@ -141,8 +138,6 @@ function retDashboardAccessObj(checkedArray) {
 function retUserAccessObj(obj) {
   let newObj = {};
   for (let key in obj) newObj[key] = obj[key] === true ? 1 : 0;
-  if (obj['reports']) newObj['phm'] = newObj['reports'];
-  if (obj['snowflake']) newObj['matillion'] = newObj['snowflake'];
   return newObj;
 }
 function retRoleAccessObj(obj) {
@@ -150,16 +145,6 @@ function retRoleAccessObj(obj) {
   for (let key in obj) newObj[key] = obj[key] === 1 ? true : false;
 
   return newObj;
-}
-
-function convertDashboardAccessObjsToCheckedString(dashboardAccessObjs) {
-  return dashboardAccessObjs
-    .map((item) => {
-      const { client_primary_id, client_id, folder_id, dashboard_id, subcategory_id = null } = item;
-
-      return `${subcategory_id}_${client_primary_id}_${client_id}_${folder_id}_${dashboard_id}`;
-    })
-    .filter((item) => item !== undefined);
 }
 
 function compareResponseAndInitialObj(responseObj, initalObj) {
@@ -178,8 +163,8 @@ function createInitalValues(responseObj) {
     return {
       personalInfo: {
         ...responseObj.user_details[0],
-        group_id: responseObj.user_details[0].user_group_id,
-        first_name: responseObj.user_details[0].name,
+        group_id: responseObj.user_details[0].group_id,
+        first_name: responseObj.user_details[0].first_name,
       },
       userAccess: {
         ...compareResponseAndInitialObj(responseObj.role_access[0], initialValues.userAccess),
@@ -188,7 +173,6 @@ function createInitalValues(responseObj) {
         Dashboard_Access: [],
         Client_List: [],
       },
-      checked: [...convertDashboardAccessObjsToCheckedString(responseObj.dashboard_access)],
     };
   return null;
 }
@@ -198,8 +182,6 @@ function transformUserAccessObj(initalObj, responseObj = {}) {
   for (let key in responseObj) {
     if (key in initalObj) obj[key] = responseObj[key];
   }
-  if (responseObj.hasOwnProperty('phm')) obj['reports'] = responseObj['phm'];
-  if (responseObj.hasOwnProperty('matillion')) obj['snowflake'] = responseObj['matillion'];
   return obj;
 }
 
@@ -212,7 +194,6 @@ const util = {
   retUserAccessObj,
   retRoleAccessObj,
   transformUserAccessObj,
-  convertDashboardAccessObjsToCheckedString,
 };
 
 export default util;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { Box, Button, CardMedia, Container, Grid, Paper, Typography, Zoom } from '@mui/material';
-import BGVideo from './assets/images/bgvideo.mp4';
+import BGVideo from './assets/images/bgvideo3.mp4';
 
 export default function HeroSection() {
   const [shouldShow, setShouldShow] = useState(false);
@@ -63,9 +63,9 @@ export default function HeroSection() {
           <Zoom in={shouldShow}>
             <Grid item sm={12} textAlign={'center'}>
               <Typography component="h1" variant="h3">
-                DO MORE WITH YOUR DATA, QUICKLY
+              EMPOWERING PEOPLE, ELEVATING PERFORMANCE!
                 <Typography variant="h5">
-                  Push the Boundaries of Business Success by Gaining Optimal Insights.{' '}
+                Streamlining people management to boost employee engagement and productivity.{' '}
                 </Typography>
               </Typography>
               <Box my={2}>

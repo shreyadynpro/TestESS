@@ -81,7 +81,7 @@ const UserList = ({ flag }) => {
   const fetchData = async () => {
     try {
       dispatch({ type: 'LOADING', bool: true });
-      const response = await httpService.get(commonConfig.urls.user + `?flag=${flag}`, {
+      const response = await httpService.get(commonConfig.urls.user, {
         headers: {
           Authorization: `Bearer ${authToken}`,
           'Content-Type': 'application/json',

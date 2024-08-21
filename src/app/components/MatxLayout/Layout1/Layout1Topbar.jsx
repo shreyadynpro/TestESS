@@ -183,7 +183,7 @@ const Layout1Topbar = () => {
                   <UserInfo>
                     <span>
                       <strong>
-                        {user?.name || ''} {user?.last_name || ''}
+                        {user?.first_name || ''} {user?.last_name || ''}
                       </strong>
                     </span>
                     <span>{user?.group || ''}</span>{' '}
@@ -197,7 +197,7 @@ const Layout1Topbar = () => {
               </StyledItem>
             )}
 
-            <TopBarSettingsMenu
+            {/* <TopBarSettingsMenu
               display={true}
               icon={
                 <StyledItem>
@@ -207,7 +207,7 @@ const Layout1Topbar = () => {
               }
             >
               <TopBarSettingsMenuOptions />
-            </TopBarSettingsMenu>
+            </TopBarSettingsMenu> */}
 
             <StyledItem onClick={logout}>
               <Icon> power_settings_new </Icon>

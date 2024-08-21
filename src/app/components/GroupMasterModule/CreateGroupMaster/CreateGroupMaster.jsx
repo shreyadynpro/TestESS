@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Box, Button, Card, Grid, MenuItem, styled } from '@mui/material';
-import AppDashboardAccess from 'app/components/ReusableComponents/AppDashboardAccess';
 import groupModuleUtils from '../util';
 
 import SnackbarUtils from 'SnackbarUtils';
@@ -91,11 +90,7 @@ export default function CreateGroupMaster() {
           initialValues={groupModuleUtils.initialValues}
           onSubmit={(values) => {
             sendDataToServer({
-              group_id: values.group_id,
               group_name: values.group_name,
-              role_id: values.role_id,
-              group_flag: updateOld ? 1 : 0,
-              dashboard_access: groupModuleUtils.retDashboardAccessObj(values.checked),
             });
           }}
         >
@@ -116,93 +111,20 @@ export default function CreateGroupMaster() {
                       {/* First Column */}
                       <Grid container direction="column" spacing={2}>
                         <Grid item>
-                          <StyledButton color="secondary" onClick={() => setUpdateOld(!updateOld)}>
-                            {updateOld ? 'Create Group' : 'Old Group'}
-                          </StyledButton>
-                        </Grid>
-                        <Grid item>
-                          {updateOld ? (
-                            <div>
-                              <AppThemeTextField
-                                defaultValue={''}
-                                id="group_id"
-                                name="group_id"
-                                value={values.group_id || ''}
-                                style={{ width: '80%' }}
-                                select
-                                label="Groups"
-                                placeholder="Select Group"
-                                variant="standard"
-                                onChange={handleChange('group_id')}
-                                error={Boolean(errors.group_id && touched.group_id)}
-                              >
-                                {userGroups.map((option, index) => (
-                                  <MenuItem key={index} value={option.group_id}>
-                                    {option.group_name}
-                                  </MenuItem>
-                                ))}
-                              </AppThemeTextField>
-                              {verifyErrors(errors, touched, 'group_id')}
-                            </div>
-                          ) : (
-                            <div>
-                              <AppThemeTextField
-                                id="group_name"
-                                name="group_name"
-                                required
-                                label="Group Name"
-                                placeholder="Enter Group Name"
-                                style={{ width: '80%' }}
-                                value={values.group_name}
-                                onChange={handleChange('group_name')}
-                                onBlur={handleBlur}
-                                error={Boolean(errors.group_name && touched.group_name)}
-                              />
-                              {verifyErrors(errors, touched, 'group_name')}
-                            </div>
-                          )}{' '}
-                        </Grid>
-                        <Grid item>
                           <div>
                             <AppThemeTextField
-                              id="role_id"
-                              name="role_id"
+                              id="group_name"
+                              name="group_name"
                               required
-                              defaultValue={''}
-                              value={values.role_id || ''}
+                              label="Group Name"
+                              placeholder="Enter Group Name"
                               style={{ width: '80%' }}
-                              select
-                              label="Roles"
-                              placeholder="Select Roles"
-                              variant="standard"
-                              onChange={handleChange('role_id')}
+                              value={values.group_name}
+                              onChange={handleChange('group_name')}
                               onBlur={handleBlur}
-                              error={Boolean(
-                                errors.role_id &&
-                                  touched.role_id &&
-                                  touched.role_id &&
-                                  errors.role_id
-                              )}
-                            >
-                              {userGroupRoles.map((option, index) => (
-                                <MenuItem key={index} value={option.role_id}>
-                                  {option.role}
-                                </MenuItem>
-                              ))}
-                            </AppThemeTextField>
-                            {verifyErrors(errors, touched, 'role_id')}
-                          </div>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={12} lg={6}>
-                      {/* Second Column */}
-                      <Grid container direction="column" spacing={2}>
-                        <Grid item>
-                          <div>
-                            {verifyErrors(errors, touched, 'checked')}
-
-                            <AppDashboardAccess checked={values.checked} onCheck={setFieldValue} />
+                              error={Boolean(errors.group_name && touched.group_name)}
+                            />
+                            {verifyErrors(errors, touched, 'group_name')}
                           </div>
                         </Grid>
                         <Grid item>

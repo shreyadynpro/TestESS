@@ -17,7 +17,8 @@ const sessionRoutes = [
   { path: commonRoutes.session.validateotp, element: <ValidateOtp /> },
   { path: commonRoutes.session.change_password, element: <ChangePassword /> },
   {
-    path: commonRoutes.landingPage.defaultLandingPage,
+    // path: commonRoutes.landingPage.defaultLandingPage,
+    path: commonRoutes.landingPage.signin,
     element: <AppLandingPage />,
   },
   { path: commonRoutes.session.notFound, element: <NotFound /> },

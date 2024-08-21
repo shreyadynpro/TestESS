@@ -200,7 +200,7 @@ const demoLayouts = [
       activeLayout: 'layout1',
       layout1Settings: {
         topbar: { theme: 'blueDark1', fixed: true },
-        leftSidebar: { mode: 'full', theme: 'whiteBlue1', bgOpacity: 0.98 },
+        leftSidebar: { mode: 'full', theme: 'whiteblue1', bgOpacity: 0.98 },
       },
       footer: { theme: 'slateDark1' },
     },
