@@ -1,6 +1,6 @@
 const serverIp = '44.199.193.239';
-const baseURL = 'http://192.168.1.239/api';
-// const baseURL = 'http://127.0.0.1:8000/api';
+// const baseURL = 'http://192.168.1.239/api';
+const baseURL = 'http://127.0.0.1:8000/api';
 
 const commonConfig = {
   tokens: {
