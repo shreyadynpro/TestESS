@@ -60,6 +60,7 @@ const commonRoutes = {
     reportsAdd: '/reports/add',
     reportsDelete: '/reports/delete',
     reportsEdit: '/reports/edit',
+    reportsGet: '/reports/get/:id', // Add :id as a parameter
   },
   generate_reports: {
     generate_reportsTabList: '/splitGenerateReports',

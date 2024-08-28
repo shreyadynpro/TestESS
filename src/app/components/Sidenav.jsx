@@ -19,6 +19,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { useSelector } from 'react-redux';
+import commonRoutes from './commonRoutes';
 
 const StyledScrollBar = styled(Scrollbar)(() => ({
   paddingLeft: '0.1rem',
@@ -89,7 +90,30 @@ const allMenuItems = [
     icon: <GroupsIcon />,
     permissionKey: 'employees',
   },
-  { title: 'Reports', path: '/reports', icon: <SummarizeIcon />, permissionKey: 'reports' },
+  {
+    title: 'Reports',
+    path: '/reports',
+    icon: <SummarizeIcon />,
+    permissionKey: 'reports',
+    subMenu: [
+      {
+        title: 'Demo',
+        path: commonRoutes.reports.reportsGet.replace(
+          ':id',
+          '0d6cf1ab-d1c5-4f14-af60-16a1c83d67b0'
+        ),
+        permissionKey: 'reports',
+      },
+      {
+        title: 'Employee Report',
+        path: commonRoutes.reports.reportsGet.replace(
+          ':id',
+          '879238e6-8b3b-485f-9c16-001f204fd47c'
+        ),
+        permissionKey: 'reports',
+      },
+    ],
+  },
   {
     title: 'Leave',
     path: '/leave',
