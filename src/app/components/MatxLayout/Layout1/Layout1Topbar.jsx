@@ -4,11 +4,9 @@ import { MatxMenu } from 'app/components';
 import AppCurrentClient from 'app/components/AppCurrentClient';
 import AppTogglePermission from 'app/components/AppTogglePermission';
 import { themeShadows } from 'app/components/MatxTheme/themeColors';
-import TopBarSettingsMenu from 'app/components/TopBarSettingsMenu';
-import TopBarSettingsMenuOptions from 'app/components/TopBarSettingsMenuOptions';
-import commonRoutes from 'app/components/commonRoutes';
 import useAuth from 'app/hooks/useAuth';
 import useRefreshData from 'app/hooks/useRefreshData';
+import commonRoutes from 'app/components/commonRoutes';
 import useSettings from 'app/hooks/useSettings';
 import { topBarHeight } from 'app/utils/constant';
 import React from 'react';
@@ -58,6 +56,7 @@ const UserMenu = styled(Box)(() => ({
   padding: 4,
   '& span': { margin: '0 8px' },
 }));
+
 const UserInfo = styled(Box)(() => ({
   display: 'flex',
   flexDirection: 'column',
@@ -65,19 +64,6 @@ const UserInfo = styled(Box)(() => ({
   borderRadius: 24,
   padding: 4,
   '& span': { margin: '0 8px' },
-}));
-
-const StyledItem = styled(MenuItem)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  minWidth: 235,
-  '& a': {
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    textDecoration: 'none',
-  },
-  '& span': { marginRight: '10px', color: theme.palette.text.primary },
 }));
 
 const Layout1Topbar = () => {
@@ -155,14 +141,14 @@ const Layout1Topbar = () => {
             StyledIconButton={StyledIconButton}
             TooltipName="Toggle Fullscreen"
           />
-          <MatxMenu
+          {/* <MatxMenu
             menuButton={
               <UserMenu>
                 <Avatar src={user?.profile_pic} sx={{ cursor: 'pointer' }} />
               </UserMenu>
             }
           >
-            <StyledItem>
+            <MenuItem>
               <Link
                 to={commonRoutes.userProfile.viewProfile}
                 onClick={() =>
@@ -186,34 +172,24 @@ const Layout1Topbar = () => {
                         {user?.first_name || ''} {user?.last_name || ''}
                       </strong>
                     </span>
-                    <span>{user?.group || ''}</span>{' '}
+                    <span>{user?.group || ''}</span>
                   </UserInfo>
-                </UserMenu>{' '}
+                </UserMenu>
               </Link>
-            </StyledItem>
+            </MenuItem>
+
             {permission_btn === 1 && (
-              <StyledItem>
+              <MenuItem>
                 <AppTogglePermission />
-              </StyledItem>
+              </MenuItem>
             )}
+          </MatxMenu> */}
 
-            {/* <TopBarSettingsMenu
-              display={true}
-              icon={
-                <StyledItem>
-                  <Icon>settings</Icon>
-                  <Span> Settings </Span>
-                </StyledItem>
-              }
-            >
-              <TopBarSettingsMenuOptions />
-            </TopBarSettingsMenu> */}
-
-            <StyledItem onClick={logout}>
-              <Icon> power_settings_new </Icon>
-              <Span> Logout </Span>
-            </StyledItem>
-          </MatxMenu>
+          <Tooltip title="Logout">
+            <StyledIconButton onClick={logout}>
+              <Icon>power_settings_new</Icon>
+            </StyledIconButton>
+          </Tooltip>
         </Box>
       </TopbarContainer>
     </TopbarRoot>
@@ -221,3 +197,14 @@ const Layout1Topbar = () => {
 };
 
 export default React.memo(Layout1Topbar);
+
+
+
+
+
+
+
+
+
+
+
