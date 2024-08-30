@@ -62,6 +62,9 @@ const commonRoutes = {
     reportsEdit: '/reports/edit',
     reportsGet: '/reports/get/:id', // Add :id as a parameter
   },
+  Zohoreports: {
+    reportsZohoGet: '/zohoreport/get/:id', // Add :id as a parameter
+  },
   generate_reports: {
     generate_reportsTabList: '/splitGenerateReports',
     generate_reportsList: '/generate_reports',

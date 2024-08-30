@@ -13,6 +13,7 @@ import groupUserMappingModuleRoutes from './components/GroupUserMappingModule/gr
 import localizationModuleRoutes from './components/LocalizationModule/localizationModuleRoutes';
 import MatxLayout from './components/MatxLayout/MatxLayout';
 import reportsModuleRoutes from './components/ReportsModule/reportsModuleRoutes';
+import reportZohoRoute from './components/ReportsModule/reportZohoRoute';
 import roleModuleRoutes from './components/Role Module/roleModuleRoutes';
 import userModuleRoutes from './components/UserModule/usermoduleRoutes';
 import userProfileRoutes from './components/UserProfileModule/UserProfileRoutes';
@@ -39,6 +40,7 @@ const routes = [
       ...lookerPageRoute,
       ...inviteUserRoute,
       ...reportsModuleRoutes,
+      ...reportZohoRoute,
       ...generateReportsModuleRoutes,
       ...clientModuleRoutes,
       ...GroupMasterModuleRoutes,

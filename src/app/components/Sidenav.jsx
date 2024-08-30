@@ -91,7 +91,7 @@ const allMenuItems = [
     permissionKey: 'employees',
   },
   {
-    title: 'Reports',
+    title: 'Power BI',
     path: '/reports',
     icon: <SummarizeIcon />,
     permissionKey: 'reports',
@@ -110,6 +110,19 @@ const allMenuItems = [
           ':id',
           '879238e6-8b3b-485f-9c16-001f204fd47c'
         ),
+        permissionKey: 'reports',
+      },
+    ],
+  },
+  {
+    title: 'Zoho',
+    path: '/zohoreports',
+    icon: <SummarizeIcon />,
+    permissionKey: 'reports',
+    subMenu: [
+      {
+        title: 'Demo',
+        path: commonRoutes.Zohoreports.reportsZohoGet.replace(':id', '377745000000002340'),
         permissionKey: 'reports',
       },
     ],
