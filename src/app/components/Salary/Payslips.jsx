@@ -10,6 +10,13 @@ import {
   ListItem,
   ListItemText,
   Box,
+  TableCell,
+  TableRow,
+  TableContainer,
+  Paper,
+  TableHead,
+  Table,
+  TableBody,
   Select,
   MenuItem,
   FormControl,
@@ -17,86 +24,8 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
-import PayslipPDF from './PayslipPDF';
-
-// Increase card size and padding
-const StyledCard = styled(Card)(({ theme }) => ({
-  boxShadow: theme.shadows[3],
-  borderRadius: theme.shape.borderRadius,
-  overflow: 'hidden',
-  height: '100%',
-  position: 'relative',
-  width: '100%', // Ensure cards take full width of their container
-  minHeight: '300px', // Increase minimum height for visibility
-}));
-
-const NetPayCard = styled(Card)(({ theme }) => ({
-  boxShadow: theme.shadows[4],
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: theme.palette.grey[50],
-  padding: theme.spacing(3), // Increase padding for more space inside
-  textAlign: 'center',
-  width: '100%', // Ensure it takes full width of its container
-  minHeight: '200px', // Increase minimum height for visibility
-}));
-
-const CardHeaderStyled = styled(CardHeader)(({ theme }) => ({
-  backgroundColor: theme.palette.grey[200],
-  color: theme.palette.text.primary,
-}));
-
-const CardContentStyled = styled(CardContent)(({ theme }) => ({
-  padding: theme.spacing(3), // Increase padding for more space inside
-}));
-
-const GreenText = styled(Typography)(({ theme }) => ({
-  color: theme.palette.success.main,
-}));
-
-const numberToWords = (num) => {
-  const ones = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
-  const teens = [
-    'Eleven',
-    'Twelve',
-    'Thirteen',
-    'Fourteen',
-    'Fifteen',
-    'Sixteen',
-    'Seventeen',
-    'Eighteen',
-    'Nineteen',
-  ];
-  const tens = ['Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-  const thousands = ['Thousand', 'Lakh', 'Crore'];
-
-  const getWords = (n) => {
-    if (n === 0) return 'Zero';
-    if (n < 10) return ones[n];
-    if (n < 20) return teens[n - 11];
-    if (n < 100) return tens[Math.floor(n / 10) - 2] + (n % 10 ? ' ' + ones[n % 10] : '');
-    if (n < 1000)
-      return ones[Math.floor(n / 100)] + ' Hundred' + (n % 100 ? ' and ' + getWords(n % 100) : '');
-    if (n < 100000)
-      return (
-        getWords(Math.floor(n / 1000)) + ' Thousand' + (n % 1000 ? ' ' + getWords(n % 1000) : '')
-      );
-    if (n < 10000000)
-      return (
-        getWords(Math.floor(n / 100000)) + ' Lakh' + (n % 100000 ? ' ' + getWords(n % 100000) : '')
-      );
-    return (
-      getWords(Math.floor(n / 10000000)) +
-      ' Crore' +
-      (n % 10000000 ? ' ' + getWords(n % 10000000) : '')
-    );
-  };
-
-  return getWords(num);
-};
-
-const formatINR = (amount) => {
-  return amount.toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
-};
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const getMonths = () => {
   const months = [];
@@ -115,63 +44,39 @@ const getMonths = () => {
 const Payslips = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
   const navigate = useNavigate();
-  const componentRef = useRef();
-
-  // Example amounts for the components
-  const earningsComponentA = {
-    basicSalary: 3000,
-    houseRentAllowance: 500,
-    specialAllowance: 200,
-    gratuityBenefitPaid: 100,
-    statutoryInterimBonus: 150,
-    shiftAllowance: 50,
-  };
-
-  const earningsComponentB = {
-    gratuityBenefit: 200,
-    employersContributionToPF: 100,
-  };
-
-  const deductions = {
-    professionTax: 300,
-    taxDeductedAtSource: 100,
-    otherDeductions: 150,
-    employeePF: 200,
-    esi: 50,
-    lwf: 30,
-  };
+  const printRef = useRef(null);
 
   // Calculate total earnings and total deductions
-  const totalEarnings =
-    Object.values(earningsComponentA).reduce((acc, curr) => acc + curr, 0) +
-    Object.values(earningsComponentB).reduce((acc, curr) => acc + curr, 0);
-
-  const totalDeductions = Object.values(deductions).reduce((acc, curr) => acc + curr, 0);
-
-  // Calculate net pay
-  const netPayAmount = totalEarnings - totalDeductions;
 
   const handleMonthChange = (event) => {
     setSelectedMonth(event.target.value);
     // Fetch or display payslip data for the selected month
   };
 
-  const handleDownloadPDF = () => {
-    navigate('/salary/payslips/pdf'); // Navigate to PayslipPDF page
-  };
+  const handleDownloadPDF = async () => {
+    const element = printRef.current;
+    if (!element) {
+      console.error('Print reference is not set.');
+      return; // Exit if the ref is not set
+    }
 
-  const employeeDetails = {
-    employeeName: 'AAA BBB',
-    employeeID: '12345',
-    region: 'Region Name',
-    bankName: 'Bank Name',
-    accountName: 'Account Name',
-    uanNo: 'UAN123456',
-    monthlySalary: formatINR(3000),
-    perDayINR: formatINR(100),
-    totalPayableDays: 30,
-    pan: 'PAN123456',
-    pfNo: 'PF123456',
+    const canvas = await html2canvas(element);
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'px', 'a4');
+
+    // Calculate PDF dimensions
+    const pdfWidth = pdf.internal.pageSize.width;
+    const pdfHeight = pdf.internal.pageSize.height;
+    const imgWidth = canvas.width;
+    const imgHeight = canvas.height;
+
+    // Calculate scale to fit the content on the PDF
+    const scale = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+    const imgScaledWidth = imgWidth * scale;
+    const imgScaledHeight = imgHeight * scale;
+
+    pdf.addImage(imgData, 'PNG', 0, 0, imgScaledWidth, imgScaledHeight);
+    pdf.save('payslip.pdf');
   };
 
   const buttonStyle = {
@@ -192,33 +97,12 @@ const Payslips = () => {
   return (
     <Container>
       <Box position="relative" mb={4}>
-        <Box
-          display="flex"
-          justifyContent="flex-end"
-          mb={2}
-          position="absolute"
-          top={0}
-          right={0}
-          p={2}
-        >
-          <Grid item xs={12}>
-            <Box display="flex" justifyContent="center" mt={4}>
-              <button
-                style={buttonStyle}
-                onMouseOver={(e) =>
-                  (e.currentTarget.style.backgroundColor = buttonHoverStyle.backgroundColor)
-                }
-                onMouseOut={(e) =>
-                  (e.currentTarget.style.backgroundColor = buttonStyle.backgroundColor)
-                }
-                onClick={handleDownloadPDF}
-              >
-                Download PDF
-              </button>
-            </Box>
-          </Grid>
-          <Box sx={{ position: 'relative', ml: 2 }}>
-            <FormControl sx={{ minWidth: 150 }}>
+        <Box display="flex" alignItems="center" justifyContent="space-between" mb={2} width="100%">
+          <Typography variant="h3" sx={{ fontSize: '1.8rem' }}>
+            PAYSLIPS
+          </Typography>
+          <Box display="flex" alignItems="center">
+            <FormControl sx={{ minWidth: 150, mr: 2 }}>
               <InputLabel id="month-select-label">Select Month</InputLabel>
               <Select
                 labelId="month-select-label"
@@ -233,140 +117,268 @@ const Payslips = () => {
                 ))}
               </Select>
             </FormControl>
+            <button
+              style={{
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                padding: '8px 16px',
+                fontSize: '14px',
+                cursor: 'pointer',
+                transition: 'background-color 0.3s',
+                marginLeft: '8px',
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#0056b3')}
+              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#007bff')}
+              onClick={handleDownloadPDF}
+            >
+              Download PDF
+            </button>
           </Box>
         </Box>
-        <Box mt={8}>
-          <Typography variant="h3" gutterBottom>
-            PAYSLIPS
-          </Typography>
-        </Box>
       </Box>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <StyledCard>
-            <CardHeaderStyled title="EMPLOYEE DETAILS" />
-            <CardContentStyled>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <List>
-                    <ListItem>
-                      <ListItemText
-                        primary="Employee Name:"
-                        secondary={employeeDetails.employeeName}
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText primary="Employee ID:" secondary={employeeDetails.employeeID} />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText primary="Region:" secondary={employeeDetails.region} />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText primary="Bank Name:" secondary={employeeDetails.bankName} />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText
-                        primary="Account Name:"
-                        secondary={employeeDetails.accountName}
-                      />
-                    </ListItem>
-                  </List>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <List>
-                    <ListItem>
-                      <ListItemText primary="UAN No:" secondary={employeeDetails.uanNo} />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText
-                        primary="Monthly Salary:"
-                        secondary={employeeDetails.monthlySalary}
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText
-                        primary="Per Day (INR):"
-                        secondary={employeeDetails.perDayINR}
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText
-                        primary="Total Payable Days:"
-                        secondary={employeeDetails.totalPayableDays}
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText primary="PAN:" secondary={employeeDetails.pan} />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText primary="PF No:" secondary={employeeDetails.pfNo} />
-                    </ListItem>
-                  </List>
-                </Grid>
-              </Grid>
-            </CardContentStyled>
-          </StyledCard>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <StyledCard>
-            <CardHeaderStyled title="EARNINGS" />
-            <CardContentStyled>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <List>
-                    {Object.entries(earningsComponentA).map(([key, value]) => (
-                      <ListItem key={key}>
-                        <ListItemText
-                          primary={key.replace(/([A-Z])/g, ' $1').trim()}
-                          secondary={formatINR(value)}
-                        />
-                      </ListItem>
-                    ))}
-                    {Object.entries(earningsComponentB).map(([key, value]) => (
-                      <ListItem key={key}>
-                        <ListItemText
-                          primary={key.replace(/([A-Z])/g, ' $1').trim()}
-                          secondary={formatINR(value)}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
-                </Grid>
-              </Grid>
-            </CardContentStyled>
-          </StyledCard>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <StyledCard>
-            <CardHeaderStyled title="DEDUCTIONS" />
-            <CardContentStyled>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <List>
-                    {Object.entries(deductions).map(([key, value]) => (
-                      <ListItem key={key}>
-                        <ListItemText
-                          primary={key.replace(/([A-Z])/g, ' $1').trim()}
-                          secondary={formatINR(value)}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
-                </Grid>
-              </Grid>
-            </CardContentStyled>
-          </StyledCard>
-        </Grid>
-        <Grid item xs={12}>
-          <NetPayCard>
-            <Typography variant="h5" gutterBottom>
-              NET PAY
+      <Box
+        ref={printRef} // Add ref to the Box you want to convert to PDF
+        sx={{ p: 2, border: '1px solid #ddd', borderRadius: '8px', maxWidth: '995px', mx: 'auto' }}
+      >
+        {/* Header Section */}
+        <Grid container spacing={2} sx={{ mb: 3 }}>
+          <Grid item xs={12} sx={{ display: 'flex', alignItems: 'flex-start' }}>
+            <img
+              src="https://www.dynpro.com/wp-content/uploads/2022/01/dynpro-logo-2-1-e1641987897332.png"
+              alt="Company Logo"
+              style={{ maxWidth: '150px' }}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sx={{
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Typography variant="h6" sx={{ mt: 2 }}>
+              DynPro India Pvt. Ltd.
             </Typography>
-            <GreenText variant="h6">{formatINR(netPayAmount)}</GreenText>
-            <Typography variant="subtitle1">({numberToWords(netPayAmount)} Rupees Only)</Typography>
-          </NetPayCard>
+            <Typography variant="subtitle2" sx={{ mt: 1 }}>
+              1st Floor, C Wing, Teerth Technospace, Sr. No. 103, Mumbai Pune Bangalore Highway
+              Pashan Exit Teerth2Work, Baner, Pune, Maharashtra 411045
+            </Typography>
+          </Grid>
         </Grid>
-      </Grid>
+
+        {/* Employee Details Box with Outline */}
+        <Box
+          sx={{
+            p: 2,
+            backgroundColor: 'transparent',
+            border: '2px solid black',
+            borderRadius: '4px',
+            mb: 3,
+            maxWidth: '100%',
+            mx: 'auto',
+            boxSizing: 'border-box',
+          }}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+            }}
+          >
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <Typography sx={{ mb: 1, fontSize: '1.1rem' }}>
+                  <strong style={{ marginRight: '8px' }}>Employee Name:</strong> John Doe
+                </Typography>
+                <Typography sx={{ mb: 1, fontSize: '1.1rem' }}>
+                  <strong style={{ marginRight: '8px' }}>Employee ID:</strong> 12345
+                </Typography>
+                <Typography sx={{ mb: 1, fontSize: '1.1rem' }}>
+                  <strong style={{ marginRight: '8px' }}>Region:</strong> Region Name
+                </Typography>
+                <Typography sx={{ mb: 1, fontSize: '1.1rem' }}>
+                  <strong style={{ marginRight: '8px' }}>Bank Name:</strong> Bank XYZ
+                </Typography>
+                <Typography sx={{ mb: 1, fontSize: '1.1rem' }}>
+                  <strong style={{ marginRight: '8px' }}>Account Name:</strong> John Doe
+                </Typography>
+                <Typography sx={{ mb: 1, fontSize: '1.1rem' }}>
+                  <strong style={{ marginRight: '8px' }}>UAN No:</strong> 1234567890
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Typography sx={{ mb: 1, fontSize: '1.1rem' }}>
+                  <strong style={{ marginRight: '8px' }}>Monthly Salary:</strong> ₹60,000
+                </Typography>
+                <Typography sx={{ mb: 1, fontSize: '1.1rem' }}>
+                  <strong style={{ marginRight: '8px' }}>Per Day (INR):</strong> ₹2,000
+                </Typography>
+                <Typography sx={{ mb: 1, fontSize: '1.1rem' }}>
+                  <strong style={{ marginRight: '8px' }}>Total Payable Days:</strong> 30
+                </Typography>
+                <Typography sx={{ mb: 1, fontSize: '1.1rem' }}>
+                  <strong style={{ marginRight: '8px' }}>PAN:</strong> ABCDE1234F
+                </Typography>
+                <Typography sx={{ mb: 1, fontSize: '1.1rem' }}>
+                  <strong style={{ marginRight: '8px' }}>PF No:</strong> PF123456
+                </Typography>
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+
+        {/* Pay Elements Table */}
+        <TableContainer
+          component={Paper}
+          sx={{ maxWidth: '100%', mx: 'auto', border: '2px solid black', mb: 2 }}
+        >
+          <Table aria-label="pay elements table">
+            <TableHead>
+              <TableRow>
+                <TableCell align="center" sx={{ border: '1px solid black', width: '15%' }}>
+                  <strong>PAY ELEMENTS</strong>
+                </TableCell>
+                <TableCell align="center" sx={{ border: '1px solid black', width: '15%' }}>
+                  <strong>MONTHLY SALARY</strong>
+                </TableCell>
+                <TableCell align="center" sx={{ border: '1px solid black', width: '15%' }}>
+                  <strong>EARNINGS</strong>
+                </TableCell>
+                <TableCell align="center" sx={{ border: '1px solid black', width: '15%' }}>
+                  <strong>DEDUCTIONS</strong>
+                </TableCell>
+                <TableCell align="center" sx={{ border: '1px solid black', width: '15%' }}>
+                  <strong>AMOUNT</strong>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+          </Table>
+        </TableContainer>
+
+        {/* Pay Elements Details Table */}
+        <TableContainer
+          component={Paper}
+          sx={{ maxWidth: '100%', mx: 'auto', border: '2px solid black', mb: 2 }}
+        >
+          <Table aria-label="pay elements details table">
+            <TableBody>
+              <TableRow>
+                <TableCell align="left" sx={{ border: '1px solid black', padding: '8px 16px' }}>
+                  <Box sx={{ fontWeight: 'bold', mb: 1 }}>Component - A</Box>
+                  <Box>Basic Salary</Box>
+                  <Box>House Rent Allowance</Box>
+                  <Box>Special Allowance</Box>
+                  <Box>Gratuity Benefit Paid</Box>
+                  <Box>Statutory Interim Bonus</Box>
+                  <Box>Shift Allowance</Box>
+                  <Box sx={{ fontWeight: 'bold', mt: 2, mb: 1 }}>Component - B</Box>
+                  <Box>Gratuity Benefit</Box>
+                  <Box>Employer's Contribution to P.F.</Box>
+                </TableCell>
+                <TableCell align="center" sx={{ border: '1px solid black' }}>
+                  ₹20,000
+                  <Box>₹5,000</Box>
+                  <Box>₹3,000</Box>
+                  <Box>₹2,000</Box>
+                  <Box>₹1,500</Box>
+                  <Box>₹1,200</Box>
+                  <Box sx={{ mt: 2, mb: 1 }}>₹4,000</Box>
+                  <Box>₹1,500</Box>
+                  <Box>₹2,000</Box>
+                </TableCell>
+                <TableCell align="center" sx={{ border: '1px solid black' }}>
+                  ₹20,000
+                  <Box>₹5,000</Box>
+                  <Box>₹3,000</Box>
+                  <Box>₹2,000</Box>
+                  <Box>₹1,500</Box>
+                  <Box>₹1,200</Box>
+                  <Box sx={{ mt: 2, mb: 1 }}>₹4,000</Box>
+                  <Box>₹1,500</Box>
+                  <Box>₹2,000</Box>
+                </TableCell>
+                <TableCell align="left" sx={{ border: '1px solid black', padding: '8px 16px' }}>
+                  <Box>Profession Tax</Box>
+                  <Box>Tax Deducted at Source</Box>
+                  <Box>Other Deductions</Box>
+                  <Box>Employee PF</Box>
+                  <Box>ESI</Box>
+                  <Box>LWF</Box>
+                </TableCell>
+                <TableCell align="center" sx={{ border: '1px solid black' }}>
+                  ₹1,500
+                  <Box>₹1,200</Box>
+                  <Box>₹800</Box>
+                  <Box>₹1,000</Box>
+                  <Box>₹500</Box>
+                  <Box>₹200</Box>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        {/* Totals Table */}
+        <TableContainer
+          component={Paper}
+          sx={{ maxWidth: '100%', mx: 'auto', border: '2px solid black', mb: 2 }}
+        >
+          <Table aria-label="totals table">
+            <TableBody>
+              {/* NET PAY Row */}
+              <TableRow>
+                <TableCell
+                  align="left"
+                  sx={{ border: '1px solid black', padding: '8px 16px', fontWeight: 'bold' }}
+                >
+                  TOTAL
+                </TableCell>
+                <TableCell align="center" sx={{ border: '1px solid black' }}>
+                  ₹50,000
+                </TableCell>
+                <TableCell align="center" sx={{ border: '1px solid black' }}>
+                  ₹60,000
+                </TableCell>
+                <TableCell
+                  align="left"
+                  sx={{ border: '1px solid black', padding: '8px 4px', fontWeight: 'bold' }}
+                >
+                  TOTAL DEDUCTIONS
+                </TableCell>
+                <TableCell align="center" sx={{ border: '1px solid black' }}>
+                  ₹53,800
+                </TableCell>
+              </TableRow>
+
+              {/* NET PAY (In Words) Row */}
+              <TableRow>
+                <TableCell align="center" sx={{ border: '1px solid black', padding: '8px 16px' }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', textAlign: 'left' }}>
+                    NET PAY (In Words)
+                  </Typography>
+                </TableCell>
+                <TableRow align="center">
+                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', textAlign: 'center' }}>
+                    Sixty Thousand Rupees Only
+                  </Typography>
+                </TableRow>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+        {/* Computer-generated statement */}
+        <Typography variant="body2" sx={{ textAlign: 'center', mt: 2 }}>
+          This is a computer-generated payslip. No signature is required.
+        </Typography>
+      </Box>
     </Container>
   );
 };

@@ -74,7 +74,8 @@ const BackgroundImageBox = styled(Box)(() => ({
   backgroundImage: `url(${BgImg})`,
   backgroundSize: 'cover',
   backgroundRepeat: 'no-repeat',
-  width: '100%',
+  backgroundPosition: 'right center',
+  width: '110%',
   height: '85%',
 }));
 
@@ -236,21 +237,21 @@ const JwtLogin = () => {
                         }}
                         onExpired={() => setDisableSubmit(true)}
                       />
-                      <FlexBox justifyContent="space-between">
+                      <FlexBox justifyContent="">
                         <FlexBox gap={1}>
-                          <Checkbox
+                          {/* <Checkbox
                             size="small"
                             name="remember"
                             onChange={handleChange}
                             checked={values.remember}
                             sx={{ padding: 0 }}
                           />
-                          <Paragraph>Remember Me</Paragraph>
+                          <Paragraph>Remember Me</Paragraph> */}
                         </FlexBox>
 
                         <NavLink
                           to={commonRoutes.session.forgot_password}
-                          style={{ color: 'black' }}
+                          style={{ color: '#01256c' }}
                         >
                           Forgot password?
                         </NavLink>
@@ -267,16 +268,23 @@ const JwtLogin = () => {
                         type="submit"
                         loading={loading}
                         variant="contained"
-                        sx={{ my: 2 }}
-                        style={{ color: '#ffffff', backgroundColor: '#212e7c' }}
+                        sx={{
+                          my: 2,
+                          color: '#ffffff',
+                          backgroundColor: '#212e7c',
+                          '&:hover': {
+                            backgroundColor: '#1a2465', // Darker shade for hover
+                          },
+                        }}
                       >
                         Login
                       </LoadingButton>
+
                       <Paragraph>
                         Don't have an account?
                         <NavLink
                           to={commonRoutes.session.signup}
-                          style={{ color: 'black', marginLeft: 5 }}
+                          style={{ color: '#01256c', marginLeft: 5 }}
                         >
                           Register
                         </NavLink>
