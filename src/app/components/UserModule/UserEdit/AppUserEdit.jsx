@@ -36,8 +36,6 @@ const AppUserEditForm = () => {
   const { handleRefreshData } = useRefreshData(false);
 
   async function sendDataToServer(data) {
-    console.log('Post Data=======', data);
-
     try {
       setLoading(true);
       const authToken = getAccessToken();

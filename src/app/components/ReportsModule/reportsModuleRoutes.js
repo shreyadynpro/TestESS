@@ -1,15 +1,16 @@
+// reportroutemodule.js
 import Loadable from '../Loadable';
 import { lazy } from 'react';
 import commonRoutes from '../commonRoutes';
 
-const AppAllReportsList = Loadable(lazy(() => import('./AppAllReportsList')));
+const AppShowReport = Loadable(lazy(() => import('./showReport')));
 const AppAllReportsCreate = Loadable(lazy(() => import('./CreateAllReports/CreateAllReports')));
 const AppAllReportsEdit = Loadable(lazy(() => import('./EditAllReports/EditAllReports')));
 
 const reportsModuleRoutes = [
   {
-    path: commonRoutes.reports.reportsList,
-    element: <AppAllReportsList />,
+    path: commonRoutes.reports.reportsGet, // This will now include the :id parameter
+    element: <AppShowReport />,
   },
   {
     path: commonRoutes.reports.reportsAdd,

@@ -1,31 +1,30 @@
 import { styled } from '@mui/system';
-import { Fragment, memo, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Fragment, memo, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Scrollbar from 'react-perfect-scrollbar';
 import { Box, Typography, Collapse } from '@mui/material';
-import HomeIcon from '@mui/icons-material/Home';
-import EventNoteIcon from '@mui/icons-material/EventNote';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import DescriptionIcon from '@mui/icons-material/Description';
-import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import GroupIcon from '@mui/icons-material/Group';
+import SecurityIcon from '@mui/icons-material/Security';
+import LockIcon from '@mui/icons-material/Lock';
+import PersonIcon from '@mui/icons-material/Person';
 import GroupsIcon from '@mui/icons-material/Groups';
 import SummarizeIcon from '@mui/icons-material/Summarize';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import DescriptionIcon from '@mui/icons-material/Description';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import InfoIcon from '@mui/icons-material/Info';
-import PersonIcon from '@mui/icons-material/Person';
-import GroupIcon from '@mui/icons-material/Group';
-import LockIcon from '@mui/icons-material/Lock';
-import SecurityIcon from '@mui/icons-material/Security';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { useSelector } from 'react-redux';
+import commonRoutes from './commonRoutes';
 
 const StyledScrollBar = styled(Scrollbar)(() => ({
   paddingLeft: '0.1rem',
   paddingRight: '0.1rem',
   position: 'relative',
-  backgroundColor: '#fafafa',
 }));
 
 const SideNavMobile = styled('div')(({ theme }) => ({
@@ -40,12 +39,11 @@ const SideNavMobile = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('lg')]: { display: 'none' },
 }));
 
-const MenuItem = styled(Box)(({ theme, isProfile }) => ({
+const MenuItem = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: '10px 20px',
   cursor: 'pointer',
-  fontWeight: isProfile ? 'bold' : 'normal',
   '&:hover': {
     backgroundColor: theme.palette.action.hover,
   },
@@ -56,11 +54,9 @@ const MenuIcon = styled(Box)(({ theme }) => ({
   marginRight: '16px',
 }));
 
-const MenuLabel = styled(Typography)(({ theme, isProfile, fontSize, fontWeight, color }) => ({
-  fontWeight: isProfile ? 'bold' : fontWeight || 'medium',
-  fontStyle: isProfile ? 'italic' : 'normal',
-  fontSize: fontSize || '16px',
-  color: color || theme.palette.text.primary, // Use the color prop or the default text color
+const MenuLabel = styled(Typography)(({ theme }) => ({
+  fontSize: '16px',
+  fontWeight: 'medium',
 }));
 
 const MenuArrow = styled(Box)(({ theme }) => ({
@@ -73,126 +69,199 @@ const SubMenuItem = styled(MenuItem)(({ theme }) => ({
   backgroundColor: theme.palette.action.hover,
 }));
 
+const allMenuItems = [
+  {
+    title: 'Group Master',
+    path: '/group-master',
+    icon: <GroupIcon />,
+    permissionKey: 'groups',
+  },
+  { title: 'Roles', path: '/role', icon: <SecurityIcon />, permissionKey: 'roles' },
+  {
+    title: 'User Access Control',
+    path: '/groups',
+    icon: <LockIcon />,
+    permissionKey: 'users',
+  },
+  { title: 'Users', path: '/splitUsers', icon: <PersonIcon />, permissionKey: 'users' },
+  {
+    title: 'Employees',
+    path: '/employee-master',
+    icon: <GroupsIcon />,
+    permissionKey: 'employees',
+  },
+  {
+    title: 'Power BI',
+    path: '/reports',
+    icon: <SummarizeIcon />,
+    permissionKey: 'reports',
+    subMenu: [
+      {
+        title: 'Demo',
+        path: commonRoutes.reports.reportsGet.replace(
+          ':id',
+          '0d6cf1ab-d1c5-4f14-af60-16a1c83d67b0'
+        ),
+        permissionKey: 'reports',
+      },
+      {
+        title: 'Employee Report',
+        path: commonRoutes.reports.reportsGet.replace(
+          ':id',
+          '879238e6-8b3b-485f-9c16-001f204fd47c'
+        ),
+        permissionKey: 'reports',
+      },
+    ],
+  },
+  {
+    title: 'Zoho',
+    path: '/zohoreports',
+    icon: <SummarizeIcon />,
+    permissionKey: 'reports',
+    subMenu: [
+      {
+        title: 'Demo',
+        path: commonRoutes.Zohoreports.reportsZohoGet.replace(':id', '377745000000002340'),
+        permissionKey: 'reports',
+      },
+    ],
+  },
+  {
+    title: 'Leave',
+    path: '/leave',
+    icon: <EventNoteIcon />,
+    permissionKey: 'leaves',
+    subMenu: [
+      { title: 'Leave Type Master', path: '/leave/sick', permissionKey: 'leaves' },
+      { title: 'Leave Apply', path: '/leave/casual', permissionKey: 'leaves' },
+      { title: 'Grant Leave', path: '/leave/grant', permissionKey: 'leaves' },
+      { title: 'Leave Balance', path: '/leave/balance', permissionKey: 'leaves' },
+      {
+        title: 'Leave Approval Tracking',
+        path: '/leave/approval-tracking',
+        permissionKey: 'leaves',
+      },
+      { title: 'Leave Calendar', path: '/leave/calendar', permissionKey: 'leaves' },
+      {
+        title: 'Manage Holiday Calendar',
+        path: '/leave/manage-calendar',
+        permissionKey: 'leaves',
+      },
+      {
+        title: 'Holiday Calendar',
+        path: '/leave/holiday-calendar',
+        permissionKey: 'leaves',
+      },
+    ],
+  },
+  {
+    title: 'Salary',
+    path: '/salary',
+    icon: <MonetizationOnIcon />,
+    permissionKey: 'salary',
+    subMenu: [
+      { title: 'Payslips', path: '/salary/payslips', permissionKey: 'salary' },
+      {
+        title: 'IT Statements',
+        path: '/salary/it-statements',
+        permissionKey: 'salary',
+      },
+      {
+        title: 'IT Declaration',
+        path: '/salary/it-declaration',
+        permissionKey: 'salary',
+      },
+      {
+        title: 'Loans & Advances',
+        path: '/salary/loans-advances',
+        permissionKey: 'salary',
+      },
+      {
+        title: 'Reimbursement',
+        path: '/salary/reimbursement',
+        permissionKey: 'salary',
+      },
+      { title: 'Salary Revision', path: '/salary/revision', permissionKey: 'salary' },
+    ],
+  },
+  { title: 'Documents', path: '/documents', icon: <DescriptionIcon />, permissionKey: 'documents' },
+  {
+    title: 'Attendance',
+    path: '/attendance',
+    icon: <CalendarMonthIcon />,
+    permissionKey: 'attendance',
+    subMenu: [
+      { title: 'Daily', path: '/attendance/daily', permissionKey: 'attendanceDaily' },
+      { title: 'Monthly', path: '/attendance/monthly', permissionKey: 'attendanceMonthly' },
+    ],
+  },
+  { title: 'Activities', path: '/activities', icon: <CampaignIcon />, permissionKey: 'activities' },
+  { title: 'Help', path: '/help', icon: <InfoIcon />, permissionKey: 'help' },
+];
+
 const Sidenav = () => {
-  const [openMenu, setOpenMenu] = useState(null);
-  const navigate = useNavigate(); // Initialize navigate
-  const user = useSelector((state) => state.userDetails?.user); // Access user from Redux
+  const [openMenu, setOpenMenu] = useState({});
+  const navigate = useNavigate();
+
+  const { uaPermissions } = useSelector((state) => ({
+    uaPermissions: state.userAccessPermissions.userPermissions,
+  }));
+
+  const filterMenuItems = (items) => {
+    return items
+      .filter((item) => uaPermissions[item.permissionKey] === 1)
+      .map((item) => ({
+        ...item,
+        subMenu: item.subMenu ? filterMenuItems(item.subMenu) : null,
+      }))
+      .filter((item) => !item.subMenu || item.subMenu.length > 0);
+  };
+
+  const menuItems = filterMenuItems(allMenuItems);
 
   const handleMenuItemClick = (path, hasSubMenu) => {
     if (hasSubMenu) {
-      setOpenMenu((prev) => (prev === path ? null : path));
+      setOpenMenu((prev) => ({
+        ...prev,
+        [path]: !prev[path],
+      }));
     } else {
-      navigate(path); // Navigate to the selected path
-      setOpenMenu(null); // Close the mobile nav if open
+      navigate(path);
+      setOpenMenu((prev) => ({
+        ...prev,
+        [path]: false,
+      }));
     }
   };
 
-  const menuItems = [
-    {
-      title: ` ${user?.first_name || ''} ${user?.last_name || ''}`,
-      path: '/Profile',
-      fontSize: '20px',
-      fontWeight: 'bold',
-      isProfile: true, // Indicate that this is a profile item
-      color: '#01256c', // Specify the desired color
-    },
-    { title: 'Group Master', path: '/group-master', icon: <GroupIcon /> },
-    { title: 'Roles', path: '/role', icon: <SecurityIcon /> },
-    { title: 'User Access Control', path: '/groups', icon: <LockIcon /> },
-    { title: 'Users', path: '/splitUsers', icon: <PersonIcon /> },
-    { title: 'Employees', path: '/employee-master', icon: <GroupsIcon /> },
-    { title: 'Reports', path: '/reports', icon: <SummarizeIcon /> },
-    {
-      title: 'To Do',
-      path: '/todo',
-      icon: <FormatListBulletedIcon />,
-      subMenu: [
-        { title: 'Tasks', path: '/todo/tasks' },
-        { title: 'Review', path: '/todo/reviews' },
-      ],
-    },
-    {
-      title: 'Leave',
-      path: '/leave',
-      icon: <EventNoteIcon />,
-      subMenu: [
-        { title: 'Leave Type Master', path: '/leave/sick' },
-        { title: 'Leave Apply', path: '/leave/casual' },
-        { title: 'Grant Leave', path: '/leave/grant' },
-        { title: 'Leave Balance', path: '/leave/balance' },
-        { title: 'Leave Approval Tracking', path: '/leave/approval-tracking' },
-        { title: 'Leave Calendar', path: '/leave/calendar' },
-        { title: 'Manage Holiday Calendar', path: '/leave/manage-calendar' },
-        { title: 'Holiday Calendar', path: '/leave/holiday-calendar' },
-      ],
-    },
-    {
-      title: 'Salary',
-      path: '/salary',
-      icon: <MonetizationOnIcon />,
-      subMenu: [
-        { title: 'Payslips', path: '/salary/payslips' },
-        { title: 'IT Statements', path: '/salary/it-statements' },
-        { title: 'IT Declaration', path: '/salary/it-declaration' },
-        { title: 'Loans & Advances', path: '/salary/loans-advances' },
-        { title: 'Reimbursement', path: '/salary/reimbursement' },
-        { title: 'Salary Revision', path: '/salary/revision' },
-      ],
-    },
-    { title: 'Documents', path: '/documents', icon: <DescriptionIcon /> },
-    {
-      title: 'Attendance',
-      path: '/attendance',
-      icon: <CalendarMonthIcon />,
-      subMenu: [
-        { title: 'Daily', path: '/attendance/daily' },
-        { title: 'Monthly', path: '/attendance/monthly' },
-      ],
-    },
-    { title: 'Activities', path: '/activities', icon: <CampaignIcon /> },
-    { title: 'Help', path: '/help', icon: <InfoIcon /> },
-  ];
+  const renderMenuItems = (items, level = 0) => {
+    return items.map((item) => (
+      <Fragment key={item.title}>
+        <MenuItem
+          onClick={() => handleMenuItemClick(item.path, item.subMenu)}
+          style={{ paddingLeft: `${20 + level * 20}px` }}
+        >
+          <MenuIcon>{item.icon}</MenuIcon>
+          <MenuLabel>{item.title}</MenuLabel>
+          {item.subMenu && (
+            <MenuArrow>{openMenu[item.path] ? <ExpandLessIcon /> : <ExpandMoreIcon />}</MenuArrow>
+          )}
+        </MenuItem>
+        {item.subMenu && (
+          <Collapse in={openMenu[item.path]}>{renderMenuItems(item.subMenu, level + 1)}</Collapse>
+        )}
+      </Fragment>
+    ));
+  };
 
   return (
     <Fragment>
       <StyledScrollBar options={{ suppressScrollX: true }}>
-        {menuItems.map((item) => (
-          <div key={item.title}>
-            <MenuItem
-              onClick={() => handleMenuItemClick(item.path, item.subMenu)}
-              isProfile={item.isProfile}
-            >
-              <MenuIcon>{item.icon}</MenuIcon>
-              <MenuLabel
-                fontSize={item.fontSize}
-                fontWeight={item.fontWeight}
-                isProfile={item.isProfile}
-                color={item.color} // Pass the color prop
-              >
-                {item.title}
-              </MenuLabel>
-              {item.subMenu && (
-                <MenuArrow>
-                  {openMenu === item.path ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                </MenuArrow>
-              )}
-            </MenuItem>
-            {item.subMenu && (
-              <Collapse in={openMenu === item.path}>
-                {item.subMenu.map((subItem) => (
-                  <SubMenuItem
-                    key={subItem.title}
-                    onClick={() => handleMenuItemClick(subItem.path, false)}
-                  >
-                    <MenuLabel>{subItem.title}</MenuLabel>
-                  </SubMenuItem>
-                ))}
-              </Collapse>
-            )}
-          </div>
-        ))}
+        {renderMenuItems(menuItems)}
       </StyledScrollBar>
-      <SideNavMobile onClick={() => setOpenMenu(null)} />
+
+      <SideNavMobile onClick={() => setOpenMenu({})} />
     </Fragment>
   );
 };

@@ -1,6 +1,5 @@
-import { Box, Button, Grid, styled } from '@mui/material';
+import { Box, Grid, styled } from '@mui/material';
 import { Breadcrumb, SimpleCard } from 'app/components';
-import commonRoutes from 'app/components/commonRoutes';
 import AppTableSearchBox from 'app/components/ReusableComponents/AppTableSearchBox';
 import { getAccessToken } from 'app/utils/utils';
 import axios from 'axios';
@@ -11,12 +10,6 @@ import commonConfig from '../../commonConfig';
 import PaginationTable from './AppPaginateEmployee';
 import SnackbarUtils from 'SnackbarUtils';
 
-const StyledButton = styled(Button)(({ theme }) => ({
-  margin: theme.spacing(1),
-  backgroundColor: theme.palette.info.main,
-  marginTop: 0,
-}));
-
 const Container = styled('div')(({ theme }) => ({
   margin: '30px',
   [theme.breakpoints.down('sm')]: { margin: '16px' },
@@ -26,21 +19,23 @@ const EmployeeList = () => {
   const [searched, setSearched] = useState('');
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
   const navigate = useNavigate();
+
   const requestSearch = (searchedVal) =>
     data.filter((row) => {
       return (row.first_name + ' ' + row.last_name + ' ' + row.email1)
         .toLowerCase()
         .includes(searchedVal.toLowerCase());
     });
+
   const [data, setData] = useState([]);
   const authToken = getAccessToken();
+
   const employeeViewPermission = useSelector(
     (state) => state.userAccessPermissions?.userPermissions?.employees_view
   );
-  const employeeCreatePermission = useSelector(
-    (state) => state.userAccessPermissions?.userPermissions?.employees_add
-  );
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -61,57 +56,166 @@ const EmployeeList = () => {
 
   const handleSearch = (e) => {
     setSearched(e.currentTarget.value);
-    if (searched) {
-      requestSearch(searched);
-    }
   };
+
+  const handleRowClick = (employee) => {
+    setSelectedEmployee(employee);
+  };
+
   return (
     <>
       <Box className="breadcrumb" sx={{ m: 1 }}>
         <Breadcrumb routeSegments={[{ name: 'Employees List' }]} />
       </Box>
       <Container>
-        {employeeViewPermission == 1 && (
-          <SimpleCard>
-            <Grid container spacing={1}>
-              <Grid item xs={12} sm={6} md={6} lg={8}>
-                <span
+        {employeeViewPermission === 1 ? (
+          <Grid container spacing={2}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={6}
+              lg={6}
+              style={{
+                backgroundColor: '#ffffff',
+                borderRadius: '5px',
+                padding: '25px',
+              }}
+            >
+              <Grid container spacing={1}>
+                <Grid item xs={6}>
+                  <span
+                    style={{
+                      fontSize: '1rem',
+                      fontWeight: '500',
+                      textTransform: 'capitalize',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    Employees List
+                  </span>
+                </Grid>
+                <Grid item xs={6}>
+                  <AppTableSearchBox onSearch={handleSearch} top="148px" />
+                </Grid>
+              </Grid>
+              <PaginationTable
+                loading={loading}
+                fetchData={fetchData}
+                data={searched ? requestSearch(searched) : data}
+                page={page}
+                onPageSet={setPage}
+                onRowClick={handleRowClick}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={6} lg={6}>
+              {selectedEmployee && (
+                <SimpleCard
                   style={{
-                    fontSize: '1rem',
-                    fontWeight: '500',
-                    textTransform: 'capitalize',
-                    marginBottom: '16px',
+                    padding: '20px',
+                    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+                    borderRadius: '12px',
+                    backgroundColor: '#f9f9f9',
                   }}
                 >
-                  Employees List
-                </span>
-              </Grid>
-              <Grid item xs={12} sm={3} md={3} lg={2}>
-                <AppTableSearchBox onSearch={handleSearch} top="148px" />
-              </Grid>
-              <Grid item xs={12} sm={3} md={3} lg={2}>
-                {employeeCreatePermission === 1 && (
-                  <StyledButton
-                    variant="contained"
-                    size="small"
-                    color="primary"
-                    onClick={() => navigate(commonRoutes.employeeMaster.employeeMasterAdd)}
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      textAlign: 'center',
+                      marginBottom: '20px',
+                    }}
                   >
-                    Create Employee
-                  </StyledButton>
-                )}
-              </Grid>
+                    {selectedEmployee.salutation === 'Mr.' ? (
+                      <img
+                        src="/assets/images/avatars/001-man.svg"
+                        alt=""
+                        style={{ width: '150px', marginBottom: '15px', borderRadius: '50%' }}
+                      />
+                    ) : (
+                      <img
+                        src="/assets/images/avatars/006-woman-1.svg"
+                        alt=""
+                        style={{ width: '150px', marginBottom: '15px', borderRadius: '50%' }}
+                      />
+                    )}
+
+                    <h2 style={{ color: '#3b5998', marginBottom: '5px', fontWeight: '600' }}>
+                      {selectedEmployee.salutation} {selectedEmployee.first_name}{' '}
+                      {selectedEmployee.last_name}
+                    </h2>
+                    <h5 style={{ color: '#3b5998', marginBottom: '15px', fontWeight: '500' }}>
+                      #{selectedEmployee.emp_id} | {selectedEmployee.dpro_designation_offered}
+                    </h5>
+                  </div>
+                  <hr style={{ borderColor: '#dedede', marginBottom: '20px' }} />
+                  <div>
+                    <table align="center" style={{ width: '100%' }}>
+                      <tr>
+                        <td
+                          style={{
+                            color: '#888888',
+                            paddingRight: '15px',
+                            fontWeight: '500',
+                            width: '50%',
+                          }}
+                        >
+                          Designation:
+                        </td>
+                        <td style={{ color: '#333333', textAlign: 'right', fontWeight: '500' }}>
+                          {selectedEmployee.dpro_designation_offered}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style={{ color: '#888888', paddingRight: '15px', fontWeight: '500' }}>
+                          Email:
+                        </td>
+                        <td style={{ color: '#333333', textAlign: 'right', fontWeight: '500' }}>
+                          {selectedEmployee.email1}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style={{ color: '#888888', paddingRight: '15px', fontWeight: '500' }}>
+                          Contact:
+                        </td>
+                        <td style={{ color: '#333333', textAlign: 'right', fontWeight: '500' }}>
+                          {selectedEmployee.phone_mobile}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style={{ color: '#888888', paddingRight: '15px', fontWeight: '500' }}>
+                          Permanent Address:
+                        </td>
+                        <td style={{ color: '#333333', textAlign: 'right', fontWeight: '500' }}>
+                          {selectedEmployee.permanent_address}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style={{ color: '#888888', paddingRight: '15px', fontWeight: '500' }}>
+                          Temp Address:
+                        </td>
+                        <td style={{ color: '#333333', textAlign: 'right', fontWeight: '500' }}>
+                          {selectedEmployee.temp_address}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style={{ color: '#888888', paddingRight: '15px', fontWeight: '500' }}>
+                          Work Location:
+                        </td>
+                        <td style={{ color: '#333333', textAlign: 'right', fontWeight: '500' }}>
+                          {selectedEmployee.work_location}
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </SimpleCard>
+              )}
             </Grid>
-            <PaginationTable
-              loading={loading}
-              fetchData={fetchData}
-              data={searched ? requestSearch(searched) : data}
-              page={page}
-              onPageSet={setPage}
-            />
-          </SimpleCard>
+          </Grid>
+        ) : (
+          <h1>You don't have access to view this page</h1>
         )}
-        {!(employeeViewPermission === 1) && <h1>You dont have access to view this page</h1>}
       </Container>
     </>
   );

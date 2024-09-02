@@ -1,25 +1,28 @@
-import { Edit, Email, Group, Work } from '@mui/icons-material';
 import {
   Badge,
   Box,
-  Button,
   Card,
   Modal,
   styled,
   Typography,
-  useTheme,
   Tabs,
   Tab,
   IconButton,
+  Paper,
+  useTheme,
 } from '@mui/material';
+import { Edit } from '@mui/icons-material';
 import { Fragment, useEffect, useState } from 'react';
-import { H4, Small } from 'app/components/Typography';
-import { getAccessToken } from 'app/utils/utils';
-import axios from 'axios';
-import commonConfig from '../commonConfig';
 import EditUserProfile from './EditUserProfile';
 import ResetPassword from './ResetPassword';
 import SnackbarUtils from 'SnackbarUtils';
+import axios from 'axios';
+import commonConfig from '../commonConfig';
+import { getAccessToken } from 'app/utils/utils';
+import PersonalTab from './PersonalTab';
+import AddressTab from './AddressTab';
+import AccountTab from './AccountTab';
+import EmploymentTab from './EmploymentTab';
 
 const style = {
   position: 'absolute',
@@ -62,21 +65,9 @@ const AvatarBadge = ({ children, width, height, ...props }) => {
 
 const FlexBox = styled(Box)({ display: 'flex' });
 
-const FlexBetween = styled(Box)({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-});
-const FlexCenter = styled(Box)({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-});
-
-// styled components
 const ContentWrapper = styled(Box)(({ theme }) => ({
   zIndex: 1,
-  marginTop: 55,
+  marginTop: 155,
   position: 'relative',
   [theme.breakpoints.down('sm')]: { paddingLeft: 20, paddingRight: 20 },
 }));
@@ -84,76 +75,103 @@ const ContentWrapper = styled(Box)(({ theme }) => ({
 const CoverPicWrapper = styled(Box)(() => ({
   top: 0,
   left: 0,
-  height: 125,
+  height: 250,
   width: '100%',
   overflow: 'hidden',
   position: 'absolute',
-  backgroundColor: '#C6D3ED',
+  backgroundColor: '#00246b',
 }));
-
+const CoverText = styled(Typography)(({ theme }) => ({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  color: 'white',
+  fontWeight: 'bold',
+  fontSize: '2rem',
+  textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
+  zIndex: 2,
+  textAlign: 'center',
+}));
 const ImageWrapper = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
-  width: 100,
-  height: 100,
+  width: 160,
+  height: 160,
   margin: 'auto',
   overflow: 'hidden',
   borderRadius: '50%',
-  border: '2px solid',
-  borderColor: 'white',
+  border: '3px solid',
+  borderColor: '#22cfe2',
   backgroundColor: theme.palette.primary[200],
 }));
 
-const CenteredBox = styled(Box)({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  textAlign: 'center',
-  padding: '20px',
-});
-
-const DetailBox = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  textAlign: 'center',
-  backgroundColor: theme.palette.background.default,
-  borderRadius: '10px',
-  padding: '20px',
-  margin: '10px 0',
-  boxShadow: `0 0 10px ${theme.palette.grey[300]}`,
+// Styled Tabs component
+const StyledTabs = styled(Tabs)(({ theme }) => ({
+  marginTop: theme.spacing(4),
+  '& .MuiTabs-flexContainer': {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  '& .MuiTabs-indicator': {
+    backgroundColor: theme.palette.primary.main,
+    height: '4px',
+    borderRadius: '4px',
+  },
 }));
 
+// Styled Tab component
+const StyledTab = styled((props) => <Tab {...props} />)(({ theme, active }) => ({
+  flex: 1, // Make each tab take up equal space
+  color: active ? theme.palette.primary.contrastText : theme.palette.text.secondary,
+  fontWeight: 'bold',
+  backgroundColor: active
+    ? theme.palette.mode === 'dark'
+      ? '#cb8b59' // Dark theme active tab background color
+      : '#cb8b59' // Light theme active tab background color
+    : '#22cfe2', // Inactive tab background color
+  borderRadius: '8px',
+  transition: 'background-color 0.3s ease-in-out, color 0.3s ease-in-out',
+  border: `1px solid ${theme.palette.divider}`,
+  margin: '0 4px',
+}));
+
+// Styled TabPanel component
+const TabPanel = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  marginTop: theme.spacing(2),
+  boxShadow: `0 0 10px ${theme.palette.grey[300]}`,
+  borderRadius: '8px',
+}));
+const GradientBackground = styled(Box)(({ theme }) => ({
+  borderRadius: theme.shape.borderRadius,
+  padding: theme.spacing(3),
+  color: 'blue',
+}));
+const StyledDiv = styled('div')({
+  position: 'relative', // Ensure the div is positioned relative so the ::before element is correctly positioned
+  '& h3': {
+    position: 'relative', // Make sure the h1 is positioned relative to apply the ::before pseudo-element
+    textTransform: 'capitalize',
+    '&::before': {
+      position: 'absolute',
+      left: 0,
+      bottom: 0,
+      width: '60px',
+      height: '2px',
+      content: '""',
+      backgroundColor: '#c50000',
+    },
+  },
+});
+
 const UserProfile = () => {
-  const [userObj, setData] = useState([]);
+  const [userdata, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('personal'); // State to manage the active tab
+  const [activeTab, setActiveTab] = useState('personal');
   const [openModal, setOpenModal] = useState(false);
   const [openResetPasswordModal, setOpenResetPasswordModal] = useState(false);
   const authToken = getAccessToken();
-  const theme = useTheme();
-
-  const FetchOtp = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.post(commonConfig.urls.forget_password, {
-        email: userObj?.email,
-        entity_id: process.env.REACT_APP_env_entity_id,
-      });
-      setLoading(false);
-      if (response.data && response.data.Status === 'Success') {
-        SnackbarUtils.success(response.data.Message);
-        setLoading(false);
-      } else {
-        SnackbarUtils.error('Email Not Available...!!!');
-      }
-    } catch (error) {
-      setLoading(false);
-      SnackbarUtils.error(error?.message || 'Something went wrong!!');
-    }
-  };
 
   const fetchData = async () => {
     try {
@@ -166,17 +184,15 @@ const UserProfile = () => {
       });
       setLoading(false);
       if (response && response['data'] && response['data']['Response'])
-        setData(response['data']['Response']);
+        setData(response['data']['Response'][0]);
     } catch (error) {
       setLoading(false);
       SnackbarUtils.error(error?.message || 'Something went wrong!!');
     }
   };
-
   useEffect(() => {
     fetchData();
   }, []);
-
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
@@ -189,131 +205,75 @@ const UserProfile = () => {
             width="100%"
             height="100%"
             alt="Team Member"
-            src="/assets/images/study-2.jpg"
+            src="/assets/images/244.jpg"
             style={{ objectFit: 'cover' }}
           />
+          <CoverText>
+            <StyledDiv className="two alt-two">
+              <h3>Hi,{userdata.first_name}</h3>
+            </StyledDiv>
+          </CoverText>
         </CoverPicWrapper>
 
         <ContentWrapper>
           <FlexBox justifyContent="center">
-            <AvatarBadge
-              badgeContent={
-                <IconButton
-                  aria-label="upload picture"
-                  component="span"
-                  onClick={() => setOpenModal(true)}
-                >
-                  <Edit sx={{ fontSize: 16, color: 'white' }} />
-                </IconButton>
-              }
-            >
+            <AvatarBadge>
               <ImageWrapper>
                 <img
-                  src={userObj?.profile_pic || '/assets/images/avatars/001-man.svg'}
+                  src={userdata?.profile_pic || '/assets/images/avatars/001-man.svg'}
                   alt="Team Member"
                 />
               </ImageWrapper>
             </AvatarBadge>
           </FlexBox>
 
-          <Box mt={2}>
-            <H4 fontWeight={600} textAlign="center">
-              {userObj?.first_name} {userObj?.last_name}
-            </H4>
+          {/* Tabs for different sections */}
+          <StyledTabs value={activeTab} onChange={handleTabChange} aria-label="user profile tabs">
+            <StyledTab label="Personal" value="personal" active={activeTab === 'personal'} />
+            <StyledTab label="Address" value="Address" active={activeTab === 'Address'} />
+            <StyledTab label="Account" value="Account" active={activeTab === 'Account'} />
+            <StyledTab
+              label="Employemnt & Job"
+              value="employemnt"
+              active={activeTab === 'employemnt'}
+            />
+            <StyledTab label="Documents" value="Documents" active={activeTab === 'Documents'} />
+          </StyledTabs>
 
-            <Tabs value={activeTab} onChange={handleTabChange} centered>
-              <Tab label="Personal Information" value="personal" />
-              <Tab label="Professional Information" value="professional" />
-              <Tab label="Documentation" value="documentation" />
-            </Tabs>
-
-            <CenteredBox mt={2}>
-              {activeTab === 'personal' && (
-                <DetailBox>
-                  <FlexBetween>
-                    <Typography variant="h6" gutterBottom>
-                      Personal Information
-                    </Typography>
-                    <IconButton
-                      aria-label="edit personal information"
-                      component="span"
-                      onClick={() => setOpenModal(true)}
-                    >
-                      <Edit sx={{ fontSize: 16, color: theme.palette.primary.main }} />
-                    </IconButton>
-                  </FlexBetween>
-                  <Typography variant="body2" color="text.secondary">
-                    Email: {userObj.email}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Phone: {userObj.phone}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Address: {userObj.address}
-                  </Typography>
-                </DetailBox>
-              )}
-
-              {activeTab === 'professional' && (
-                <DetailBox>
-                  <FlexBetween>
-                    <Typography variant="h6" gutterBottom>
-                      Professional Information
-                    </Typography>
-                    <IconButton
-                      aria-label="edit professional information"
-                      component="span"
-                      onClick={() => setOpenModal(true)}
-                    >
-                      <Edit sx={{ fontSize: 16, color: theme.palette.primary.main }} />
-                    </IconButton>
-                  </FlexBetween>
-                  <Typography variant="body2" color="text.secondary">
-                    Group: {userObj.group}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Role: {userObj.role}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Department: {userObj.department}
-                  </Typography>
-                </DetailBox>
-              )}
-
-              {activeTab === 'documentation' && (
-                <DetailBox>
-                  <FlexBetween>
-                    <Typography variant="h6" gutterBottom>
-                      Documentation
-                    </Typography>
-                    <IconButton
-                      aria-label="edit documentation"
-                      component="span"
-                      onClick={() => setOpenModal(true)}
-                    >
-                      <Edit sx={{ fontSize: 16, color: theme.palette.primary.main }} />
-                    </IconButton>
-                  </FlexBetween>
-                  <Typography variant="body2" color="text.secondary">
-                    Documents: {userObj.documents}
-                  </Typography>
-                </DetailBox>
-              )}
-            </CenteredBox>
-
-            <Box mt={2} display="flex" justifyContent="center">
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={() => setOpenResetPasswordModal(true)}
-              >
-                Reset Password
-              </Button>
-            </Box>
+          <Box sx={{ padding: 2 }}>
+            {activeTab === 'personal' && (
+              <TabPanel>
+                <PersonalTab theme userData={userdata} />
+              </TabPanel>
+            )}
+            {activeTab === 'Address' && (
+              <TabPanel>
+                <AddressTab theme userData={userdata} />
+              </TabPanel>
+            )}
+            {activeTab === 'Account' && (
+              <TabPanel>
+                <AccountTab theme userData={userdata} />
+              </TabPanel>
+            )}
+            {activeTab === 'employemnt' && (
+              <TabPanel>
+                <EmploymentTab theme userData={userdata} />
+              </TabPanel>
+            )}
+            {activeTab === 'Documents' && (
+              <TabPanel>
+                <Typography variant="h6" gutterBottom>
+                  Documents
+                </Typography>
+                {/* Display or Form fields for Documents Info */}
+              </TabPanel>
+            )}
           </Box>
         </ContentWrapper>
       </Card>
 
+      {/* Edit Profile Modal */}
       <Modal
         open={openModal}
         onClose={() => setOpenModal(false)}
@@ -321,10 +281,11 @@ const UserProfile = () => {
         aria-describedby="edit-user-profile-description"
       >
         <Box sx={style}>
-          <EditUserProfile tab={activeTab} user={userObj} onclose={() => setOpenModal(false)} />
+          <EditUserProfile tab={activeTab} user={userdata} onClose={() => setOpenModal(false)} />
         </Box>
       </Modal>
 
+      {/* Reset Password Modal */}
       <Modal
         open={openResetPasswordModal}
         onClose={() => setOpenResetPasswordModal(false)}
@@ -332,7 +293,7 @@ const UserProfile = () => {
         aria-describedby="reset-password-description"
       >
         <Box sx={style}>
-          <ResetPassword onclose={() => setOpenResetPasswordModal(false)} />
+          <ResetPassword onClose={() => setOpenResetPasswordModal(false)} />
         </Box>
       </Modal>
     </Fragment>

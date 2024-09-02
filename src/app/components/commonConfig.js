@@ -84,11 +84,13 @@ const commonConfig = {
     pullLookerClients: `${baseURL}/pull_looker_clients`,
     pullLookerPHMFolders: `${baseURL}/pull_looker_phmfolders`,
     pullLookerDashboards: `${baseURL}/pull_looker_dashboards`,
-    getUserProfile: `${baseURL}/profile`,
+    getUserProfile: `${baseURL}/emp_profile`,
     updateUserProfile: `${baseURL}/profile_update`,
     getInTouch: `${baseURL}/get_in_touch`,
     getEmployeeList: `${baseURL}/employee`,
     employee: `${baseURL}/employee`,
+    getPowerBiDashboard: `${baseURL}/getembedtoken`,
+    getZohoDashboard: `${baseURL}/zohoAuth`,
   },
 };
 
