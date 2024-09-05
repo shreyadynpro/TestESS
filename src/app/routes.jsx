@@ -22,8 +22,8 @@ import BIDemo from './views/dashboard/BIDemo';
 import EmployeeMasterModuleRoutes from './components/EmployeeModule/employeeModuleRoutes';
 // import EmployeeList from './components/EmployeeList/EmployeeList';
 import Tasks from './components/ToDo/Tasks';
-import Payslips from './components/Salary/Payslips';
-import PayslipPDF from './components/Salary/PayslipPDF';
+import Payslips from './components/Salary/Payslip/Payslips';
+import PayslipPDF from './components/Salary/Payslip/PayslipPDF';
 
 const routes = [
   {

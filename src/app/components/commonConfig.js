@@ -91,6 +91,8 @@ const commonConfig = {
     employee: `${baseURL}/employee`,
     getPowerBiDashboard: `${baseURL}/getembedtoken`,
     getZohoDashboard: `${baseURL}/zohoAuth`,
+    getMonths: `${baseURL}/getmonth`,
+    getpayslip: `${baseURL}/getpayslip`,
   },
 };
 

@@ -3,8 +3,8 @@ const commonRoutes = {
   home: '/home',
   // employees: '/EmployeeList',
   tasks: '/todo/tasks',
-  payslips: '/salary/payslips',
-  payslipPDF: '/salary/payslips/PDF',
+  payslips: '/salary/payslip/payslips',
+  payslipPDF: '/salary/payslip/payslips/PDF',
   session: {
     signup: '/signup',
     signin: '/signin',

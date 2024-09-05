@@ -52,21 +52,19 @@ const MenuItem = styled(({ isProfile, ...rest }) => <Box {...rest} />)(({ theme,
   },
 }));
 
-const MenuLabel = styled(({ isProfile, ...rest }) => <Typography {...rest} />)(({ theme, isProfile, fontSize, fontWeight, color }) => ({
-  fontWeight: isProfile ? 'bold' : fontWeight || 'medium',
-  fontStyle: isProfile ? 'italic' : 'normal',
-  fontSize: fontSize || '16px',
-  color: isProfile ? '#00246b' : color || theme.palette.text.primary, 
-}));
-
-
+const MenuLabel = styled(({ isProfile, ...rest }) => <Typography {...rest} />)(
+  ({ theme, isProfile, fontSize, fontWeight, color }) => ({
+    fontWeight: isProfile ? 'bold' : fontWeight || 'medium',
+    fontStyle: isProfile ? 'italic' : 'normal',
+    fontSize: fontSize || '16px',
+    color: isProfile ? '#00246b' : color || theme.palette.text.primary,
+  })
+);
 
 const MenuIcon = styled(Box)(({ theme }) => ({
   fontSize: '24px',
   marginRight: '16px',
 }));
-
-
 
 const MenuArrow = styled(Box)(({ theme }) => ({
   marginLeft: 'auto',
@@ -88,15 +86,15 @@ const Sidenav = () => {
   }));
 
   const allMenuItems = [
-    { 
-      title: `${user?.first_name || ''} ${user?.last_name || ''},`, 
-      path: '/Profile', 
+    {
+      title: `${user?.first_name || ''} ${user?.last_name || ''},`,
+      path: '/Profile',
       fontSize: '20px',
       fontWeight: 'bold',
-      color:'#00246b',
-      isProfile: true, 
+      color: '#00246b',
+      isProfile: true,
       // icon: <BadgeIcon />,
-      permissionKey: 'roles'
+      permissionKey: 'roles',
     },
     {
       title: 'Group Master',
@@ -189,7 +187,7 @@ const Sidenav = () => {
       icon: <MonetizationOnIcon />,
       permissionKey: 'salary',
       subMenu: [
-        { title: 'Payslips', path: '/salary/payslips', permissionKey: 'salary' },
+        { title: 'Payslips', path: '/salary/payslip/payslips', permissionKey: 'salary' },
         {
           title: 'IT Statements',
           path: '/salary/it-statements',
@@ -213,7 +211,12 @@ const Sidenav = () => {
         { title: 'Salary Revision', path: '/salary/revision', permissionKey: 'salary' },
       ],
     },
-    { title: 'Documents', path: '/documents', icon: <DescriptionIcon />, permissionKey: 'documents' },
+    {
+      title: 'Documents',
+      path: '/documents',
+      icon: <DescriptionIcon />,
+      permissionKey: 'documents',
+    },
     {
       title: 'Attendance',
       path: '/attendance',
@@ -224,7 +227,12 @@ const Sidenav = () => {
         { title: 'Monthly', path: '/attendance/monthly', permissionKey: 'attendanceMonthly' },
       ],
     },
-    { title: 'Activities', path: '/activities', icon: <CampaignIcon />, permissionKey: 'activities' },
+    {
+      title: 'Activities',
+      path: '/activities',
+      icon: <CampaignIcon />,
+      permissionKey: 'activities',
+    },
     { title: 'Help', path: '/help', icon: <InfoIcon />, permissionKey: 'help' },
   ];
 
@@ -253,7 +261,6 @@ const Sidenav = () => {
         [path]: false,
       }));
     }
-    
   };
 
   return (
