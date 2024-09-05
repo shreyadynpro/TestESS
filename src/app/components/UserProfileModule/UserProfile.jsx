@@ -2,20 +2,35 @@ import {
   Badge,
   Box,
   Card,
-  Modal,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   styled,
   Typography,
   Tabs,
   Tab,
   IconButton,
+  MenuItem,
+  Select,
+  Grid,
+  TextField,
+  InputAdornment,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  InputLabel,
+  FormControlLabel,
+  Radio,
   Paper,
+  Button,
   useTheme,
 } from '@mui/material';
 import { Edit } from '@mui/icons-material';
+import { FaUser, FaEnvelope, FaPhoneAlt, FaCalendar, FaBuilding, FaKey } from 'react-icons/fa';
+
 import { Fragment, useEffect, useState } from 'react';
-import EditUserProfile from './EditUserProfile';
-import ResetPassword from './ResetPassword';
-import SnackbarUtils from 'SnackbarUtils';
 import axios from 'axios';
 import commonConfig from '../commonConfig';
 import { getAccessToken } from 'app/utils/utils';
@@ -24,16 +39,20 @@ import AddressTab from './AddressTab';
 import AccountTab from './AccountTab';
 import EmploymentTab from './EmploymentTab';
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 500,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 4,
-};
+const StyledButton = styled(Button)(({ theme, active }) => ({
+  margin: theme.spacing(1),
+  color: active ? theme.palette.primary.contrastText : theme.palette.text.secondary,
+  fontWeight: 'bold',
+  backgroundColor: active
+    ? theme.palette.mode === 'dark'
+      ? '#cb8b59' // Dark theme active tab background color
+      : '#cb8b59' // Light theme active tab background color
+    : '#22cfe2', // Inactive tab background color
+  borderRadius: '8px',
+  transition: 'background-color 0.3s ease-in-out, color 0.3s ease-in-out',
+  border: `1px solid ${theme.palette.divider}`,
+  marginTop: 0,
+}));
 
 const StyledBadge = styled(Badge)(({ theme, width, height }) => ({
   '& .MuiBadge-badge': {
@@ -81,6 +100,7 @@ const CoverPicWrapper = styled(Box)(() => ({
   position: 'absolute',
   backgroundColor: '#00246b',
 }));
+
 const CoverText = styled(Typography)(({ theme }) => ({
   position: 'absolute',
   top: '50%',
@@ -93,6 +113,7 @@ const CoverText = styled(Typography)(({ theme }) => ({
   zIndex: 2,
   textAlign: 'center',
 }));
+
 const ImageWrapper = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
@@ -136,22 +157,10 @@ const StyledTab = styled((props) => <Tab {...props} />)(({ theme, active }) => (
   margin: '0 4px',
 }));
 
-// Styled TabPanel component
-const TabPanel = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  marginTop: theme.spacing(2),
-  boxShadow: `0 0 10px ${theme.palette.grey[300]}`,
-  borderRadius: '8px',
-}));
-const GradientBackground = styled(Box)(({ theme }) => ({
-  borderRadius: theme.shape.borderRadius,
-  padding: theme.spacing(3),
-  color: 'blue',
-}));
 const StyledDiv = styled('div')({
-  position: 'relative', // Ensure the div is positioned relative so the ::before element is correctly positioned
+  position: 'relative',
   '& h3': {
-    position: 'relative', // Make sure the h1 is positioned relative to apply the ::before pseudo-element
+    position: 'relative',
     textTransform: 'capitalize',
     '&::before': {
       position: 'absolute',
@@ -165,12 +174,26 @@ const StyledDiv = styled('div')({
   },
 });
 
+// Styled TabPanel component
+const TabPanel = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  marginTop: theme.spacing(2),
+  boxShadow: `0 0 10px ${theme.palette.grey[300]}`,
+  borderRadius: '8px',
+}));
+
 const UserProfile = () => {
   const [userdata, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('personal');
-  const [openModal, setOpenModal] = useState(false);
-  const [openResetPasswordModal, setOpenResetPasswordModal] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [openDialog, setOpenDialog] = useState(false);
+  const [formData, setFormData] = useState({
+    personal: {},
+    address: {},
+    account: {},
+    employment: {},
+  });
   const authToken = getAccessToken();
 
   const fetchData = async () => {
@@ -187,14 +210,47 @@ const UserProfile = () => {
         setData(response['data']['Response'][0]);
     } catch (error) {
       setLoading(false);
-      SnackbarUtils.error(error?.message || 'Something went wrong!!');
+      console.error(error?.message || 'Something went wrong!!');
     }
   };
+
   useEffect(() => {
     fetchData();
   }, []);
+
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
+  };
+
+  const [maritalStatus, setMaritalStatus] = useState(''); // Default value
+
+  const handleMaritalStatusChange = (event) => {
+    setMaritalStatus(event.target.value);
+  };
+
+  const handleFieldChange = (tab, field, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [tab]: {
+        ...prevData[tab],
+        [field]: value,
+      },
+    }));
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+    // Optionally, you can add validation logic here and update errors state
+  };
+
+  const handleSubmit = () => {
+    // Handle the submit action (e.g., sending the data to an API)
+    console.log('Form Data Submitted:', formData);
+    setOpenDialog(false);
   };
 
   return (
@@ -210,7 +266,7 @@ const UserProfile = () => {
           />
           <CoverText>
             <StyledDiv className="two alt-two">
-              <h3>Hi,{userdata.first_name}</h3>
+              <h3>Hi, {userdata.first_name}</h3>
             </StyledDiv>
           </CoverText>
         </CoverPicWrapper>
@@ -226,16 +282,25 @@ const UserProfile = () => {
               </ImageWrapper>
             </AvatarBadge>
           </FlexBox>
+          <Box textAlign="right">
+            <StyledButton
+              variant="contained"
+              color="primary"
+              onClick={() => setOpenDialog(true)}
+              startIcon={<Edit />}
+            >
+              Update Profile
+            </StyledButton>
+          </Box>
 
-          {/* Tabs for different sections */}
           <StyledTabs value={activeTab} onChange={handleTabChange} aria-label="user profile tabs">
             <StyledTab label="Personal" value="personal" active={activeTab === 'personal'} />
             <StyledTab label="Address" value="Address" active={activeTab === 'Address'} />
             <StyledTab label="Account" value="Account" active={activeTab === 'Account'} />
             <StyledTab
-              label="Employemnt & Job"
-              value="employemnt"
-              active={activeTab === 'employemnt'}
+              label="Employment & Job"
+              value="employment"
+              active={activeTab === 'employment'}
             />
             <StyledTab label="Documents" value="Documents" active={activeTab === 'Documents'} />
           </StyledTabs>
@@ -256,46 +321,647 @@ const UserProfile = () => {
                 <AccountTab theme userData={userdata} />
               </TabPanel>
             )}
-            {activeTab === 'employemnt' && (
+            {activeTab === 'employment' && (
               <TabPanel>
                 <EmploymentTab theme userData={userdata} />
               </TabPanel>
             )}
-            {activeTab === 'Documents' && (
-              <TabPanel>
-                <Typography variant="h6" gutterBottom>
-                  Documents
-                </Typography>
-                {/* Display or Form fields for Documents Info */}
-              </TabPanel>
-            )}
           </Box>
+
+          {/* Dialog box */}
+          <Dialog
+            open={openDialog}
+            onClose={() => setOpenDialog(false)}
+            maxWidth="lg" // Adjust this as needed
+            fullWidth
+            sx={{
+              '& .MuiDialog-paper': {
+                width: '80vw',
+                height: '80vh',
+              },
+            }}
+          >
+            <DialogTitle>Update Profile</DialogTitle>
+            <DialogContent>
+              <DialogContentText
+                sx={{
+                  backgroundColor: '#e8f5e9', // Light green background for the note
+                  border: '1px solid #4caf50', // Green border
+                  borderRadius: 1,
+                  padding: 2,
+                  fontSize: '1rem',
+                  fontWeight: 'bold',
+                  color: '#388e3c', // Darker green text color
+                  textAlign: 'left',
+                  marginBottom: 2,
+                }}
+              >
+                **THE PROFILE WILL BE UPDATED ONLY AFTER HR's APPROVAL**
+              </DialogContentText>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Typography
+                    variant="h6"
+                    align="left"
+                    style={{ color: '#00246b', fontSize: '16px' }}
+                  >
+                    Personal Information
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
+                    label="First Name"
+                    name="firstName"
+                    value={userdata.first_name}
+                    onChange={handleChange}
+                    error={!!errors.first_name}
+                    helperText={errors.first_name}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaUser />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
+                    label="Middle Name"
+                    name="mid_name"
+                    value={userdata.mid_name}
+                    onChange={handleChange}
+                    error={!!errors.mid_name}
+                    helperText={errors.mid_name}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaUser />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
+                    label="Last Name"
+                    name="lastName"
+                    value={userdata.last_name}
+                    onChange={handleChange}
+                    error={!!errors.last_name}
+                    helperText={errors.last_name}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaUser />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Email"
+                    name="email"
+                    type="email"
+                    value={userdata.email1}
+                    onChange={handleChange}
+                    error={!!errors.email1}
+                    helperText={errors.email1}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaEnvelope />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Phone"
+                    name="phone"
+                    value={userdata.phone_mobile}
+                    onChange={handleChange}
+                    error={!!errors.phone_mobile}
+                    helperText={errors.phone_mobile}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaPhoneAlt />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Date of Birth"
+                    name="dob"
+                    type="date"
+                    value={userdata.date_of_birth}
+                    onChange={handleChange}
+                    error={!!errors.date_of_birth}
+                    helperText={errors.date_of_birth}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaCalendar />
+                        </InputAdornment>
+                      ),
+                    }}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl component="fieldset">
+                      <FormLabel component="legend">Gender</FormLabel>
+                      <RadioGroup
+                        row
+                        aria-label="Gender"
+                        name="Gender"
+                        value={userdata.sex}
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel
+                          value="Male"
+                          control={
+                            <Radio
+                              sx={{
+                                color: '#22cfe2',
+                                '&.Mui-checked': {
+                                  color: '#cb8b59',
+                                },
+                              }}
+                            />
+                          }
+                          label="Male"
+                          sx={{
+                            '& .MuiFormControlLabel-label': {
+                              color: userdata.sex === 'Male' ? '#cb8b59' : '#00246b',
+                            },
+                          }}
+                        />
+                        <FormControlLabel
+                          value="Female"
+                          control={
+                            <Radio
+                              sx={{
+                                color: '#22cfe2',
+                                '&.Mui-checked': {
+                                  color: '#cb8b59',
+                                },
+                              }}
+                            />
+                          }
+                          label="Female"
+                          sx={{
+                            '& .MuiFormControlLabel-label': {
+                              color: userdata.sex === 'Female' ? '#cb8b59' : '#00246b',
+                            },
+                          }}
+                        />
+                      </RadioGroup>
+                    </FormControl>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <FormControl component="fieldset">
+                    <FormLabel component="legend">Marital Status</FormLabel>
+                    <RadioGroup
+                      row
+                      aria-label="Marital Status"
+                      name="marital_status"
+                      value={userdata.marital_status}
+                      onChange={handleChange}
+                    >
+                      <FormControlLabel
+                        value="Married"
+                        control={
+                          <Radio
+                            sx={{
+                              color: '#22cfe2',
+                              '&.Mui-checked': {
+                                color: '#cb8b59',
+                              },
+                            }}
+                          />
+                        }
+                        label="Married"
+                        sx={{
+                          '& .MuiFormControlLabel-label': {
+                            color: userdata.marital_status === 'Married' ? '#cb8b59' : '#00246b',
+                          },
+                        }}
+                      />
+                      <FormControlLabel
+                        value="Single"
+                        control={
+                          <Radio
+                            sx={{
+                              color: '#22cfe2',
+                              '&.Mui-checked': {
+                                color: '#cb8b59',
+                              },
+                            }}
+                          />
+                        }
+                        label="Single"
+                        sx={{
+                          '& .MuiFormControlLabel-label': {
+                            color: userdata.marital_status === 'Single' ? '#cb8b59' : '#00246b',
+                          },
+                        }}
+                      />
+                    </RadioGroup>
+                  </FormControl>
+                </Grid>
+              </Grid>
+
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Typography
+                    variant="h6"
+                    align="left"
+                    style={{ color: '#00246b', fontSize: '16px' }}
+                  >
+                    Present Address
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth>
+                    <InputLabel>Country</InputLabel>
+                    <Select
+                      name="country"
+                      value={userdata.primary_address_country}
+                      onChange={handleChange}
+                    >
+                      <MenuItem value="">Select a country</MenuItem>
+                      <MenuItem value="India">India</MenuItem>
+                      <MenuItem value="US">United States</MenuItem>
+                      <MenuItem value="UK">United Kingdom</MenuItem>
+                      <MenuItem value="CA">Canada</MenuItem>
+                      <MenuItem value="AU">Australia</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth>
+                    <InputLabel>State</InputLabel>
+                    <Select
+                      name="state"
+                      value={userdata.primary_address_state}
+                      onChange={handleChange}
+                    >
+                      <MenuItem value="">Select a state</MenuItem>
+                      <MenuItem value="Maharashtra">Maharashtra</MenuItem>
+                      <MenuItem value="Gujrat">Gujrat</MenuItem>
+                      <MenuItem value="Uttar Pradesh">Uttar Pradesh</MenuItem>
+                      <MenuItem value="Madhya Pradesh">Madhya Pradesh</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth>
+                    <InputLabel>City</InputLabel>
+                    <Select
+                      name="city"
+                      value={userdata.primary_address_city}
+                      onChange={handleChange}
+                    >
+                      <MenuItem value="">Select a city</MenuItem>
+                      <MenuItem value="Mumbai">Mumbai</MenuItem>
+                      <MenuItem value="Pune">Pune</MenuItem>
+                      <MenuItem value="Nashik">Nashik</MenuItem>
+                      <MenuItem value="Nagpur">Nagpur</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                  <TextField
+                    fullWidth
+                    label="Address"
+                    name="address"
+                    value={userdata.primary_address_street}
+                    onChange={handleChange}
+                    error={!!errors.primary_address_street}
+                    helperText={errors.primary_address_street}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaUser />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
+                    label="Pincode"
+                    name="pincode"
+                    value={userdata.primary_address_postalcode}
+                    onChange={handleChange}
+                    error={!!errors.primary_address_postalcode}
+                    helperText={errors.primary_address_postalcode}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaUser />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+              </Grid>
+
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Typography
+                    variant="h6"
+                    align="left"
+                    style={{ color: '#00246b', fontSize: '16px' }}
+                  >
+                    Permanent Address
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth>
+                    <InputLabel>State</InputLabel>
+                    <Select
+                      name="state"
+                      value={userdata.permanent_address_state}
+                      onChange={handleChange}
+                    >
+                      <MenuItem value="">Select a state</MenuItem>
+                      <MenuItem value="Maharashtra">Maharashtra</MenuItem>
+                      <MenuItem value="Gujrat">Gujrat</MenuItem>
+                      <MenuItem value="Uttar Pradesh">Uttar Pradesh</MenuItem>
+                      <MenuItem value="Madhya Pradesh">Madhya Pradesh</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth>
+                    <InputLabel>City</InputLabel>
+                    <Select
+                      name="city"
+                      value={userdata.permanent_address_city}
+                      onChange={handleChange}
+                    >
+                      <MenuItem value="">Select a city</MenuItem>
+                      <MenuItem value="Mumbai">Mumbai</MenuItem>
+                      <MenuItem value="Pune">Pune</MenuItem>
+                      <MenuItem value="Nashik">Nashik</MenuItem>
+                      <MenuItem value="Nagpur">Nagpur</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                  <TextField
+                    fullWidth
+                    label="Address"
+                    name="address"
+                    value={userdata.permanent_address_street}
+                    onChange={handleChange}
+                    error={!!errors.permanent_address_street}
+                    helperText={errors.permanent_address_street}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaUser />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
+                    label="Pincode"
+                    name="pincode"
+                    value={userdata.permanent_address_postalcode}
+                    onChange={handleChange}
+                    error={!!errors.permanent_address_postalcode}
+                    helperText={errors.permanent_address_postalcode}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaUser />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+              </Grid>
+
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Typography
+                    variant="h6"
+                    align="left"
+                    style={{ color: '#00246b', fontSize: '16px' }}
+                  >
+                    Emergency Contact
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Emergency Address"
+                    name="emergency_address"
+                    value={userdata.emergency_address}
+                    onChange={handleChange}
+                    error={!!errors.emergency_address}
+                    helperText={errors.emergency_address}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaUser />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Emergency Contact Name"
+                    name="emergency_contact_name"
+                    value={userdata.emergency_contact_name}
+                    onChange={handleChange}
+                    error={!!errors.emergency_contact_name}
+                    helperText={errors.emergency_contact_name}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaUser />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Emergency Contact Number"
+                    name="emergency_contact_number"
+                    value={userdata.emergency_contact_number}
+                    onChange={handleChange}
+                    error={!!errors.emergency_contact_number}
+                    helperText={errors.emergency_contact_number}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaPhoneAlt />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Relationship"
+                    name="emergency_contact_relationship"
+                    value={userdata.emergency_contact_relationship}
+                    onChange={handleChange}
+                    error={!!errors.emergency_contact_relationship}
+                    helperText={errors.emergency_contact_relationship}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaUser />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+              </Grid>
+
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Typography
+                    variant="h6"
+                    align="left"
+                    style={{ color: '#00246b', fontSize: '16px' }}
+                  >
+                    Bank Account Details
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
+                    label="Bank Name"
+                    name="bank_name"
+                    value={userdata.bank_name}
+                    onChange={handleChange}
+                    error={!!errors.bank_name}
+                    helperText={errors.bank_name}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaBuilding />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
+                    label="Account Holder's Name"
+                    name="account_holder_name"
+                    value={userdata.account_holder_name}
+                    onChange={handleChange}
+                    error={!!errors.account_holder_name}
+                    helperText={errors.account_holder_name}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaUser />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
+                    label="Account Number"
+                    name="account_number"
+                    value={userdata.account_number}
+                    onChange={handleChange}
+                    error={!!errors.account_number}
+                    helperText={errors.account_number}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaKey />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
+                    label="Branch Name"
+                    name="branch_name"
+                    value={userdata.branch_name}
+                    onChange={handleChange}
+                    error={!!errors.branch_name}
+                    helperText={errors.branch_name}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaBuilding />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
+                    label="IFSC Code"
+                    name="ifsc_code"
+                    value={userdata.ifsc_code}
+                    onChange={handleChange}
+                    error={!!errors.ifsc_code}
+                    helperText={errors.ifsc_code}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <FaKey />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+              </Grid>
+            </DialogContent>
+
+            <DialogActions>
+              <Button onClick={() => setOpenDialog(false)} color="secondary">
+                Cancel
+              </Button>
+              <StyledButton onClick={handleSubmit} variant="contained" color="primary">
+                Send
+              </StyledButton>
+            </DialogActions>
+          </Dialog>
         </ContentWrapper>
       </Card>
-
-      {/* Edit Profile Modal */}
-      <Modal
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        aria-labelledby="edit-user-profile"
-        aria-describedby="edit-user-profile-description"
-      >
-        <Box sx={style}>
-          <EditUserProfile tab={activeTab} user={userdata} onClose={() => setOpenModal(false)} />
-        </Box>
-      </Modal>
-
-      {/* Reset Password Modal */}
-      <Modal
-        open={openResetPasswordModal}
-        onClose={() => setOpenResetPasswordModal(false)}
-        aria-labelledby="reset-password"
-        aria-describedby="reset-password-description"
-      >
-        <Box sx={style}>
-          <ResetPassword onClose={() => setOpenResetPasswordModal(false)} />
-        </Box>
-      </Modal>
     </Fragment>
   );
 };

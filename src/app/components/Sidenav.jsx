@@ -22,12 +22,17 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { useSelector } from 'react-redux';
 import commonRoutes from './commonRoutes';
 
-const StyledScrollBar = styled(Scrollbar)(({ theme }) => ({
+const SidenavContainer = styled('div')(({ theme }) => ({
+  position: 'relative',
+  backgroundColor: theme.palette.background.default, // Apply background color to the entire sidenav
+  height: '100vh', // Ensure it covers the entire viewport height
+}));
+
+const StyledScrollBar = styled(Scrollbar)({
   paddingLeft: '0.1rem',
   paddingRight: '0.1rem',
   position: 'relative',
-  backgroundColor: '#fafafa',
-}));
+});
 
 const SideNavMobile = styled('div')(({ theme }) => ({
   position: 'fixed',
@@ -52,12 +57,17 @@ const MenuItem = styled(({ isProfile, ...rest }) => <Box {...rest} />)(({ theme,
   },
 }));
 
-const MenuLabel = styled(({ isProfile, ...rest }) => <Typography {...rest} />)(
-  ({ theme, isProfile, fontSize, fontWeight, color }) => ({
+const MenuLabel = styled(({ isProfile, active, ...rest }) => <Typography {...rest} />)(
+  ({ theme, isProfile, active, fontSize, fontWeight, color }) => ({
     fontWeight: isProfile ? 'bold' : fontWeight || 'medium',
     fontStyle: isProfile ? 'italic' : 'normal',
     fontSize: fontSize || '16px',
-    color: isProfile ? '#00246b' : color || theme.palette.text.primary,
+    color:
+      isProfile && active
+        ? theme.palette.mode === 'light'
+          ? '#00246b' // Light mode color
+          : '#22cfe2' // Dark mode color
+        : color || theme.palette.text.primary,
   })
 );
 
@@ -91,9 +101,7 @@ const Sidenav = () => {
       path: '/Profile',
       fontSize: '20px',
       fontWeight: 'bold',
-      color: '#00246b',
       isProfile: true,
-      // icon: <BadgeIcon />,
       permissionKey: 'roles',
     },
     {
@@ -248,50 +256,50 @@ const Sidenav = () => {
 
   const menuItems = filterMenuItems(allMenuItems);
 
-  const handleMenuItemClick = (path, hasSubMenu) => {
-    if (hasSubMenu) {
-      setOpenMenu((prev) => ({
-        ...prev,
-        [path]: !prev[path],
-      }));
-    } else {
-      navigate(path);
-      setOpenMenu((prev) => ({
-        ...prev,
-        [path]: false,
-      }));
-    }
+  const handleMenuClick = (path) => {
+    navigate(path);
+  };
+
+  const handleSubMenuClick = (index) => {
+    setOpenMenu((prev) => ({ ...prev, [index]: !prev[index] }));
   };
 
   return (
-    <Fragment>
-      <StyledScrollBar options={{ suppressScrollX: true }}>
+    <SidenavContainer>
+      <StyledScrollBar>
         {menuItems.map((item, index) => (
           <Fragment key={index}>
             <MenuItem
-              onClick={() => handleMenuItemClick(item.path, !!item.subMenu)}
+              onClick={
+                item.subMenu ? () => handleSubMenuClick(index) : () => handleMenuClick(item.path)
+              }
               isProfile={item.isProfile}
             >
-              <MenuIcon>{item.icon}</MenuIcon>
+              {item.icon && <MenuIcon>{item.icon}</MenuIcon>}
               <MenuLabel
                 isProfile={item.isProfile}
                 fontSize={item.fontSize}
                 fontWeight={item.fontWeight}
+                color={item.color}
               >
                 {item.title}
               </MenuLabel>
               {item.subMenu && (
-                <MenuArrow>
-                  {openMenu[item.path] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                <MenuArrow
+                  sx={{
+                    transform: openMenu[index] ? 'rotate(180deg)' : 'rotate(0deg)',
+                  }}
+                >
+                  {openMenu[index] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 </MenuArrow>
               )}
             </MenuItem>
             {item.subMenu && (
-              <Collapse in={openMenu[item.path]} timeout="auto" unmountOnExit>
+              <Collapse in={openMenu[index]} timeout="auto" unmountOnExit>
                 {item.subMenu.map((subItem, subIndex) => (
                   <SubMenuItem
                     key={`${index}-${subIndex}`}
-                    onClick={() => handleMenuItemClick(subItem.path, !!subItem.subMenu)}
+                    onClick={() => handleMenuClick(subItem.path)}
                   >
                     <MenuLabel>{subItem.title}</MenuLabel>
                   </SubMenuItem>
@@ -302,7 +310,7 @@ const Sidenav = () => {
         ))}
       </StyledScrollBar>
       <SideNavMobile />
-    </Fragment>
+    </SidenavContainer>
   );
 };
 
