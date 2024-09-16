@@ -263,13 +263,13 @@ const Payslips = () => {
 
                   <Grid item xs={12} sm={6}>
                     <Typography sx={{ mb: 1, fontSize: '15px' }}>
-                      <strong style={{ marginRight: '8px' }}>Employee ID:</strong>{' '}
+                      <strong style={{ marginRight: '8px' }}>Employee ID:</strong>
                       {payslipData.emp_id}
                     </Typography>
 
                     {payslipData.salary_type !== 'Monthly' && (
                       <Typography sx={{ mb: 1, fontSize: '15px' }}>
-                        <strong style={{ marginRight: '8px' }}>Per Day (INR):</strong>{' '}
+                        <strong style={{ marginRight: '8px' }}>Per Day (INR):</strong>
                         {payslipData.hours_payble}
                       </Typography>
                     )}

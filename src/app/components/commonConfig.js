@@ -93,6 +93,11 @@ const commonConfig = {
     getZohoDashboard: `${baseURL}/zohoAuth`,
     getMonths: `${baseURL}/getmonth`,
     getpayslip: `${baseURL}/getpayslip`,
+    updateEmpProfile: `${baseURL}/update_profile`,
+    docs: `${baseURL}/docs`,
+    docs_download: `${baseURL}/docs_download`,
+    generatePayslipPdf: `${baseURL}/generatePayslipPdf`,
+    generatePayslipZip: `${baseURL}/generatePayslipZip`,
   },
 };
 
