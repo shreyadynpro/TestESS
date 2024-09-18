@@ -11,6 +11,9 @@ import AccountTab from './AccountTab';
 import EmploymentTab from './EmploymentTab';
 import UpdateProfile from './UpdateProfile';
 import DocumentCenter from './DocumentCenter';
+import ChangePassword from './ChangePassword';
+import PersonalTabNormalUser from './PersonalTabNormalUser';
+import { useSelector } from 'react-redux';
 
 const StyledButton = styled(Button)(({ theme, active }) => ({
   margin: theme.spacing(1),
@@ -161,8 +164,13 @@ const UserProfile = () => {
   const [activeTab, setActiveTab] = useState('personal');
   const authToken = getAccessToken();
   const [openDialog, setOpenDialog] = useState(false); // State for dialog
+  const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
+  const user = useSelector((state) => state.userDetails?.user);
 
+  // Function to fetch user profile data
   const fetchData = async () => {
+    if (!user?.dynmis_empid) return; // Prevent API call if dynmis_empid is empty
+
     try {
       setLoading(true);
       const response = await axios(commonConfig.urls.getUserProfile, {
@@ -172,8 +180,7 @@ const UserProfile = () => {
         },
       });
       setLoading(false);
-      if (response && response['data'] && response['data']['Response'])
-        setData(response['data']['Response'][0]);
+      if (response?.data?.Response) setData(response.data.Response[0]);
     } catch (error) {
       setLoading(false);
       console.error(error?.message || 'Something went wrong!!');
@@ -181,8 +188,10 @@ const UserProfile = () => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (user?.dynmis_empid) {
+      fetchData();
+    }
+  }, [user?.dynmis_empid]);
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -201,7 +210,7 @@ const UserProfile = () => {
           />
           <CoverText>
             <StyledDiv className="two alt-two">
-              <h3>Hi, {userdata.first_name}</h3>
+              <h3>Hi, {user?.first_name}</h3>
             </StyledDiv>
           </CoverText>
         </CoverPicWrapper>
@@ -217,61 +226,89 @@ const UserProfile = () => {
               </ImageWrapper>
             </AvatarBadge>
           </FlexBox>
-          <Box textAlign="right">
+
+          <Box textAlign="right" display="flex" justifyContent="flex-end">
+            {user?.dynmis_empid && (
+              <StyledButton
+                variant="contained"
+                color="primary"
+                onClick={() => setOpenDialog(true)}
+                startIcon={<Edit />}
+              >
+                Update Profile
+              </StyledButton>
+            )}
             <StyledButton
               variant="contained"
               color="primary"
-              onClick={() => setOpenDialog(true)}
+              onClick={() => setOpenPasswordDialog(true)}
               startIcon={<Edit />}
             >
-              Update Profile
+              Change Password
             </StyledButton>
           </Box>
 
-          <StyledTabs value={activeTab} onChange={handleTabChange} aria-label="user profile tabs">
-            <StyledTab label="Personal" value="personal" active={activeTab === 'personal'} />
-            <StyledTab label="Address" value="Address" active={activeTab === 'Address'} />
-            <StyledTab label="Account" value="Account" active={activeTab === 'Account'} />
-            <StyledTab
-              label="Employment & Job"
-              value="employment"
-              active={activeTab === 'employment'}
-            />
-            <StyledTab label="Documents" value="Documents" active={activeTab === 'Documents'} />
-          </StyledTabs>
+          {/* Conditionally render the tabs */}
+          {!user?.dynmis_empid ? (
+            <Box sx={{ padding: 2 }}>
+              <TabPanel>
+                <PersonalTabNormalUser theme />
+              </TabPanel>
+            </Box>
+          ) : (
+            <Fragment>
+              <StyledTabs
+                value={activeTab}
+                onChange={handleTabChange}
+                aria-label="user profile tabs"
+              >
+                <StyledTab label="Personal" value="personal" active={activeTab === 'personal'} />
+                <StyledTab label="Address" value="Address" active={activeTab === 'Address'} />
+                <StyledTab label="Account" value="Account" active={activeTab === 'Account'} />
+                <StyledTab
+                  label="Employment & Job"
+                  value="employment"
+                  active={activeTab === 'employment'}
+                />
+                <StyledTab label="Documents" value="Documents" active={activeTab === 'Documents'} />
+              </StyledTabs>
 
-          <Box sx={{ padding: 2 }}>
-            {activeTab === 'personal' && (
-              <TabPanel>
-                <PersonalTab theme userData={userdata} />
-              </TabPanel>
-            )}
-            {activeTab === 'Address' && (
-              <TabPanel>
-                <AddressTab theme userData={userdata} />
-              </TabPanel>
-            )}
-            {activeTab === 'Account' && (
-              <TabPanel>
-                <AccountTab theme userData={userdata} />
-              </TabPanel>
-            )}
-            {activeTab === 'employment' && (
-              <TabPanel>
-                <EmploymentTab theme userData={userdata} />
-              </TabPanel>
-            )}
-            {activeTab === 'Documents' && (
-              <TabPanel>
-                <DocumentCenter theme userData={userdata} />
-              </TabPanel>
-            )}
-          </Box>
+              <Box sx={{ padding: 2 }}>
+                {activeTab === 'personal' && (
+                  <TabPanel>
+                    <PersonalTab theme userData={userdata} />
+                  </TabPanel>
+                )}
+                {activeTab === 'Address' && (
+                  <TabPanel>
+                    <AddressTab theme userData={userdata} />
+                  </TabPanel>
+                )}
+                {activeTab === 'Account' && (
+                  <TabPanel>
+                    <AccountTab theme userData={userdata} />
+                  </TabPanel>
+                )}
+                {activeTab === 'employment' && (
+                  <TabPanel>
+                    <EmploymentTab theme userData={userdata} />
+                  </TabPanel>
+                )}
+                {activeTab === 'Documents' && (
+                  <TabPanel>
+                    <DocumentCenter theme userData={userdata} />
+                  </TabPanel>
+                )}
+              </Box>
+            </Fragment>
+          )}
+
           <UpdateProfile
             open={openDialog}
             onClose={() => setOpenDialog(false)}
             userData={userdata}
           />
+          <ChangePassword open={openPasswordDialog} onClose={() => setOpenPasswordDialog(false)} />
         </ContentWrapper>
       </Card>
     </Fragment>

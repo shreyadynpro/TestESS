@@ -196,27 +196,27 @@ const Sidenav = () => {
       permissionKey: 'salary',
       subMenu: [
         { title: 'Payslips', path: '/salary/payslip/payslips', permissionKey: 'salary' },
-        {
-          title: 'IT Statements',
-          path: '/salary/it-statements',
-          permissionKey: 'salary',
-        },
-        {
-          title: 'IT Declaration',
-          path: '/salary/it-declaration',
-          permissionKey: 'salary',
-        },
-        {
-          title: 'Loans & Advances',
-          path: '/salary/loans-advances',
-          permissionKey: 'salary',
-        },
-        {
-          title: 'Reimbursement',
-          path: '/salary/reimbursement',
-          permissionKey: 'salary',
-        },
-        { title: 'Salary Revision', path: '/salary/revision', permissionKey: 'salary' },
+        // {
+        //   title: 'IT Statements',
+        //   path: '/salary/it-statements',
+        //   permissionKey: 'salary',
+        // },
+        // {
+        //   title: 'IT Declaration',
+        //   path: '/salary/it-declaration',
+        //   permissionKey: 'salary',
+        // },
+        // {
+        //   title: 'Loans & Advances',
+        //   path: '/salary/loans-advances',
+        //   permissionKey: 'salary',
+        // },
+        // {
+        //   title: 'Reimbursement',
+        //   path: '/salary/reimbursement',
+        //   permissionKey: 'salary',
+        // },
+        // { title: 'Salary Revision', path: '/salary/revision', permissionKey: 'salary' },
       ],
     },
     {
@@ -246,7 +246,12 @@ const Sidenav = () => {
 
   const filterMenuItems = (items) => {
     return items
-      .filter((item) => uaPermissions[item.permissionKey] === 1)
+      .filter((item) => {
+        // Always include the profile item
+        if (item.isProfile) return true;
+        // Filter other items based on permissions
+        return uaPermissions[item.permissionKey] === 1;
+      })
       .map((item) => ({
         ...item,
         subMenu: item.subMenu ? filterMenuItems(item.subMenu) : null,

@@ -20,6 +20,7 @@ const commonConfig = {
     login: `${baseURL}/login`,
     logout: `${baseURL}/logout`,
     refreshToken: `${baseURL}/refresh`,
+    changepassword: `${baseURL}/changepassword`,
     register: `${baseURL}/register`,
     validateOtp: `${baseURL}/validate_otp`,
     resendOtp: `${baseURL}/resend_otp`,
