@@ -3,8 +3,8 @@ const commonRoutes = {
   home: '/home',
   // employees: '/EmployeeList',
   tasks: '/todo/tasks',
-  payslips: '/salary/payslips',
-  payslipPDF: '/salary/payslips/PDF',
+  payslips: '/salary/payslip/payslips',
+  payslipPDF: '/salary/payslip/payslips/PDF',
   session: {
     signup: '/signup',
     signin: '/signin',
@@ -60,6 +60,10 @@ const commonRoutes = {
     reportsAdd: '/reports/add',
     reportsDelete: '/reports/delete',
     reportsEdit: '/reports/edit',
+    reportsGet: '/reports/get/:id', // Add :id as a parameter
+  },
+  Zohoreports: {
+    reportsZohoGet: '/zohoreport/get/:id', // Add :id as a parameter
   },
   generate_reports: {
     generate_reportsTabList: '/splitGenerateReports',

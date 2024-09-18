@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Grid, Card, CardContent, Typography, styled, useTheme } from '@mui/material';
 import TaskIcon from 'app/components/AppLandingPage/assets/images/tasks.jpg'; // Adjust path as needed
 import HolidayIcon from 'app/components/AppLandingPage/assets/images/calender.jpg'; // Adjust path as needed
@@ -65,6 +66,16 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
   letterSpacing: '1px',
 }));
 
+
+const Home = ({ greetingPosition = 'top-left' }) => {
+  const user = useSelector((state) => state.userDetails?.user);
+  const { uaPermissions } = useSelector((state) => ({
+    uaPermissions: state.userAccessPermissions.userPermissions,
+  }));
+
+  const theme = useTheme();
+
+
 const getGreeting = () => {
   const hours = new Date().getHours();
   if (hours < 12) return 'Good Morning';
@@ -112,13 +123,12 @@ const notifications = [
   { message: 'System maintenance scheduled for this weekend.', type: 'Alert' },
 ];
 
-const Home = ({ greetingPosition = 'top-left' }) => {
-  const theme = useTheme();
+
 
   return (
     <div style={{ position: 'relative', height: '100vh', backgroundColor: theme.palette.background.default, padding: '20px' }}>
       <GreetingRoot position={greetingPosition}>
-        {getGreeting()} User,
+        {getGreeting()} {user?.first_name || ''},
       </GreetingRoot>
       <Grid container spacing={3} style={{ marginTop: '80px' }}>
         <Grid item xs={12} md={4}>

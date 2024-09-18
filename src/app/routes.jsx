@@ -13,6 +13,7 @@ import groupUserMappingModuleRoutes from './components/GroupUserMappingModule/gr
 import localizationModuleRoutes from './components/LocalizationModule/localizationModuleRoutes';
 import MatxLayout from './components/MatxLayout/MatxLayout';
 import reportsModuleRoutes from './components/ReportsModule/reportsModuleRoutes';
+import reportZohoRoute from './components/ReportsModule/reportZohoRoute';
 import roleModuleRoutes from './components/Role Module/roleModuleRoutes';
 import userModuleRoutes from './components/UserModule/usermoduleRoutes';
 import userProfileRoutes from './components/UserProfileModule/UserProfileRoutes';
@@ -21,8 +22,8 @@ import BIDemo from './views/dashboard/BIDemo';
 import EmployeeMasterModuleRoutes from './components/EmployeeModule/employeeModuleRoutes';
 // import EmployeeList from './components/EmployeeList/EmployeeList';
 import Tasks from './components/ToDo/Tasks';
-import Payslips from './components/Salary/Payslips';
-import PayslipPDF from './components/Salary/PayslipPDF';
+import Payslips from './components/Salary/Payslip/Payslips';
+import PayslipPDF from './components/Salary/Payslip/PayslipPDF';
 
 const routes = [
   {
@@ -39,6 +40,7 @@ const routes = [
       ...lookerPageRoute,
       ...inviteUserRoute,
       ...reportsModuleRoutes,
+      ...reportZohoRoute,
       ...generateReportsModuleRoutes,
       ...clientModuleRoutes,
       ...GroupMasterModuleRoutes,
