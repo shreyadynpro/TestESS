@@ -40,13 +40,13 @@ const sections = [
     bgColor: '#ffebee',
     category: 'CompanyPolicy',
   },
-  {
-    title: 'Form16',
-    icon: <DescriptionIcon />,
-    description: 'Annual tax documents.',
-    bgColor: '#f3e5f5',
-    category: 'Form16',
-  },
+  // {
+  //   title: 'Form16',
+  //   icon: <DescriptionIcon />,
+  //   description: 'Annual tax documents.',
+  //   bgColor: '#f3e5f5',
+  //   category: 'Form16',
+  // },
   {
     title: 'Payslip',
     icon: <AccountBalanceIcon />,
@@ -54,13 +54,13 @@ const sections = [
     bgColor: '#e8f5e9',
     category: 'Payslip',
   },
-  {
-    title: 'IT Declaration',
-    icon: <ArticleIcon />,
-    description: 'Income tax declaration.',
-    bgColor: '#fff3e0',
-    category: 'ITDeclaration',
-  },
+  // {
+  //   title: 'IT Declaration',
+  //   icon: <ArticleIcon />,
+  //   description: 'Income tax declaration.',
+  //   bgColor: '#fff3e0',
+  //   category: 'ITDeclaration',
+  // },
 ];
 
 const DocumentCenter = () => {
