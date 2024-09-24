@@ -79,6 +79,8 @@ const UpdateProfile = ({ open, onClose, userData }) => {
     gender: '',
   });
 
+  const [initialData, setInitialData] = useState({});
+
   const [state, dispatch] = useReducer(reducer, {
     loading: false,
     open: false,
@@ -88,14 +90,17 @@ const UpdateProfile = ({ open, onClose, userData }) => {
 
   useEffect(() => {
     if (userData) {
-      setFormData({
+      const initialFormState = {
+        fname: userData.first_name || '',
+        lname: userData.last_name || '',
+        pemail: userData.email1 || '',
         first_name: userData.first_name || '',
         last_name: userData.last_name || '',
         middle_name: userData.mid_name || '',
         personal_email: userData.email1 || '',
         contact: userData.phone_mobile || '',
         dob: userData.date_of_birth || '',
-        gender: userData.sex || '', // Ensure that gender is set correctly
+        gender: userData.sex || '',
         marital_status: userData.marital_status || '',
         present_country: userData.primary_address_country || '',
         present_state: userData.primary_address_state || '',
@@ -110,7 +115,9 @@ const UpdateProfile = ({ open, onClose, userData }) => {
         emergency_name: userData.emergency_contact_name || '',
         emergency_contact: userData.emergency_contact_no || '',
         emergency_relationship: userData.emergency_contact_relatio || '',
-      });
+      };
+      setFormData(initialFormState);
+      setInitialData(initialFormState); // Store the initial data for comparison
     }
   }, [userData]);
 
@@ -120,13 +127,42 @@ const UpdateProfile = ({ open, onClose, userData }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const getChangedFields = () => {
+    const changedFields = {};
+    let hasChanges = false;
+
+    Object.keys(formData).forEach((key) => {
+      if (formData[key] !== initialData[key]) {
+        changedFields[key] = formData[key];
+        hasChanges = true; // Set flag if any field has changed
+      }
+    });
+
+    // Always include fname if there are any changes
+    if (hasChanges) {
+      changedFields.fname = initialData.first_name;
+      changedFields.lname = initialData.last_name;
+      changedFields.pemail = initialData.personal_email;
+    }
+
+    return changedFields;
+  };
   async function handleSubmit() {
-    console.log('Form Data:', formData);
+    const changedData = getChangedFields();
+
+    // Check if no changes were detected
+    if (Object.keys(changedData).length === 0) {
+      SnackbarUtils.warning('No changes detected');
+      return;
+    }
+
+    console.log('Changed Data:', changedData);
     onClose();
+
     const authToken = getAccessToken();
     try {
       dispatch({ type: 'LOADING', bool: true });
-      const response = await axios.post(commonConfig.urls.updateEmpProfile, formData, {
+      const response = await axios.post(commonConfig.urls.updateEmpProfile, changedData, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       dispatch({ type: 'LOADING', bool: false });
@@ -138,14 +174,15 @@ const UpdateProfile = ({ open, onClose, userData }) => {
         );
       }
       if (response && response.data.Status === 'Success') {
-        SnackbarUtils.success('Mail Send Successfully');
-        navigate(commonRoutes.users.usertablist);
+        SnackbarUtils.success('Profile Updated Successfully');
+        navigate(commonRoutes.home);
       }
     } catch (error) {
       dispatch({ type: 'LOADING', bool: false });
       SnackbarUtils.error(error?.message || 'Something went wrong!!');
     }
   }
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>Update Profile</DialogTitle>
@@ -166,10 +203,11 @@ const UpdateProfile = ({ open, onClose, userData }) => {
       </DialogContentText>
       <DialogContent>
         <Box display="flex" flexDirection="row" gap={2}>
-          <Typography variant="h6" align="left" style={{ color: '#00246b', fontSize: '16px' }}>
+          <Typography variant="h6" align="left" style={{ color: '#cb8b59', fontSize: '16px' }}>
             Personal Info
           </Typography>
         </Box>
+
         <Box display="flex" flexDirection="row" gap={2}>
           <CustomTextField
             margin="dense"
@@ -265,7 +303,7 @@ const UpdateProfile = ({ open, onClose, userData }) => {
         </Box>
 
         <Box display="flex" flexDirection="row" gap={2}>
-          <Typography variant="h6" align="left" style={{ color: '#00246b', fontSize: '16px' }}>
+          <Typography variant="h6" align="left" style={{ color: '#cb8b59', fontSize: '16px' }}>
             Present Address
           </Typography>
         </Box>
@@ -322,7 +360,7 @@ const UpdateProfile = ({ open, onClose, userData }) => {
         </Box>
 
         <Box display="flex" flexDirection="row" gap={2}>
-          <Typography variant="h6" align="left" style={{ color: '#00246b', fontSize: '16px' }}>
+          <Typography variant="h6" align="left" style={{ color: '#cb8b59', fontSize: '16px' }}>
             Permanant Address
           </Typography>
         </Box>
@@ -368,7 +406,7 @@ const UpdateProfile = ({ open, onClose, userData }) => {
         </Box>
 
         <Box display="flex" flexDirection="row" gap={2}>
-          <Typography variant="h6" align="left" style={{ color: '#00246b', fontSize: '16px' }}>
+          <Typography variant="h6" align="left" style={{ color: '#cb8b59', fontSize: '16px' }}>
             Emergency Address/Contact
           </Typography>
         </Box>

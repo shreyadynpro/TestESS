@@ -11,22 +11,14 @@ import AccountTab from './AccountTab';
 import EmploymentTab from './EmploymentTab';
 import UpdateProfile from './UpdateProfile';
 import DocumentCenter from './DocumentCenter';
+import ReferralTab from './ReferralTab';
 import ChangePassword from './ChangePassword';
 import PersonalTabNormalUser from './PersonalTabNormalUser';
 import { useSelector } from 'react-redux';
 
-const StyledButton = styled(Button)(({ theme, active }) => ({
+const StyledButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(1),
-  color: active ? theme.palette.primary.contrastText : theme.palette.text.secondary,
-  fontWeight: 'bold',
-  backgroundColor: active
-    ? theme.palette.mode === 'dark'
-      ? '#cb8b59' // Dark theme active tab background color
-      : '#cb8b59' // Light theme active tab background color
-    : '#22cfe2', // Inactive tab background color
-  borderRadius: '8px',
-  transition: 'background-color 0.3s ease-in-out, color 0.3s ease-in-out',
-  border: `1px solid ${theme.palette.divider}`,
+  backgroundColor: theme.palette.info.main,
   marginTop: 0,
 }));
 
@@ -160,6 +152,7 @@ const TabPanel = styled(Paper)(({ theme }) => ({
 
 const UserProfile = () => {
   const [userdata, setData] = useState([]);
+  const [referraldata, setReferralData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('personal');
   const authToken = getAccessToken();
@@ -186,10 +179,28 @@ const UserProfile = () => {
       console.error(error?.message || 'Something went wrong!!');
     }
   };
+  const getReferral = async () => {
+    if (!user?.dynmis_empid) return; // Prevent API call if dynmis_empid is empty
 
+    try {
+      setLoading(true);
+      const response = await axios(commonConfig.urls.getReferralProfile, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      setLoading(false);
+      if (response?.data?.Response) setReferralData(response.data.Response);
+    } catch (error) {
+      setLoading(false);
+      console.error(error?.message || 'Something went wrong!!');
+    }
+  };
   useEffect(() => {
     if (user?.dynmis_empid) {
       fetchData();
+      getReferral();
     }
   }, [user?.dynmis_empid]);
 
@@ -271,6 +282,7 @@ const UserProfile = () => {
                   active={activeTab === 'employment'}
                 />
                 <StyledTab label="Documents" value="Documents" active={activeTab === 'Documents'} />
+                <StyledTab label="Referral" value="Referral" active={activeTab === 'Referral'} />
               </StyledTabs>
 
               <Box sx={{ padding: 2 }}>
@@ -297,6 +309,11 @@ const UserProfile = () => {
                 {activeTab === 'Documents' && (
                   <TabPanel>
                     <DocumentCenter theme userData={userdata} />
+                  </TabPanel>
+                )}
+                {activeTab === 'Referral' && (
+                  <TabPanel>
+                    <ReferralTab theme ReferralData={referraldata} />
                   </TabPanel>
                 )}
               </Box>

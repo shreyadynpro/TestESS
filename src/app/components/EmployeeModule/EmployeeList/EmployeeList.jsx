@@ -1,14 +1,13 @@
-import { Box, Grid, styled } from '@mui/material';
+import { Box, Grid, styled, Tabs, Tab, useTheme } from '@mui/material';
 import { Breadcrumb, SimpleCard } from 'app/components';
 import AppTableSearchBox from 'app/components/ReusableComponents/AppTableSearchBox';
 import { getAccessToken } from 'app/utils/utils';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import commonConfig from '../../commonConfig';
 import PaginationTable from './AppPaginateEmployee';
 import SnackbarUtils from 'SnackbarUtils';
+import commonConfig from '../../commonConfig';
 
 const Container = styled('div')(({ theme }) => ({
   margin: '30px',
@@ -16,26 +15,20 @@ const Container = styled('div')(({ theme }) => ({
 }));
 
 const EmployeeList = () => {
+  const theme = useTheme();
   const [searched, setSearched] = useState('');
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const navigate = useNavigate();
-
-  const requestSearch = (searchedVal) =>
-    data.filter((row) => {
-      return (row.first_name + ' ' + row.last_name + ' ' + row.email1)
-        .toLowerCase()
-        .includes(searchedVal.toLowerCase());
-    });
-
-  const [data, setData] = useState([]);
+  const [data, setData] = useState({ active: [], inactive: [] }); // Handle active and inactive data
+  const [tabValue, setTabValue] = useState(0); // 0 for Active, 1 for Inactive
   const authToken = getAccessToken();
 
   const employeeViewPermission = useSelector(
     (state) => state.userAccessPermissions?.userPermissions?.employees_view
   );
 
+  // Fetch employee data (active and inactive)
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -43,7 +36,12 @@ const EmployeeList = () => {
         headers: { Authorization: `Bearer ${authToken}`, 'Content-Type': 'application/json' },
       });
       setLoading(false);
-      if (response && response['data'] && response['data']) setData(response['data']);
+      if (response && response['data']) {
+        setData({
+          active: response['data']['active'] || [],
+          inactive: response['data']['inactive'] || [],
+        });
+      }
     } catch (error) {
       setLoading(false);
       SnackbarUtils.error(error?.message || 'Something went wrong');
@@ -54,12 +52,24 @@ const EmployeeList = () => {
     fetchData();
   }, []);
 
+  const requestSearch = (searchedVal) =>
+    (tabValue === 0 ? data.active : data.inactive).filter((row) => {
+      return (row.first_name + ' ' + row.last_name + ' ' + row.email1)
+        .toLowerCase()
+        .includes(searchedVal.toLowerCase());
+    });
+
   const handleSearch = (e) => {
     setSearched(e.currentTarget.value);
   };
 
   const handleRowClick = (employee) => {
     setSelectedEmployee(employee);
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+    setPage(0); // Reset page when switching tabs
   };
 
   return (
@@ -77,11 +87,36 @@ const EmployeeList = () => {
               md={6}
               lg={6}
               style={{
-                backgroundColor: '#ffffff',
                 borderRadius: '5px',
                 padding: '25px',
               }}
             >
+              {/* Add Tabs for Active/Inactive */}
+              <Tabs
+                value={tabValue}
+                onChange={handleTabChange}
+                TabIndicatorProps={{
+                  style: { backgroundColor: '#22cfe2' }, // Indicator color
+                }}
+                style={{
+                  marginBottom: '15px',
+                }}
+              >
+                <Tab
+                  label="Billable Employees"
+                  sx={{
+                    color: tabValue === 0 ? '#ffaf38 !important' : theme.palette.text.primary, // Active tab font color
+                    fontWeight: tabValue === 0 ? 'bold' : 'normal',
+                  }}
+                />
+                <Tab
+                  label="Non-Billable Employees"
+                  sx={{
+                    color: tabValue === 1 ? '#ffaf38 !important' : theme.palette.text.primary, // Active tab font color
+                    fontWeight: tabValue === 1 ? 'bold' : 'normal',
+                  }}
+                />
+              </Tabs>
               <Grid container spacing={1}>
                 <Grid item xs={6}>
                   <span
@@ -92,7 +127,7 @@ const EmployeeList = () => {
                       marginBottom: '16px',
                     }}
                   >
-                    Employees List
+                    {tabValue === 0 ? 'Billable Employees' : 'Non-Billable Employees'}
                   </span>
                 </Grid>
                 <Grid item xs={6}>
@@ -102,7 +137,9 @@ const EmployeeList = () => {
               <PaginationTable
                 loading={loading}
                 fetchData={fetchData}
-                data={searched ? requestSearch(searched) : data}
+                data={
+                  searched ? requestSearch(searched) : tabValue === 0 ? data.active : data.inactive
+                }
                 page={page}
                 onPageSet={setPage}
                 onRowClick={handleRowClick}
@@ -118,6 +155,7 @@ const EmployeeList = () => {
                     backgroundColor: '#f9f9f9',
                   }}
                 >
+                  {/* Employee Details */}
                   <div
                     style={{
                       display: 'flex',
@@ -140,18 +178,19 @@ const EmployeeList = () => {
                         style={{ width: '150px', marginBottom: '15px', borderRadius: '50%' }}
                       />
                     )}
-
-                    <h2 style={{ color: '#3b5998', marginBottom: '5px', fontWeight: '600' }}>
+                    <h2 style={{ color: '#cb8b59', marginBottom: '5px', fontWeight: '600' }}>
                       {selectedEmployee.salutation} {selectedEmployee.first_name}{' '}
                       {selectedEmployee.last_name}
                     </h2>
-                    <h5 style={{ color: '#3b5998', marginBottom: '15px', fontWeight: '500' }}>
+                    <h5 style={{ color: '#cb8b59', marginBottom: '15px', fontWeight: '500' }}>
                       #{selectedEmployee.emp_id} | {selectedEmployee.dpro_designation_offered}
                     </h5>
                   </div>
                   <hr style={{ borderColor: '#dedede', marginBottom: '20px' }} />
                   <div>
                     <table align="center" style={{ width: '100%' }}>
+                      {/* Render employee details */}
+                      {/* Add other fields as necessary */}
                       <tr>
                         <td
                           style={{
@@ -163,7 +202,7 @@ const EmployeeList = () => {
                         >
                           Designation:
                         </td>
-                        <td style={{ color: '#333333', textAlign: 'right', fontWeight: '500' }}>
+                        <td style={{ textAlign: 'right', fontWeight: '500' }}>
                           {selectedEmployee.dpro_designation_offered}
                         </td>
                       </tr>
@@ -171,7 +210,7 @@ const EmployeeList = () => {
                         <td style={{ color: '#888888', paddingRight: '15px', fontWeight: '500' }}>
                           Email:
                         </td>
-                        <td style={{ color: '#333333', textAlign: 'right', fontWeight: '500' }}>
+                        <td style={{ textAlign: 'right', fontWeight: '500' }}>
                           {selectedEmployee.email1}
                         </td>
                       </tr>
@@ -179,7 +218,7 @@ const EmployeeList = () => {
                         <td style={{ color: '#888888', paddingRight: '15px', fontWeight: '500' }}>
                           Contact:
                         </td>
-                        <td style={{ color: '#333333', textAlign: 'right', fontWeight: '500' }}>
+                        <td style={{ textAlign: 'right', fontWeight: '500' }}>
                           {selectedEmployee.phone_mobile}
                         </td>
                       </tr>
@@ -187,7 +226,7 @@ const EmployeeList = () => {
                         <td style={{ color: '#888888', paddingRight: '15px', fontWeight: '500' }}>
                           Permanent Address:
                         </td>
-                        <td style={{ color: '#333333', textAlign: 'right', fontWeight: '500' }}>
+                        <td style={{ textAlign: 'right', fontWeight: '500' }}>
                           {selectedEmployee.permanent_address}
                         </td>
                       </tr>
@@ -195,7 +234,7 @@ const EmployeeList = () => {
                         <td style={{ color: '#888888', paddingRight: '15px', fontWeight: '500' }}>
                           Temp Address:
                         </td>
-                        <td style={{ color: '#333333', textAlign: 'right', fontWeight: '500' }}>
+                        <td style={{ textAlign: 'right', fontWeight: '500' }}>
                           {selectedEmployee.temp_address}
                         </td>
                       </tr>
@@ -203,7 +242,7 @@ const EmployeeList = () => {
                         <td style={{ color: '#888888', paddingRight: '15px', fontWeight: '500' }}>
                           Work Location:
                         </td>
-                        <td style={{ color: '#333333', textAlign: 'right', fontWeight: '500' }}>
+                        <td style={{ textAlign: 'right', fontWeight: '500' }}>
                           {selectedEmployee.work_location}
                         </td>
                       </tr>

@@ -99,6 +99,7 @@ const commonConfig = {
     docs_download: `${baseURL}/docs_download`,
     generatePayslipPdf: `${baseURL}/generatePayslipPdf`,
     generatePayslipZip: `${baseURL}/generatePayslipZip`,
+    getReferralProfile: `${baseURL}/referral`,
   },
 };
 

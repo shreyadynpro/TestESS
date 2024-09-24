@@ -11,8 +11,13 @@ const StyledTable = styled(Table)(() => ({
     '& tr': {
       '& td': { paddingLeft: 0, textTransform: 'capitalize' },
       '&:hover': {
-        backgroundColor: '#f5f5f5',
         cursor: 'pointer',
+      },
+      '&:hover': {
+        // Set font color on hover
+        '& td': {
+          color: '#007bff', // Change to your desired hover font color
+        },
       },
     },
   },
@@ -35,9 +40,9 @@ const PaginationTable = ({ data = [], fetchData, onPageSet, page, loading, onRow
       <StyledTable>
         <TableHead>
           <TableRow>
-            <TableCell>First Name</TableCell>
-            <TableCell>Last Name</TableCell>
+            <TableCell>Name</TableCell>
             <TableCell>Email</TableCell>
+            <TableCell>PAN</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -56,9 +61,9 @@ const PaginationTable = ({ data = [], fetchData, onPageSet, page, loading, onRow
           ) : (
             data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((emp, index) => (
               <TableRow key={index} onClick={() => onRowClick(emp)}>
-                <TableCell>{emp.first_name}</TableCell>
-                <TableCell>{emp.last_name}</TableCell>
+                <TableCell>{emp.name}</TableCell>
                 <TableCell>{emp.email1}</TableCell>
+                <TableCell>{emp.identity_no}</TableCell>
               </TableRow>
             ))
           )}

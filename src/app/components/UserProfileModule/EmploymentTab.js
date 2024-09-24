@@ -60,7 +60,7 @@ const EmploymentTab = ({ handleSubmit, theme, userData }) => (
         <StyledForm onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Typography variant="h6" align="left" style={{ color: '#00246b', fontSize: '16px' }}>
+              <Typography variant="h6" align="left" style={{ color: '#cb8b59', fontSize: '16px' }}>
                 Employment
               </Typography>
             </Grid>
@@ -130,7 +130,7 @@ const EmploymentTab = ({ handleSubmit, theme, userData }) => (
               />
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="h6" align="left" style={{ color: '#00246b', fontSize: '16px' }}>
+              <Typography variant="h6" align="left" style={{ color: '#cb8b59', fontSize: '16px' }}>
                 Job
               </Typography>
             </Grid>
