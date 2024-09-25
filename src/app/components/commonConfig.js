@@ -93,6 +93,7 @@ const commonConfig = {
     getPowerBiDashboard: `${baseURL}/getembedtoken`,
     getZohoDashboard: `${baseURL}/zohoAuth`,
     getMonths: `${baseURL}/getmonth`,
+    getLetestPayslipMonths: `${baseURL}/getMonthsletest`,
     getpayslip: `${baseURL}/getpayslip`,
     updateEmpProfile: `${baseURL}/update_profile`,
     docs: `${baseURL}/docs`,
