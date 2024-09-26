@@ -20,6 +20,7 @@ import userProfileRoutes from './components/UserProfileModule/UserProfileRoutes'
 import commonRoutes from './components/commonRoutes';
 import BIDemo from './views/dashboard/BIDemo';
 import EmployeeMasterModuleRoutes from './components/EmployeeModule/employeeModuleRoutes';
+import HolidayModuleRoutes from './components/HolidayModule/holidayModuleRoutes';
 // import EmployeeList from './components/EmployeeList/EmployeeList';
 import Tasks from './components/ToDo/Tasks';
 import Payslips from './components/Salary/Payslip/Payslips';
@@ -44,6 +45,7 @@ const routes = [
       ...generateReportsModuleRoutes,
       ...clientModuleRoutes,
       ...GroupMasterModuleRoutes,
+      ...HolidayModuleRoutes,
       ...roleModuleRoutes,
       ...localizationModuleRoutes,
       ...EmployeeMasterModuleRoutes,

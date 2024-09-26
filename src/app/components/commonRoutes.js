@@ -33,6 +33,9 @@ const commonRoutes = {
     groupMasterDelete: '/group-master/delete',
     groupMasterEdit: '/group-master/edit',
   },
+  holiday: {
+    holidaylist: '/holidays',
+  },
   employeeMaster: {
     employeeMasterlist: '/employee-master',
     employeeMasterAdd: '/employee-master/add',

@@ -101,6 +101,7 @@ const commonConfig = {
     generatePayslipPdf: `${baseURL}/generatePayslipPdf`,
     generatePayslipZip: `${baseURL}/generatePayslipZip`,
     getReferralProfile: `${baseURL}/referral`,
+    getHolidays: `${baseURL}/holidays`,
   },
 };
 

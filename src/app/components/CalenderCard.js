@@ -10,7 +10,6 @@ const StyledProfileCard = styled(Card)(({ theme }) => ({
   backgroundColor: '#1a2038',
   color: '#fff',
   textAlign: 'center', // Center content inside the card
-  cursor: 'pointer', // Change cursor to indicate it's clickable
   padding: '20px', // Add padding around the card content
 }));
 

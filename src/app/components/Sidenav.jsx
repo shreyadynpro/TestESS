@@ -19,6 +19,8 @@ import CampaignIcon from '@mui/icons-material/Campaign';
 import InfoIcon from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import BeachAccessIcon from '@mui/icons-material/BeachAccess';
 import { useSelector } from 'react-redux';
 import commonRoutes from './commonRoutes';
 
@@ -113,7 +115,7 @@ const Sidenav = () => {
   const allMenuItems = [
     {
       title: `${user?.first_name || ''} ${user?.last_name || ''}`,
-      path: '/Profile',
+      path: '/Profile?tab=personal',
       fontSize: '20px',
       fontWeight: 'bold',
       isProfile: true,
@@ -236,9 +238,21 @@ const Sidenav = () => {
       ],
     },
     {
-      title: 'Documents',
-      path: '/documents',
+      title: 'Referral',
+      path: '/Profile?tab=Referral',
+      icon: <GroupAddIcon />,
+      permissionKey: 'documents',
+    },
+    {
+      title: 'Documents Center',
+      path: '/Profile?tab=Documents',
       icon: <DescriptionIcon />,
+      permissionKey: 'documents',
+    },
+    {
+      title: 'Holidays',
+      path: '/holidays',
+      icon: <BeachAccessIcon />,
       permissionKey: 'documents',
     },
     {

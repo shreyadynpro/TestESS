@@ -11,7 +11,6 @@ const StyledProfileCard = styled(Card)(({ theme }) => ({
   color: '#fff',
   height: '93%',
   textAlign: 'center', // Center content inside the card
-  cursor: 'pointer', // Change cursor to indicate it's clickable
 }));
 
 const ProfileSummaryCard = () => {
@@ -19,51 +18,49 @@ const ProfileSummaryCard = () => {
   const theme = useTheme();
 
   return (
-    <Link to="/Profile" style={{ textDecoration: 'none' }}>
-      <StyledProfileCard>
-        <CardContent>
-          <Typography variant="h6" align="center" gutterBottom>
-            Profile Summary
-          </Typography>
+    <StyledProfileCard>
+      <CardContent>
+        <Typography variant="h6" align="center" gutterBottom>
+          Profile Summary
+        </Typography>
 
-          {/* Wrapper for each entry to apply consistent styles */}
-          {[
-            { label: 'Employee ID:', value: user?.emp_id || 'N/A' },
-            { label: 'PAN:', value: user?.identity_no || 'N/A' },
-            { label: 'Email:', value: user?.email || 'N/A' },
-            { label: 'Contact:', value: user?.phone_mobile || 'N/A' },
-            { label: 'Designation:', value: user?.dpro_designation_offered || 'N/A' },
-            { label: 'Date of Joining:', value: user?.expected_doj || 'N/A' },
-          ].map(({ label, value }, index) => (
-            <Grid container key={index} alignItems="center" style={{ marginBottom: '10px' }}>
-              <Grid item xs={4} style={{ textAlign: 'left' }}>
-                <Typography
-                  variant="body1"
-                  style={{
-                    color: '#FF9800', // Orange color for labels
-                    fontWeight: '400',
-                  }}
-                >
-                  {label}
-                </Typography>
-              </Grid>
-              <Grid item xs={6} style={{ textAlign: 'left' }}>
-                <Typography
-                  variant="body1"
-                  color="rgba(255, 255, 255, 0.9)" // Slightly brighter for better visibility
-                  style={{
-                    fontSize: '1.1rem', // Increased font size for values
-                    fontWeight: '200', // Increased font weight for values
-                  }}
-                >
-                  {value}
-                </Typography>
-              </Grid>
+        {/* Wrapper for each entry to apply consistent styles */}
+        {[
+          { label: 'Employee ID:', value: user?.emp_id || 'N/A' },
+          { label: 'PAN:', value: user?.identity_no || 'N/A' },
+          { label: 'Email:', value: user?.email || 'N/A' },
+          { label: 'Contact:', value: user?.phone_mobile || 'N/A' },
+          { label: 'Designation:', value: user?.dpro_designation_offered || 'N/A' },
+          { label: 'Date of Joining:', value: user?.expected_doj || 'N/A' },
+        ].map(({ label, value }, index) => (
+          <Grid container key={index} alignItems="center" style={{ marginBottom: '10px' }}>
+            <Grid item xs={4} style={{ textAlign: 'left' }}>
+              <Typography
+                variant="body1"
+                style={{
+                  color: '#FF9800', // Orange color for labels
+                  fontWeight: '400',
+                }}
+              >
+                {label}
+              </Typography>
             </Grid>
-          ))}
-        </CardContent>
-      </StyledProfileCard>
-    </Link>
+            <Grid item xs={6} style={{ textAlign: 'left' }}>
+              <Typography
+                variant="body1"
+                color="rgba(255, 255, 255, 0.9)" // Slightly brighter for better visibility
+                style={{
+                  fontSize: '1.1rem', // Increased font size for values
+                  fontWeight: '200', // Increased font weight for values
+                }}
+              >
+                {value}
+              </Typography>
+            </Grid>
+          </Grid>
+        ))}
+      </CardContent>
+    </StyledProfileCard>
   );
 };
 

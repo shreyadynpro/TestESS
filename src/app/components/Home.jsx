@@ -147,7 +147,7 @@ const PayslipCard = () => {
           variant="outlined"
           color="secondary"
           onClick={() => {
-            navigate('/Profile'); // Redirect to /Profile page
+            navigate('/Profile?tab=Documents'); // Redirect to /Profile page
           }}
         >
           View All

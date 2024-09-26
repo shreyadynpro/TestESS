@@ -15,6 +15,7 @@ import ReferralTab from './ReferralTab';
 import ChangePassword from './ChangePassword';
 import PersonalTabNormalUser from './PersonalTabNormalUser';
 import { useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const StyledButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(1),
@@ -154,6 +155,10 @@ const UserProfile = () => {
   const [userdata, setData] = useState([]);
   const [referraldata, setReferralData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation(); // use the useLocation hook
+  const queryParams = new URLSearchParams(location.search); // Get search params from location
+  const initialTab = queryParams.get('tab') || 'personal'; // Default to 'personal' if no query parameter is present
   const [activeTab, setActiveTab] = useState('personal');
   const authToken = getAccessToken();
   const [openDialog, setOpenDialog] = useState(false); // State for dialog
@@ -198,15 +203,25 @@ const UserProfile = () => {
     }
   };
   useEffect(() => {
+    // Extract the 'tab' parameter from the URL
+    const currentTab = queryParams.get('tab');
+    if (currentTab && currentTab !== activeTab) {
+      setActiveTab(currentTab);
+    }
+  }, [location.search]); // Only rerun this effect when the search part of the URL changes
+
+  // Function to handle tab changes
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+    navigate(`/Profile?tab=${newValue}`); // Update the URL without reloading the page
+  };
+
+  useEffect(() => {
     if (user?.dynmis_empid) {
       fetchData();
       getReferral();
     }
   }, [user?.dynmis_empid]);
-
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
-  };
 
   return (
     <Fragment>
