@@ -109,7 +109,10 @@ const HolidayList = () => {
                   marginBottom: '16px',
                 }}
               >
-                Holidays List
+                Holidays List{' '}
+                <p>
+                  (*Holiday list for Dynpro India Internal employees as per their base locations)
+                </p>
               </span>
             </Grid>
             {/* <Grid item xs={12} sm={3} md={3} lg={2}>

@@ -21,6 +21,7 @@ import { getAccessToken } from 'app/utils/utils';
 import DownloadIcon from '@mui/icons-material/CloudDownload'; // Importing download icon
 import PayslipSummaryCard from './PayslipSummaryCard'; // Import the new card
 import CalenderCard from './CalenderCard';
+import HolidayCard from './HolidayCard';
 // StyledDiv with underline effect using ::before pseudo-element
 const StyledDiv = styled('div')({
   position: 'absolute',
@@ -66,6 +67,7 @@ const PayslipCard = () => {
   const [months, setMonths] = useState([]);
   const authToken = getAccessToken();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.userDetails?.user);
   useEffect(() => {
     const fetchMonths = async () => {
@@ -115,29 +117,55 @@ const PayslipCard = () => {
         </Typography>
 
         {months && months.length > 0 ? (
-          <List dense>
-            {' '}
-            {/* Use dense for less spacing */}
-            {months.map((payslip) => (
-              <ListItem key={payslip.month_year} style={{ marginBottom: '0px' }}>
-                {' '}
-                {/* Reduced padding */}
-                <ListItemText
-                  primary={` ${payslip.month_year}`}
-                  primaryTypographyProps={{ style: { color: 'white' } }}
-                />
-                <ListItemIcon>
-                  <StyledButton
-                    variant="contained"
-                    style={{ backgroundColor: 'transparent', boxShadow: 'none' }} // Transparent button background
-                    onClick={() => downloadPayslip(payslip.month_year)}
-                  >
-                    <StyledIcon /> {/* Use the styled icon */}
-                  </StyledButton>
-                </ListItemIcon>
-              </ListItem>
-            ))}
-          </List>
+          <Grid container spacing={2}>
+            {/* Left side for first 4 payslips */}
+            <Grid item xs={6}>
+              <List dense>
+                {months.slice(0, 4).map((payslip) => (
+                  <ListItem key={payslip.month_year} style={{ marginBottom: '0px' }}>
+                    <ListItemText
+                      primary={` ${payslip.month_year}`}
+                      primaryTypographyProps={{ style: { color: 'white' } }} // Adjust color as needed
+                    />
+                    <ListItemIcon>
+                      <Button
+                        variant="contained"
+                        style={{ backgroundColor: 'transparent', boxShadow: 'none' }} // Transparent button background
+                        onClick={() => downloadPayslip(payslip.month_year)}
+                        disabled={loading} // Disable button while loading
+                      >
+                        <StyledIcon />
+                      </Button>
+                    </ListItemIcon>
+                  </ListItem>
+                ))}
+              </List>
+            </Grid>
+
+            {/* Right side for next 4 payslips */}
+            <Grid item xs={6}>
+              <List dense>
+                {months.slice(4, 8).map((payslip) => (
+                  <ListItem key={payslip.month_year} style={{ marginBottom: '0px' }}>
+                    <ListItemText
+                      primary={` ${payslip.month_year}`}
+                      primaryTypographyProps={{ style: { color: 'white' } }} // Adjust color as needed
+                    />
+                    <ListItemIcon>
+                      <Button
+                        variant="contained"
+                        style={{ backgroundColor: 'transparent', boxShadow: 'none' }} // Transparent button background
+                        onClick={() => downloadPayslip(payslip.month_year)}
+                        disabled={loading} // Disable button while loading
+                      >
+                        <StyledIcon />
+                      </Button>
+                    </ListItemIcon>
+                  </ListItem>
+                ))}
+              </List>
+            </Grid>
+          </Grid>
         ) : (
           <Typography variant="body2" color="textSecondary">
             No payslips available.
@@ -147,7 +175,7 @@ const PayslipCard = () => {
           variant="outlined"
           color="secondary"
           onClick={() => {
-            navigate('/Profile?tab=Documents'); // Redirect to /Profile page
+            navigate('/salary/payslip/payslips'); // Redirect to /Profile page
           }}
         >
           View All
@@ -191,10 +219,10 @@ const Home = () => {
         </Grid>
         {user?.dynmis_empid && user.dynmis_empid !== '' ? (
           <>
-            <Grid item xs={12} sm={4}>
+            {/* <Grid item xs={12} sm={4}>
               <PayslipSummaryCard />
-            </Grid>
-            <Grid item xs={12} sm={4}>
+            </Grid> */}
+            <Grid item xs={12} sm={8}>
               <PayslipCard />
             </Grid>
           </>
@@ -209,20 +237,11 @@ const Home = () => {
           </>
         )}
 
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={4}>
           <CalenderCard />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <img
-            width="100%" // Adjust image to fill the grid item
-            height="80%" // Maintain aspect ratio
-            src="/assets/images/311.jpg"
-            alt="Greeting"
-            style={{
-              borderRadius: '15px', // Optional: Add some rounding to the image corners
-              boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)', // Optional: Add shadow to the image
-            }}
-          />
+        <Grid item xs={12} sm={8}>
+          <HolidayCard />
         </Grid>
 
         {/* Row with Payslip List Card and Payslip Summary Card */}

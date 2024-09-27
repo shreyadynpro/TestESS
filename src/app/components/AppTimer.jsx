@@ -35,7 +35,12 @@ export default function AppTimer({ open, handleExtend, handleLogout }) {
         </Typography>
         <hr />
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <StyledButton onClick={handleExtend} variant="contained" color="primary">
+          <StyledButton
+            onClick={handleExtend}
+            variant="contained"
+            color="primary"
+            style={{ backgroundColor: '#22cfe2' }}
+          >
             Extend
           </StyledButton>
           <LoadingButton

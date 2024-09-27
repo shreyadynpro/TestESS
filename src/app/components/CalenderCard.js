@@ -43,9 +43,8 @@ const StyledClock = styled(Typography)(({ theme }) => ({
   color: '#ffffff',
   fontFamily: 'serif',
   fontWeight: 'bold',
-  fontSize: '2rem', // Adjust font size for the clock
+  fontSize: '1.5rem', // Adjust font size for the clock
   textAlign: 'left', // Center the clock text
-  border: '1px solid #ffffff', // Add border around the clock
   borderRadius: '10px', // Round the clock's corners
   padding: '10px', // Add padding around the clock
 }));
@@ -74,13 +73,13 @@ const CalenderCard = () => {
     <StyledProfileCard>
       <CardContent>
         <Grid container spacing={1} alignItems="center">
-          <Grid item xs={6}>
+          <Grid item xs={8}>
             {/* Custom Calendar Component */}
             <CustomCalendar onChange={handleDateChange} value={date} />
           </Grid>
           <Grid
             item
-            xs={6}
+            xs={4}
             style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
           >
             {/* Digital Clock */}

@@ -14,12 +14,19 @@ import {
 import GetAppIcon from '@mui/icons-material/GetApp';
 import DownloadAllIcon from '@mui/icons-material/CloudDownload';
 
-const PayslipDialog = ({ open, onClose, payslipData, loading, onDownload, onDownloadAll }) => (
+const PayslipDialog = ({
+  open,
+  onClose,
+  payslipData,
+  loading,
+  downloadPayslip,
+  downloadAllPayslips,
+}) => (
   <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
     <DialogTitle sx={{ color: '#00246b', fontWeight: 'bold' }}>
       Payslip List
       <IconButton
-        onClick={onDownloadAll}
+        onClick={downloadAllPayslips}
         sx={{ position: 'absolute', right: 16, top: 16, color: '#00246b' }}
       >
         <DownloadAllIcon />
@@ -41,7 +48,7 @@ const PayslipDialog = ({ open, onClose, payslipData, loading, onDownload, onDown
                 <ListItemSecondaryAction>
                   <IconButton
                     edge="end"
-                    onClick={() => onDownload(payslip.month_year)}
+                    onClick={() => downloadPayslip(payslip.month_year)}
                     sx={{ color: '#00246b' }}
                   >
                     <GetAppIcon />

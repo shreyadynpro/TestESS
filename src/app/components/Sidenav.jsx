@@ -239,13 +239,13 @@ const Sidenav = () => {
     },
     {
       title: 'Referral',
-      path: '/Profile?tab=Referral',
+      path: '/referral',
       icon: <GroupAddIcon />,
       permissionKey: 'documents',
     },
     {
       title: 'Documents Center',
-      path: '/Profile?tab=Documents',
+      path: '/documentcenter',
       icon: <DescriptionIcon />,
       permissionKey: 'documents',
     },

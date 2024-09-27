@@ -9,7 +9,7 @@ import BgImg from 'app/components/AppLandingPage/assets/images/7.jpg';
 import DynproLT from 'app/components/AppLandingPage/assets/images/Dynviz_logo.png';
 import commonConfig from 'app/components/commonConfig';
 import commonRoutes from 'app/components/commonRoutes';
-
+import DynpEssLT from 'app/components/AppLandingPage/assets/images/DynESS_LT.png';
 import { lightModeTheme } from 'app/components/MatxTheme/themeColors';
 import { Formik } from 'formik';
 import { useNavigate } from 'react-router-dom';
@@ -60,7 +60,6 @@ const ForgotPassword = () => {
     try {
       const response = await axios.post(commonConfig.urls.forget_password, {
         email: values.email,
-        entity_id: process.env.REACT_APP_env_entity_id,
       });
       setLoading(false);
       if (response.data && response.data.Status === 'Success') {
@@ -81,7 +80,7 @@ const ForgotPassword = () => {
           <Grid container>
             <Grid item sm={6} xs={12}>
               <ContentBox>
-                <img width="100%" alt="Register" src={DynproLT} />
+                <img width="100%" alt="Register" src={DynpEssLT} />
               </ContentBox>
             </Grid>
             <Grid item sm={6} xs={12}>
@@ -113,6 +112,7 @@ const ForgotPassword = () => {
                       <LoadingButton
                         type="submit"
                         color="primary"
+                        style={{ backgroundColor: '#22cfe2' }}
                         variant="contained"
                         sx={{ mb: 4, mt: 3 }}
                         onClick={handleSubmit}

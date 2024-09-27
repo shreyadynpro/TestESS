@@ -90,7 +90,12 @@ const commonRoutes = {
   localizaion: {
     localizationSplitList: '/localization',
   },
-
+  referral: {
+    referrallist: '/referral',
+  },
+  documentcenter: {
+    documentcenter: '/documentcenter',
+  },
   // powerBIClient: '/powerBIClient',
 };
 

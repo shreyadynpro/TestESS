@@ -229,14 +229,6 @@ const JwtLogin = () => {
                         }
                         sx={{ mb: 3 }}
                       />
-                      <ReCAPTCHA
-                        sitekey={process.env.REACT_APP_SITE_KEY}
-                        ref={captchaRef}
-                        onChange={(value) => {
-                          if (value) setDisableSubmit(false);
-                        }}
-                        onExpired={() => setDisableSubmit(true)}
-                      />
                       <FlexBox justifyContent="">
                         <FlexBox gap={1}>
                           {/* <Checkbox
@@ -246,16 +238,25 @@ const JwtLogin = () => {
                             checked={values.remember}
                             sx={{ padding: 0 }}
                           />
-                          <Paragraph>Remember Me</Paragraph> */}
+                          <Paragraph></Paragraph> */}
                         </FlexBox>
 
                         <NavLink
                           to={commonRoutes.session.forgot_password}
-                          style={{ color: '#01256c' }}
+                          style={{ color: '#01256c', marginLeft: '70%' }}
                         >
                           Forgot password?
                         </NavLink>
                       </FlexBox>
+                      <ReCAPTCHA
+                        sitekey={process.env.REACT_APP_SITE_KEY}
+                        ref={captchaRef}
+                        onChange={(value) => {
+                          if (value) setDisableSubmit(false);
+                        }}
+                        onExpired={() => setDisableSubmit(true)}
+                      />
+
                       <LoadingButton
                         disabled={
                           !(
@@ -280,7 +281,7 @@ const JwtLogin = () => {
                         Login
                       </LoadingButton>
 
-                      <Paragraph>
+                      {/* <Paragraph>
                         Don't have an account?
                         <NavLink
                           to={commonRoutes.session.signup}
@@ -288,7 +289,7 @@ const JwtLogin = () => {
                         >
                           Register
                         </NavLink>
-                      </Paragraph>
+                      </Paragraph> */}
                     </form>
                   )}
                 </Formik>

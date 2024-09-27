@@ -296,8 +296,8 @@ const UserProfile = () => {
                   value="employment"
                   active={activeTab === 'employment'}
                 />
-                <StyledTab label="Documents" value="Documents" active={activeTab === 'Documents'} />
-                <StyledTab label="Referral" value="Referral" active={activeTab === 'Referral'} />
+                {/* <StyledTab label="Documents" value="Documents" active={activeTab === 'Documents'} />
+                <StyledTab label="Referral" value="Referral" active={activeTab === 'Referral'} /> */}
               </StyledTabs>
 
               <Box sx={{ padding: 2 }}>
@@ -321,7 +321,7 @@ const UserProfile = () => {
                     <EmploymentTab theme userData={userdata} />
                   </TabPanel>
                 )}
-                {activeTab === 'Documents' && (
+                {/* {activeTab === 'Documents' && (
                   <TabPanel>
                     <DocumentCenter theme userData={userdata} />
                   </TabPanel>
@@ -330,7 +330,7 @@ const UserProfile = () => {
                   <TabPanel>
                     <ReferralTab theme ReferralData={referraldata} />
                   </TabPanel>
-                )}
+                )} */}
               </Box>
             </Fragment>
           )}
