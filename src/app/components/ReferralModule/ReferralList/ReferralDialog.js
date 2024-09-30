@@ -32,6 +32,9 @@ const ReferralDialog = ({ open, onClose, referralData, onChange, onSubmit, onFil
   <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
     <DialogTitle sx={{ color: '#00246b', fontWeight: 'bold' }}>Add Referral</DialogTitle>
     <hr style={{ border: '1px solid #00246b', margin: '8px 0' }} />
+    <p style={{ color: '#00246b', margin: '8px 0', textAlign: 'center' }}>
+      Please enter candidate information below.
+    </p>
     <DialogContent>
       <form onSubmit={onSubmit}>
         <CustomTextField
