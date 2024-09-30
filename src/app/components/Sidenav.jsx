@@ -143,6 +143,12 @@ const Sidenav = () => {
       permissionKey: 'employees',
     },
     {
+      title: 'Referral',
+      path: '/referral',
+      icon: <GroupAddIcon />,
+      permissionKey: 'documents',
+    },
+    {
       title: 'Power BI',
       path: '/reports',
       icon: <SummarizeIcon />,
@@ -237,12 +243,7 @@ const Sidenav = () => {
         // { title: 'Salary Revision', path: '/salary/revision', permissionKey: 'salary' },
       ],
     },
-    {
-      title: 'Referral',
-      path: '/referral',
-      icon: <GroupAddIcon />,
-      permissionKey: 'documents',
-    },
+
     {
       title: 'Documents Center',
       path: '/documentcenter',
@@ -279,6 +280,7 @@ const Sidenav = () => {
       .filter((item) => {
         // Always include the profile item
         if (item.isProfile) return true;
+        if (item.title === 'Referral') return true;
         // Filter other items based on permissions
         return uaPermissions[item.permissionKey] === 1;
       })

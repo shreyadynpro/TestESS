@@ -164,7 +164,26 @@ const DocumentCenter = () => {
   const handleClosePayslipDialog = () => {
     setPayslipOpen(false);
   };
+  const handlePreview = async (doc_id, name) => {
+    try {
+      const response = await axios.get(commonConfig.urls.docs_download + '/' + doc_id, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+        responseType: 'blob', // Important to handle binary data
+      });
 
+      // Create a blob URL for the response data and specify the type as 'application/pdf'
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+
+      // Open the PDF in a new tab
+      window.open(url, '_blank');
+    } catch (error) {
+      console.error('Error previewing the document:', error);
+    }
+  };
   // Function to handle document download
   const handleDownload = async (doc_id, name) => {
     try {
@@ -282,6 +301,7 @@ const DocumentCenter = () => {
         documents={documents}
         loading={loading}
         handleDownload={handleDownload}
+        handlePreview={handlePreview}
       />
 
       {/* Dialog for viewing Payslips */}

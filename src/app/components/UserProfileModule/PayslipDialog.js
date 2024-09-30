@@ -10,6 +10,7 @@ import {
   ListItemSecondaryAction,
   IconButton,
   Typography,
+  Tooltip,
 } from '@mui/material';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import DownloadAllIcon from '@mui/icons-material/CloudDownload';
@@ -25,12 +26,14 @@ const PayslipDialog = ({
   <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
     <DialogTitle sx={{ color: '#00246b', fontWeight: 'bold' }}>
       Payslip List
-      <IconButton
-        onClick={downloadAllPayslips}
-        sx={{ position: 'absolute', right: 16, top: 16, color: '#00246b' }}
-      >
-        <DownloadAllIcon />
-      </IconButton>
+      <Tooltip title="Download All Payslips">
+        <IconButton
+          onClick={downloadAllPayslips}
+          sx={{ position: 'absolute', right: 16, top: 16, color: '#00246b' }}
+        >
+          <DownloadAllIcon />
+        </IconButton>
+      </Tooltip>
     </DialogTitle>
     <hr style={{ border: '1px solid #00246b', margin: '8px 0' }} />
     <DialogContent>
@@ -46,13 +49,15 @@ const PayslipDialog = ({
                   sx={{ color: '#59919d', fontWeight: 'bold', fontSize: '22px' }}
                 />
                 <ListItemSecondaryAction>
-                  <IconButton
-                    edge="end"
-                    onClick={() => downloadPayslip(payslip.month_year)}
-                    sx={{ color: '#00246b' }}
-                  >
-                    <GetAppIcon />
-                  </IconButton>
+                  <Tooltip title="Download Payslips">
+                    <IconButton
+                      edge="end"
+                      onClick={() => downloadPayslip(payslip.month_year)}
+                      sx={{ color: '#00246b' }}
+                    >
+                      <GetAppIcon />
+                    </IconButton>
+                  </Tooltip>
                 </ListItemSecondaryAction>
               </ListItem>
             ))

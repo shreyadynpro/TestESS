@@ -55,6 +55,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   borderRadius: '15px',
   boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
   backgroundColor: '#1a2038', // Changed background color
+  height: '94%',
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
@@ -222,7 +223,7 @@ const Home = () => {
             {/* <Grid item xs={12} sm={4}>
               <PayslipSummaryCard />
             </Grid> */}
-            <Grid item xs={12} sm={8}>
+            <Grid item xs={12} sm={4}>
               <PayslipCard />
             </Grid>
           </>
@@ -231,19 +232,27 @@ const Home = () => {
             <Grid item xs={12} sm={4}>
               {/* Optional content when condition is false */}
             </Grid>
-            <Grid item xs={12} sm={4}>
-              {/* Optional content when condition is false */}
-            </Grid>
           </>
         )}
-
         <Grid item xs={12} sm={4}>
           <CalenderCard />
         </Grid>
         <Grid item xs={12} sm={8}>
           <HolidayCard />
         </Grid>
-
+        <Grid item xs={12} sm={4}>
+          <img
+            width="100%" // Adjust image to fill the grid item
+            height="90%" // Maintain aspect ratio
+            src="/assets/images/311.jpg"
+            alt="Greeting"
+            style={{
+              borderRadius: '15px', // Optional: Add some rounding to the image corners
+              boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)', // Optional: Add shadow to the image
+              marginTop: '25px',
+            }}
+          />
+        </Grid>
         {/* Row with Payslip List Card and Payslip Summary Card */}
       </Grid>
     </div>

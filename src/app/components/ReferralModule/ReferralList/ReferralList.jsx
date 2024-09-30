@@ -95,8 +95,6 @@ const ReferralList = () => {
     });
 
   const getReferral = async () => {
-    if (!user?.dynmis_empid) return; // Prevent API call if dynmis_empid is empty
-
     try {
       setLoading(true);
       const response = await axios(commonConfig.urls.getReferralProfile, {
@@ -134,19 +132,49 @@ const ReferralList = () => {
       [name]: value,
     }));
   };
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setReferralData((prevData) => ({
+      ...prevData,
+      attachment: file, // Store the file in referralData
+    }));
+  };
 
   const handleSubmitReferral = async (e) => {
     e.preventDefault();
-    // Add your API call here to submit the referralData
-    console.log(referralData); // Send this data to your API
-    // After submitting, close the dialog
+
     const authToken = getAccessToken();
+
+    // Create a new FormData object
+    const formData = new FormData();
+
+    // Append all the text fields from referralData to formData
+    formData.append('full_name', referralData.full_name);
+    formData.append('email', referralData.email);
+    formData.append('contact_no', referralData.contact_no);
+    formData.append('skills', referralData.skills);
+    formData.append('experience', referralData.experience);
+    formData.append('pan', referralData.pan);
+    formData.append('current_location', referralData.current_location);
+
+    // Append the file (if there is any)
+    if (referralData.attachment) {
+      formData.append('attachment', referralData.attachment); // Name must match what the server expects
+    }
+
     try {
       dispatch({ type: 'LOADING', bool: true });
-      const response = await axios.post(commonConfig.urls.getReferralProfile, referralData, {
-        headers: { Authorization: `Bearer ${authToken}` },
+
+      // Send formData instead of JSON referralData
+      const response = await axios.post(commonConfig.urls.getReferralProfile, formData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'multipart/form-data', // Necessary for file uploads
+        },
       });
+
       dispatch({ type: 'LOADING', bool: false });
+
       if (response && response.data.Status === 'Failed') {
         SnackbarUtils.error(
           Object.values(response.data.Errors)
@@ -154,13 +182,37 @@ const ReferralList = () => {
             .toString()
         );
       }
+
       if (response && response.data.Status === 'Success') {
         SnackbarUtils.success('Profile Updated Successfully');
-        navigate(commonRoutes.home);
+        navigate(commonRoutes.referral);
       }
     } catch (error) {
       dispatch({ type: 'LOADING', bool: false });
       SnackbarUtils.error(error?.message || 'Something went wrong!!');
+    }
+  };
+  const handlePreview = async (doc_id, name) => {
+    try {
+      const response = await axios.get(
+        commonConfig.urls.referral_attachment_review + '/' + doc_id,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+          },
+          responseType: 'blob', // Important to handle binary data
+        }
+      );
+
+      // Create a blob URL for the response data and specify the type as 'application/pdf'
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+
+      // Open the PDF in a new tab
+      window.open(url, '_blank');
+    } catch (error) {
+      console.error('Error previewing the document:', error);
     }
   };
   return (
@@ -203,6 +255,7 @@ const ReferralList = () => {
             data={searched ? requestSearch(searched) : state.data}
             page={page}
             onPageSet={setPage}
+            handlePreview={handlePreview}
           />
         </SimpleCard>
       </Container>
@@ -213,6 +266,7 @@ const ReferralList = () => {
         referralData={referralData}
         onChange={handleReferralChange}
         onSubmit={handleSubmitReferral}
+        onFileChange={handleFileChange} // Pass the file change handler
       />
     </>
   );

@@ -21,6 +21,7 @@ import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import SnackbarUtils from 'SnackbarUtils';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const StyledTable = styled(Table)(() => ({
   whiteSpace: 'pre',
@@ -32,7 +33,7 @@ const StyledTable = styled(Table)(() => ({
   },
 }));
 
-const PaginationTable = ({ data = [], fetchData, onPageSet, page, loading }) => {
+const PaginationTable = ({ data = [], fetchData, onPageSet, page, loading, handlePreview }) => {
   const currentRole = useRef(null);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const navigate = useNavigate();
@@ -67,6 +68,7 @@ const PaginationTable = ({ data = [], fetchData, onPageSet, page, loading }) => 
             <TableCell>Exp (Years)</TableCell>
             <TableCell>PAN</TableCell>
             <TableCell>Current Location</TableCell>
+            <TableCell>Attachment</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -90,6 +92,15 @@ const PaginationTable = ({ data = [], fetchData, onPageSet, page, loading }) => 
                   <TableCell>{referral.experience}</TableCell>
                   <TableCell>{referral.pan}</TableCell>
                   <TableCell>{referral.currentLocation || referral.current_location}</TableCell>
+                  <TableCell>
+                    <IconButton
+                      edge="end"
+                      onClick={() => handlePreview(referral.id, referral.attachment_path)}
+                      sx={{ color: '#59919d' }} // Style the view button
+                    >
+                      <VisibilityIcon />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               ))
           )}

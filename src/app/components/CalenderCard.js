@@ -10,7 +10,7 @@ const StyledProfileCard = styled(Card)(({ theme }) => ({
   backgroundColor: '#1a2038',
   color: '#fff',
   textAlign: 'center', // Center content inside the card
-  padding: '20px', // Add padding around the card content
+  padding: '0px', // Add padding around the card content
 }));
 
 // Custom calendar styles
