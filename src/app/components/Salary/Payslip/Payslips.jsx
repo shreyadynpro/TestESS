@@ -146,7 +146,31 @@ const Payslips = () => {
 
     html2pdf().from(element).set(opt).save();
   };
+  const downloadPayslip = async (payslipname) => {
+    const splitname = payslipname.split(' ');
+    try {
+      const response = await axios.get(
+        commonConfig.urls.generatePayslipPdf + '/' + splitname[0] + '/' + splitname[1],
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+          },
+          responseType: 'blob', // Important to handle binary data
+        }
+      );
 
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${payslipname}.pdf`); // Use a dynamic filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading the document:', error);
+    }
+  };
   const listItemStyle = {
     cursor: 'pointer',
     backgroundColor: '#f0f0f0',
@@ -182,7 +206,17 @@ const Payslips = () => {
 
       <Grid container spacing={4}>
         {/* Left-side Month List */}
-        <Grid item xs={3}>
+        <Grid
+          item
+          xs={3}
+          style={{
+            boxShadow: '150px',
+            border: '1px solid #ddd',
+            borderRadius: '8px',
+            padding: '10px',
+            backgroundColor: '#ffffff',
+          }}
+        >
           <List component="nav" aria-label="Months List">
             {months.map((month) => (
               <ListItem
@@ -201,7 +235,7 @@ const Payslips = () => {
                     aria-label="download"
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent triggering the ListItem's onClick
-                      handleGeneratePdf(month.month_year);
+                      downloadPayslip(month.month_year);
                     }}
                   >
                     <DownloadIcon />

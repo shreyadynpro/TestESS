@@ -226,17 +226,18 @@ const Home = () => {
             <Grid item xs={12} sm={4}>
               <PayslipCard />
             </Grid>
+            <Grid item xs={12} sm={4}>
+              <CalenderCard />
+            </Grid>
           </>
         ) : (
           <>
             <Grid item xs={12} sm={4}>
-              {/* Optional content when condition is false */}
+              <CalenderCard />
             </Grid>
           </>
         )}
-        <Grid item xs={12} sm={4}>
-          <CalenderCard />
-        </Grid>
+
         <Grid item xs={12} sm={8}>
           <HolidayCard />
         </Grid>

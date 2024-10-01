@@ -103,6 +103,7 @@ const commonConfig = {
     getReferralProfile: `${baseURL}/referral`,
     getHolidays: `${baseURL}/holidays`,
     referral_attachment_review: `${baseURL}/referral_attachment_review`,
+    downloadReferraDoc: `${baseURL}/downloadReferraDoc`,
   },
 };
 

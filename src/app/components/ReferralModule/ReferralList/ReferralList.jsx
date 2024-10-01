@@ -1,4 +1,4 @@
-import { Box, Button, Grid, styled } from '@mui/material';
+import { Box, Button, Grid, styled, Tooltip } from '@mui/material';
 import { Breadcrumb, SimpleCard } from 'app/components';
 import commonRoutes from 'app/components/commonRoutes';
 import AppTableSearchBox from 'app/components/ReusableComponents/AppTableSearchBox';
@@ -217,6 +217,62 @@ const ReferralList = () => {
       console.error('Error previewing the document:', error);
     }
   };
+  const downloadPayslip = async (id, fallbackName) => {
+    try {
+      const response = await axios.get(commonConfig.urls.downloadReferraDoc + '/' + id, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+        responseType: 'blob', // Important to handle binary data
+      });
+
+      // Determine the file extension based on the Content-Type header
+      const contentType = response.headers['content-type'];
+      let fileExtension;
+
+      switch (contentType) {
+        case 'application/pdf':
+          fileExtension = 'pdf';
+          break;
+        case 'application/msword':
+          fileExtension = 'doc';
+          break;
+        case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+          fileExtension = 'docx';
+          break;
+        case 'image/jpeg':
+          fileExtension = 'jpg';
+          break;
+        case 'image/png':
+          fileExtension = 'png';
+          break;
+        // Add more cases as needed
+        default:
+          fileExtension = 'bin'; // Fallback for unknown content types
+      }
+
+      // Construct the filename using the fallback name and determined file extension
+      const originalFileName = `${fallbackName}.${fileExtension}`;
+
+      // Create a Blob from the response data
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+
+      // Create a link element and trigger the download
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', originalFileName); // Download with the original filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Revoke the object URL to release memory
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading the document:', error);
+    }
+  };
+
   return (
     <>
       <Box className="breadcrumb" sx={{ m: 1 }}>
@@ -258,6 +314,7 @@ const ReferralList = () => {
             page={page}
             onPageSet={setPage}
             handlePreview={handlePreview}
+            downloadPayslip={downloadPayslip}
           />
         </SimpleCard>
       </Container>

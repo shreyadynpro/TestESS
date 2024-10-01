@@ -8,6 +8,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Tooltip,
 } from '@mui/material';
 import commonConfig from 'app/components/commonConfig';
 import commonRoutes from 'app/components/commonRoutes';
@@ -22,6 +23,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import SnackbarUtils from 'SnackbarUtils';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import DownloadIcon from '@mui/icons-material/Download';
 
 const StyledTable = styled(Table)(() => ({
   whiteSpace: 'pre',
@@ -33,7 +35,15 @@ const StyledTable = styled(Table)(() => ({
   },
 }));
 
-const PaginationTable = ({ data = [], fetchData, onPageSet, page, loading, handlePreview }) => {
+const PaginationTable = ({
+  data = [],
+  fetchData,
+  onPageSet,
+  page,
+  loading,
+  handlePreview,
+  downloadPayslip,
+}) => {
   const currentRole = useRef(null);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const navigate = useNavigate();
@@ -100,6 +110,22 @@ const PaginationTable = ({ data = [], fetchData, onPageSet, page, loading, handl
                     >
                       <VisibilityIcon />
                     </IconButton>
+                    <Tooltip title="Download">
+                      <IconButton
+                        edge="end"
+                        aria-label="download"
+                        style={{
+                          marginLeft: '1rem',
+                          color: '#59919d',
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent triggering the ListItem's onClick
+                          downloadPayslip(referral.id, referral.full_name);
+                        }}
+                      >
+                        <DownloadIcon />
+                      </IconButton>
+                    </Tooltip>
                   </TableCell>
                 </TableRow>
               ))
