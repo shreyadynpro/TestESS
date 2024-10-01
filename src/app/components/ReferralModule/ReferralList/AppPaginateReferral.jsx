@@ -78,6 +78,7 @@ const PaginationTable = ({
             <TableCell>Exp (Years)</TableCell>
             <TableCell>PAN</TableCell>
             <TableCell>Current Location</TableCell>
+            <TableCell>Referred By</TableCell>
             <TableCell>Attachment</TableCell>
           </TableRow>
         </TableHead>
@@ -102,6 +103,10 @@ const PaginationTable = ({
                   <TableCell>{referral.experience}</TableCell>
                   <TableCell>{referral.pan}</TableCell>
                   <TableCell>{referral.currentLocation || referral.current_location}</TableCell>
+                  <TableCell>
+                    {referral.first_name}&nbsp;
+                    {referral.last_name}
+                  </TableCell>
                   <TableCell>
                     <IconButton
                       edge="end"
