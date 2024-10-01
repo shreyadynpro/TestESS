@@ -22,6 +22,7 @@ import {
   FormControl,
   InputLabel,
   IconButton,
+  Tooltip,
 } from '@mui/material';
 import { styled } from '@mui/system';
 
@@ -31,13 +32,16 @@ import commonConfig from '../../commonConfig';
 import { getAccessToken } from 'app/utils/utils';
 import html2pdf from 'html2pdf.js';
 import DownloadIcon from '@mui/icons-material/Download';
+import DownloadAllIcon from '@mui/icons-material/CloudDownload';
 
 const Payslips = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
   const [months, setMonths] = useState([]);
   const [lastPayslip, setLastPayslip] = useState(null);
   const [payslipData, setPayslipData] = useState({});
+  const [PayslipList, setPayslipList] = useState({});
   const authToken = getAccessToken();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchMonths = async () => {
@@ -60,8 +64,35 @@ const Payslips = () => {
     };
 
     fetchMonths();
+    fetchPayslipList();
   }, []);
 
+  const downloadAllPayslips = async () => {
+    try {
+      const payslipMonths = PayslipList.map((payslip) => payslip.month_year);
+      const response = await axios.post(
+        commonConfig.urls.generatePayslipZip, // API for downloading all payslips
+        { payslipmonths: payslipMonths },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+          },
+          responseType: 'blob', // Important to handle binary data
+        }
+      );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `All_Payslips.zip`); // Download as a zip file
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading all payslips:', error);
+    }
+  };
   const fetchPayslipData = async (month) => {
     try {
       const [monthPart, year] = month.split(' ');
@@ -78,7 +109,25 @@ const Payslips = () => {
       console.error('Failed to fetch payslip data:', error);
     }
   };
-
+  const fetchPayslipList = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(commonConfig.urls.getMonths, {
+        // Replace with the new Payslip API
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      setLoading(false);
+      if (response && response.data && response.data.Response) {
+        setPayslipList(response.data.Response); // Bind Payslip data to state
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error('Error fetching Payslip data:', error);
+    }
+  };
   const handleMonthChange = (month) => {
     setSelectedMonth(month);
     fetchPayslipData(month);
@@ -114,15 +163,20 @@ const Payslips = () => {
       <Box position="relative" mb={4}>
         <Box
           display="flex"
-          alignItems="flex-start"
-          justifyContent="space-between"
+          alignItems="center" // Align items vertically centered
+          justifyContent="space-between" // Ensure they are spaced
           mb={2}
           mt={2}
-          width="100%"
+          width="23.5%"
         >
-          <Typography variant="h3" sx={{ fontSize: '1.8rem' }}>
+          <Typography variant="h3" sx={{ fontSize: '1.8rem', mr: '100px' }}>
             PAYSLIPS
           </Typography>
+          <Tooltip title="Download All Payslips">
+            <IconButton onClick={downloadAllPayslips} sx={{ color: '#00246b' }}>
+              <DownloadAllIcon />
+            </IconButton>
+          </Tooltip>
         </Box>
       </Box>
 
@@ -141,16 +195,18 @@ const Payslips = () => {
               >
                 <ListItemText primary={month.month_year} />
                 {/* Add download icon */}
-                <IconButton
-                  edge="end"
-                  aria-label="download"
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent triggering the ListItem's onClick
-                    handleGeneratePdf(month.month_year);
-                  }}
-                >
-                  <DownloadIcon />
-                </IconButton>
+                <Tooltip title="Download Payslips">
+                  <IconButton
+                    edge="end"
+                    aria-label="download"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent triggering the ListItem's onClick
+                      handleGeneratePdf(month.month_year);
+                    }}
+                  >
+                    <DownloadIcon />
+                  </IconButton>
+                </Tooltip>
               </ListItem>
             ))}
           </List>

@@ -163,7 +163,7 @@ const ReferralList = () => {
     }
 
     try {
-      dispatch({ type: 'LOADING', bool: true });
+      setLoading(true);
 
       // Send formData instead of JSON referralData
       const response = await axios.post(commonConfig.urls.getReferralProfile, formData, {
@@ -173,19 +173,21 @@ const ReferralList = () => {
         },
       });
 
-      dispatch({ type: 'LOADING', bool: false });
-
+      setLoading(false);
       if (response && response.data.Status === 'Failed') {
         SnackbarUtils.error(
           Object.values(response.data.Errors)
             .map((item) => item.toString())
             .toString()
         );
-      }
-
-      if (response && response.data.Status === 'Success') {
-        SnackbarUtils.success('Profile Updated Successfully');
-        navigate(commonRoutes.referral);
+      } else if (response && response.data.Status === 'Success') {
+        // Adjust condition for success
+        SnackbarUtils.success('Referral Added Successfully');
+        handleCloseDialog();
+        getReferral();
+        // window.location.reload();
+      } else {
+        SnackbarUtils.error('Something went wrong!!');
       }
     } catch (error) {
       dispatch({ type: 'LOADING', bool: false });

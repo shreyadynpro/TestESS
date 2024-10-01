@@ -56,13 +56,13 @@ const sections = [
   //   bgColor: '#f3e5f5',
   //   category: 'Form16',
   // },
-  {
-    title: 'Payslip',
-    icon: <AccountBalanceIcon />,
-    description: 'Monthly salary breakdown.',
-    bgColor: '#e8f5e9',
-    category: 'Payslip',
-  },
+  // {
+  //   title: 'Payslip',
+  //   icon: <AccountBalanceIcon />,
+  //   description: 'Monthly salary breakdown.',
+  //   bgColor: '#e8f5e9',
+  //   category: 'Payslip',
+  // },
   // {
   //   title: 'IT Declaration',
   //   icon: <ArticleIcon />,
