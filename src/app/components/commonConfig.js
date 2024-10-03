@@ -1,5 +1,5 @@
 const serverIp = '44.199.193.239';
-const baseURL = ''https://ess.dynprocloud.com:8443/api';
+const baseURL = 'https://ess.dynprocloud.com:8443/api';
 // const baseURL = 'http://127.0.0.1:8000/api';
 
 const commonConfig = {
