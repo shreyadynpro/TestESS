@@ -15,16 +15,25 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
+  TextField,
+  Button,
 } from '@mui/material';
+import { useReducer } from 'react';
 import DescriptionIcon from '@mui/icons-material/Description';
 import PolicyIcon from '@mui/icons-material/Policy';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import ArticleIcon from '@mui/icons-material/Article';
 import GetAppIcon from '@mui/icons-material/GetApp'; // Icon for download
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import axios from 'axios';
 import commonConfig from '../commonConfig';
 import { getAccessToken } from 'app/utils/utils';
+import SnackbarUtils from 'SnackbarUtils';
+import { useNavigate } from 'react-router-dom';
 import DownloadAllIcon from '@mui/icons-material/CloudDownload';
+import commonRoutes from 'app/components/commonRoutes';
+import PayslipDialog from './PayslipDialog';
+import DocumentDialog from './DocumentDialog';
 
 const StyledListItemText = styled(ListItemText)(({ theme }) => ({
   color: '#59919d',
@@ -40,29 +49,44 @@ const sections = [
     bgColor: '#ffebee',
     category: 'CompanyPolicy',
   },
-  {
-    title: 'Form16',
-    icon: <DescriptionIcon />,
-    description: 'Annual tax documents.',
-    bgColor: '#f3e5f5',
-    category: 'Form16',
-  },
-  {
-    title: 'Payslip',
-    icon: <AccountBalanceIcon />,
-    description: 'Monthly salary breakdown.',
-    bgColor: '#e8f5e9',
-    category: 'Payslip',
-  },
-  {
-    title: 'IT Declaration',
-    icon: <ArticleIcon />,
-    description: 'Income tax declaration.',
-    bgColor: '#fff3e0',
-    category: 'ITDeclaration',
-  },
+  // {
+  //   title: 'Form16',
+  //   icon: <DescriptionIcon />,
+  //   description: 'Annual tax documents.',
+  //   bgColor: '#f3e5f5',
+  //   category: 'Form16',
+  // },
+  // {
+  //   title: 'Payslip',
+  //   icon: <AccountBalanceIcon />,
+  //   description: 'Monthly salary breakdown.',
+  //   bgColor: '#e8f5e9',
+  //   category: 'Payslip',
+  // },
+  // {
+  //   title: 'IT Declaration',
+  //   icon: <ArticleIcon />,
+  //   description: 'Income tax declaration.',
+  //   bgColor: '#fff3e0',
+  //   category: 'ITDeclaration',
+  // },
+  // {
+  //   title: 'Add Referral',
+  //   icon: <PersonAddIcon />, // Make sure to import this icon
+  //   description: 'Add a new referral.',
+  //   bgColor: '#e3f2fd', // You can choose any background color
+  //   category: 'AddReferral',
+  // },
 ];
-
+// Define reducer function
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'LOADING':
+      return { ...state, loading: action.bool };
+    default:
+      return state;
+  }
+};
 const DocumentCenter = () => {
   const [open, setOpen] = useState(false);
   const [payslipOpen, setPayslipOpen] = useState(false); // New state for Payslip dialog
@@ -71,6 +95,14 @@ const DocumentCenter = () => {
   const [payslipData, setPayslipData] = useState([]); // New state for Payslip data
   const authToken = getAccessToken();
   const [loading, setLoading] = useState(false);
+
+  const [state, dispatch] = useReducer(reducer, {
+    loading: false,
+    open: false,
+    responseError: '',
+    hasError: false,
+  });
+  const navigate = useNavigate();
 
   // Fetch data for other sections
   const fetchData = async (sectionTitle) => {
@@ -116,11 +148,11 @@ const DocumentCenter = () => {
   const handleOpenDialog = (section) => {
     setSelectedSection(section);
     if (section.category === 'Payslip') {
-      fetchPayslipData(); // Fetch Payslip data
-      setPayslipOpen(true); // Open Payslip dialog
+      fetchPayslipData();
+      setPayslipOpen(true);
     } else {
-      fetchData(section.category); // Fetch other section documents
-      setOpen(true); // Open the regular dialog
+      fetchData(section.category);
+      setOpen(true);
     }
   };
 
@@ -132,7 +164,26 @@ const DocumentCenter = () => {
   const handleClosePayslipDialog = () => {
     setPayslipOpen(false);
   };
+  const handlePreview = async (doc_id, name) => {
+    try {
+      const response = await axios.get(commonConfig.urls.docs_download + '/' + doc_id, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+        responseType: 'blob', // Important to handle binary data
+      });
 
+      // Create a blob URL for the response data and specify the type as 'application/pdf'
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+
+      // Open the PDF in a new tab
+      window.open(url, '_blank');
+    } catch (error) {
+      console.error('Error previewing the document:', error);
+    }
+  };
   // Function to handle document download
   const handleDownload = async (doc_id, name) => {
     try {
@@ -213,10 +264,10 @@ const DocumentCenter = () => {
   return (
     <Box sx={{ padding: 4 }}>
       <Typography
-        variant="h4"
+        variant="h6"
         align="center"
         gutterBottom
-        sx={{ color: '#00246b', fontWeight: 'bold' }}
+        sx={{ color: '#cb8b59', fontWeight: 'bold' }}
       >
         Document Center
       </Typography>
@@ -244,78 +295,24 @@ const DocumentCenter = () => {
       </Grid>
 
       {/* Dialog for viewing other documents */}
-      <Dialog open={open} onClose={handleCloseDialog} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ color: '#00246b', fontWeight: 'bold' }}>
-          {selectedSection?.title}
-        </DialogTitle>
-        <hr style={{ border: '1px solid #00246b', margin: '8px 0' }} />
-        <DialogContent>
-          {loading ? (
-            <Typography>Loading...</Typography>
-          ) : (
-            <List>
-              {documents.length > 0 ? (
-                documents.map((doc, index) => (
-                  <ListItem key={index}>
-                    <StyledListItemText primary={doc.doc_name} />
-                    <ListItemSecondaryAction>
-                      <IconButton
-                        edge="end"
-                        onClick={() => handleDownload(doc.id, doc.doc_name)}
-                        sx={{ color: '#00246b' }}
-                      >
-                        <GetAppIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                ))
-              ) : (
-                <Typography>No documents available</Typography>
-              )}
-            </List>
-          )}
-        </DialogContent>
-      </Dialog>
+      <DocumentDialog
+        open={open}
+        onClose={handleCloseDialog}
+        documents={documents}
+        loading={loading}
+        handleDownload={handleDownload}
+        handlePreview={handlePreview}
+      />
 
       {/* Dialog for viewing Payslips */}
-      <Dialog open={payslipOpen} onClose={handleClosePayslipDialog} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ color: '#00246b', fontWeight: 'bold' }}>
-          Payslip List
-          <IconButton
-            onClick={downloadAllPayslips}
-            sx={{ position: 'absolute', right: 16, top: 16, color: '#00246b' }}
-          >
-            <DownloadAllIcon />
-          </IconButton>
-        </DialogTitle>
-        <hr style={{ border: '1px solid #00246b', margin: '8px 0' }} />
-        <DialogContent>
-          {loading ? (
-            <Typography>Loading Payslips...</Typography>
-          ) : (
-            <List>
-              {payslipData.length > 0 ? (
-                payslipData.map((payslip, index) => (
-                  <ListItem key={index}>
-                    <StyledListItemText primary={payslip.month_year} />
-                    <ListItemSecondaryAction>
-                      <IconButton
-                        edge="end"
-                        onClick={() => downloadPayslip(payslip.month_year)}
-                        sx={{ color: '#00246b' }}
-                      >
-                        <GetAppIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                ))
-              ) : (
-                <Typography>No Payslips available</Typography>
-              )}
-            </List>
-          )}
-        </DialogContent>
-      </Dialog>
+      <PayslipDialog
+        open={payslipOpen}
+        onClose={handleClosePayslipDialog}
+        payslipData={payslipData}
+        loading={loading}
+        downloadPayslip={downloadPayslip}
+        downloadAllPayslips={downloadAllPayslips}
+      />
     </Box>
   );
 };

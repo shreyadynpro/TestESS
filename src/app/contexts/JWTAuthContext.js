@@ -102,7 +102,7 @@ export const AuthProvider = ({ children }) => {
     if (response.status === 200) {
       localStorage.setItem(commonConfig.tokens.accessToken, response.data.Response.access_token);
       const accessToken = response.data.Response.access_token;
-      const user = response.data.Response.user;
+      const user = response.data.Response.user[0];
       const userPermissions = response.data.Response.user_access;
       dispatchX({ type: 'SET_TOKEN', accessToken });
       dispatchX({ type: 'SET_USER', user });

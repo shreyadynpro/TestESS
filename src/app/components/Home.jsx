@@ -1,271 +1,260 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Grid, Card, CardContent, Typography, styled, useTheme } from '@mui/material';
-import TaskIcon from 'app/components/AppLandingPage/assets/images/tasks.jpg'; // Adjust path as needed
-import HolidayIcon from 'app/components/AppLandingPage/assets/images/calender.jpg'; // Adjust path as needed
-import PayslipIcon from 'app/components/AppLandingPage/assets/images/salaryslip.jpg'; // Adjust path as needed
-import NotificationIcon from 'app/components/AppLandingPage/assets/images/notification.jpg'; // Adjust path as needed
-
-// Styled components
-const GreetingRoot = styled('div')(({ theme, position }) => ({
+import {
+  styled,
+  useTheme,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+} from '@mui/material';
+import ProfileSummaryCard from './ProfileSummaryCard'; // Import Profile Summary Card
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import commonConfig from './commonConfig';
+import { getAccessToken } from 'app/utils/utils';
+import DownloadIcon from '@mui/icons-material/CloudDownload'; // Importing download icon
+import PayslipSummaryCard from './PayslipSummaryCard'; // Import the new card
+import CalenderCard from './CalenderCard';
+import HolidayCard from './HolidayCard';
+// StyledDiv with underline effect using ::before pseudo-element
+const StyledDiv = styled('div')({
   position: 'absolute',
-  fontSize: '36px',
-  fontStyle: 'italic',
-  fontFamily: 'Roboto, sans-serif',
-  color: theme.palette.text.primary,
-  ...(() => {
-    switch (position) {
-      case 'top-left':
-        return { top: '10px', left: '10px' };
-      case 'top-right':
-        return { top: '10px', right: '10px' };
-      case 'bottom-left':
-        return { bottom: '10px', left: '10px' };
-      case 'bottom-right':
-        return { bottom: '10px', right: '10px' };
-      default:
-        return { top: '10px', left: '10px' };
-    }
-  })(),
-}));
-
-const StyledCard = styled(Card)(({ theme }) => ({
-  backgroundColor: theme.palette.background.paper,
-  borderRadius: '20px',
-  boxShadow: theme.shadows[6],
-  '&:hover': {
-    boxShadow: theme.shadows[10],
+  top: '20px',
+  left: '20px',
+  '& h3': {
+    position: 'relative',
+    textTransform: 'capitalize',
+    margin: 0,
+    paddingBottom: '10px',
+    fontSize: '36px',
+    fontWeight: 700,
+    fontFamily: "'Roboto', sans-serif",
+    color: '#00246b',
+    '&::before': {
+      position: 'absolute',
+      left: 0,
+      bottom: 0,
+      width: '60px',
+      height: '2px',
+      content: '""',
+      backgroundColor: '#c50000',
+    },
   },
-  transition: 'box-shadow 0.3s ease-in-out',
-  display: 'flex',
-  flexDirection: 'column', // **Added to stack content vertically**
-  position: 'relative', // **Added to position the image absolutely within the card**
+});
+
+// Styled Payslip Card with background color #1a2038
+const StyledCard = styled(Card)(({ theme }) => ({
+  marginTop: '20px',
+  padding: theme.spacing(1), // Reduced padding
+  borderRadius: '15px',
+  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+  backgroundColor: '#1a2038', // Changed background color
+  height: '94%',
 }));
 
-// **Updated: Positioned the image at the top-right corner**
-const CardImage = styled('img')(({ theme }) => ({
-  width: '200px',  // Size of the image
-  height: '200px', // Size of the image
-  position: 'absolute', // Positioned absolutely within the card
-  top: '10px',
-  right: '10px',
-  borderRadius: '50%',
+const StyledButton = styled(Button)(({ theme }) => ({
+  marginLeft: '10px', // Align button with the text
 }));
-
-const StyledCardContent = styled(CardContent)(({ theme }) => ({
-  padding: '24px',
-  marginTop: '40px', // Added margin to ensure content is not overlapped by the image
+const StyledIcon = styled(DownloadIcon)(({ theme }) => ({
+  color: '#FFA500', // Set the color of the icon to orange
 }));
-
-const StyledTypography = styled(Typography)(({ theme }) => ({
-  marginBottom: '16px',
-  fontWeight: 'bold',
-  color: theme.palette.text.primary,
-  fontFamily: 'Roboto, sans-serif',
-  textTransform: 'uppercase',
-  letterSpacing: '1px',
-}));
-
-
-const Home = ({ greetingPosition = 'top-left' }) => {
+const PayslipCard = () => {
+  const [months, setMonths] = useState([]);
+  const authToken = getAccessToken();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.userDetails?.user);
-  const { uaPermissions } = useSelector((state) => ({
-    uaPermissions: state.userAccessPermissions.userPermissions,
-  }));
+  useEffect(() => {
+    const fetchMonths = async () => {
+      try {
+        const response = await axios(commonConfig.urls.getLetestPayslipMonths, {
+          headers: { Authorization: `Bearer ${authToken}`, 'Content-Type': 'application/json' },
+        });
+        const fetchedMonths = response.data.Response;
+        setMonths(fetchedMonths);
+      } catch (error) {
+        console.error('Failed to fetch months:', error);
+      }
+    };
 
+    fetchMonths();
+  }, []);
+  const downloadPayslip = async (payslipname) => {
+    const splitname = payslipname.split(' ');
+    try {
+      const response = await axios.get(
+        commonConfig.urls.generatePayslipPdf + '/' + splitname[0] + '/' + splitname[1],
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+          },
+          responseType: 'blob', // Important to handle binary data
+        }
+      );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${payslipname}.pdf`); // Use a dynamic filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading the document:', error);
+    }
+  };
+  return (
+    <StyledCard>
+      <CardContent>
+        <Typography variant="h6" align="center" color={'white'} gutterBottom>
+          Payslips
+        </Typography>
+
+        {months && months.length > 0 ? (
+          <Grid container spacing={2}>
+            {/* Left side for first 4 payslips */}
+            <Grid item xs={6}>
+              <List dense>
+                {months.slice(0, 4).map((payslip) => (
+                  <ListItem key={payslip.month_year} style={{ marginBottom: '0px' }}>
+                    <ListItemText
+                      primary={` ${payslip.month_year}`}
+                      primaryTypographyProps={{ style: { color: 'white' } }} // Adjust color as needed
+                    />
+                    <ListItemIcon>
+                      <Button
+                        variant="contained"
+                        style={{ backgroundColor: 'transparent', boxShadow: 'none' }} // Transparent button background
+                        onClick={() => downloadPayslip(payslip.month_year)}
+                        disabled={loading} // Disable button while loading
+                      >
+                        <StyledIcon />
+                      </Button>
+                    </ListItemIcon>
+                  </ListItem>
+                ))}
+              </List>
+            </Grid>
+
+            {/* Right side for next 4 payslips */}
+            <Grid item xs={6}>
+              <List dense>
+                {months.slice(4, 8).map((payslip) => (
+                  <ListItem key={payslip.month_year} style={{ marginBottom: '0px' }}>
+                    <ListItemText
+                      primary={` ${payslip.month_year}`}
+                      primaryTypographyProps={{ style: { color: 'white' } }} // Adjust color as needed
+                    />
+                    <ListItemIcon>
+                      <Button
+                        variant="contained"
+                        style={{ backgroundColor: 'transparent', boxShadow: 'none' }} // Transparent button background
+                        onClick={() => downloadPayslip(payslip.month_year)}
+                        disabled={loading} // Disable button while loading
+                      >
+                        <StyledIcon />
+                      </Button>
+                    </ListItemIcon>
+                  </ListItem>
+                ))}
+              </List>
+            </Grid>
+          </Grid>
+        ) : (
+          <Typography variant="body2" color="textSecondary">
+            No payslips available.
+          </Typography>
+        )}
+        <StyledButton
+          variant="outlined"
+          color="secondary"
+          onClick={() => {
+            navigate('/salary/payslip/payslips'); // Redirect to /Profile page
+          }}
+        >
+          View All
+        </StyledButton>
+      </CardContent>
+    </StyledCard>
+  );
+};
+
+const Home = () => {
+  const user = useSelector((state) => state.userDetails?.user);
   const theme = useTheme();
 
-
-const getGreeting = () => {
-  const hours = new Date().getHours();
-  if (hours < 12) return 'Good Morning';
-  if (hours < 18) return 'Good Afternoon';
-  return 'Good Evening';
-};
-
-// Mock data
-const pendingTasks = [
-  { task: 'Task 1', completion: 70, dueDate: '2024-07-30', priority: 'High', assignedBy: 'Manager', tags: ['Urgent', 'Client'] },
-  { task: 'Task 2', completion: 50, dueDate: '2024-08-05', priority: 'Medium', assignedBy: 'Team Lead', tags: ['Internal'] },
-  { task: 'Task 3', completion: 30, dueDate: '2024-08-10', priority: 'Low', assignedBy: 'Manager', tags: ['Research'] },
-];
-
-const holidays = [
-  { date: '2024-08-15', name: 'Independence Day', description: 'National holiday in India', type: 'National' },
-  { date: '2024-10-02', name: 'Gandhi Jayanti', description: 'Birthday of Mahatma Gandhi', type: 'National' },
-  { date: '2024-12-25', name: 'Christmas Day', description: 'Celebration of the birth of Jesus Christ', type: 'Religious' },
-  { date: '2024-10-24', name: 'Diwali', description: 'Festival of Lights', type: 'Religious' },
-  { date: '2024-09-08', name: 'Ganesh Chaturthi', description: 'Festival dedicated to Lord Ganesha', type: 'Religious' },
-];
-
-const payslip = {
-  month: 'July',
-  year: 2024,
-  workingDays: 22,
-  baseSalary: 4000,
-  bonuses: 500,
-  grossPay: 4500,
-  netPay: 4000,
-  deductions: 500,
-  taxDetails: { federal: 200, state: 100, local: 50 },
-  benefits: { healthInsurance: 100, retirement: 50 },
-  overtime: 200,
-  leaveDeductions: 50,
-};
-
-const recentActivities = [
-  { activity: 'Completed Task 1', timestamp: '2024-07-23 14:00' },
-  { activity: 'Joined Meeting with Team', timestamp: '2024-07-23 10:00' },
-];
-
-const notifications = [
-  { message: 'Your report is due tomorrow.', type: 'Reminder' },
-  { message: 'System maintenance scheduled for this weekend.', type: 'Alert' },
-];
-
-
+  const getGreeting = () => {
+    const hours = new Date().getHours();
+    if (hours < 12) return 'Good Morning';
+    if (hours < 18) return 'Good Afternoon';
+    return 'Good Evening';
+  };
 
   return (
-    <div style={{ position: 'relative', height: '100vh', backgroundColor: theme.palette.background.default, padding: '20px' }}>
-      <GreetingRoot position={greetingPosition}>
-        {getGreeting()} {user?.first_name || ''},
-      </GreetingRoot>
-      <Grid container spacing={3} style={{ marginTop: '80px' }}>
-        <Grid item xs={12} md={4}>
-          <StyledCard>
-            <CardImage src={TaskIcon} alt="Task Icon" />
-            <StyledCardContent>
-              <StyledTypography variant="h6" component="div" gutterBottom>
-                Pending Tasks
-              </StyledTypography>
-              {pendingTasks.map((task, index) => (
-                <div key={index} style={{ marginBottom: '16px' }}>
-                  <Typography variant="body2" color="text.secondary">
-                    {task.task}: {task.completion}% Complete
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Due Date: {new Date(task.dueDate).toLocaleDateString()}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Priority: {task.priority}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Assigned By: {task.assignedBy}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Tags: {task.tags.join(', ')}
-                  </Typography>
-                </div>
-              ))}
-              <Typography variant="body2" color="text.secondary">
-                Total Tasks: {pendingTasks.length}
-              </Typography>
-            </StyledCardContent>
-          </StyledCard>
+    <div
+      style={{
+        position: 'relative',
+        height: '100vh',
+        backgroundColor: theme.palette.mode === 'dark' ? '#121212' : '#ffffff',
+        padding: '20px',
+      }}
+    >
+      <StyledDiv>
+        <h3>
+          {getGreeting()} {user?.first_name || ''},
+        </h3>
+      </StyledDiv>
+
+      {/* Center Grid for content */}
+      <Grid container justifyContent="center" spacing={2} style={{ marginTop: '40px' }}>
+        {/* Row with Profile Summary Card and Image */}
+        <Grid item xs={12} sm={4}>
+          <ProfileSummaryCard />
         </Grid>
-        {/* Other Grid items remain unchanged */}
-        <Grid item xs={12} md={4}>
-          <StyledCard>
-            <CardImage src={HolidayIcon} alt="Holiday Icon" />
-            <StyledCardContent>
-              <StyledTypography variant="h6" component="div" gutterBottom>
-                Upcoming Holidays
-              </StyledTypography>
-              {holidays.map((holiday, index) => (
-                <div key={index} style={{ marginBottom: '16px' }}>
-                  <Typography variant="body2" color="text.secondary">
-                    {new Date(holiday.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' })} - {holiday.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {holiday.description}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Type: {holiday.type}
-                  </Typography>
-                </div>
-              ))}
-            </StyledCardContent>
-          </StyledCard>
+        {user?.dynmis_empid && user.dynmis_empid !== '' ? (
+          <>
+            {/* <Grid item xs={12} sm={4}>
+              <PayslipSummaryCard />
+            </Grid> */}
+            <Grid item xs={12} sm={4}>
+              <PayslipCard />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <CalenderCard />
+            </Grid>
+          </>
+        ) : (
+          <>
+            <Grid item xs={12} sm={4}>
+              <CalenderCard />
+            </Grid>
+          </>
+        )}
+
+        <Grid item xs={12} sm={8}>
+          <HolidayCard />
         </Grid>
-        <Grid item xs={12} md={4}>
-          <StyledCard>
-            <CardImage src={PayslipIcon} alt="Payslip Icon" />
-            <StyledCardContent>
-              <StyledTypography variant="h6" component="div" gutterBottom>
-                Payslip - {payslip.month} {payslip.year}
-              </StyledTypography>
-              <Typography variant="body2" color="text.secondary">
-                Working Days: {payslip.workingDays}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Base Salary: ${payslip.baseSalary}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Bonuses: ${payslip.bonuses}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Gross Pay: ${payslip.grossPay}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Net Pay: ${payslip.netPay}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Deductions: ${payslip.deductions}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Tax Details: Federal - ${payslip.taxDetails.federal}, State - ${payslip.taxDetails.state}, Local - ${payslip.taxDetails.local}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Benefits: Health Insurance - ${payslip.benefits.healthInsurance}, Retirement - ${payslip.benefits.retirement}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Overtime: ${payslip.overtime}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Leave Deductions: ${payslip.leaveDeductions}
-              </Typography>
-            </StyledCardContent>
-          </StyledCard>
+        <Grid item xs={12} sm={4}>
+          <img
+            width="100%" // Adjust image to fill the grid item
+            height="90%" // Maintain aspect ratio
+            src="/assets/images/311.jpg"
+            alt="Greeting"
+            style={{
+              borderRadius: '15px', // Optional: Add some rounding to the image corners
+              boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)', // Optional: Add shadow to the image
+              marginTop: '25px',
+            }}
+          />
         </Grid>
-        <Grid item xs={12} md={4}>
-          <StyledCard>
-            <CardImage src={NotificationIcon} alt="Notification Icon" />
-            <StyledCardContent>
-              <StyledTypography variant="h6" component="div" gutterBottom>
-                Notifications
-              </StyledTypography>
-              {notifications.map((notification, index) => (
-                <div key={index} style={{ marginBottom: '16px' }}>
-                  <Typography variant="body2" color="text.secondary">
-                    {notification.message}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Type: {notification.type}
-                  </Typography>
-                </div>
-              ))}
-            </StyledCardContent>
-          </StyledCard>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <StyledCard>
-            <StyledCardContent>
-              <StyledTypography variant="h6" component="div" gutterBottom>
-                Recent Activities
-              </StyledTypography>
-              {recentActivities.map((activity, index) => (
-                <div key={index} style={{ marginBottom: '16px' }}>
-                  <Typography variant="body2" color="text.secondary">
-                    {activity.activity}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Timestamp: {new Date(activity.timestamp).toLocaleString()}
-                  </Typography>
-                </div>
-              ))}
-            </StyledCardContent>
-          </StyledCard>
-        </Grid>
+        {/* Row with Payslip List Card and Payslip Summary Card */}
       </Grid>
     </div>
   );

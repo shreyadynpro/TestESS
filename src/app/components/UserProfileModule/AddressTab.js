@@ -81,7 +81,7 @@ const AddressTab = ({ handleSubmit, theme, userData }) => {
                 <Typography
                   variant="h6"
                   align="left"
-                  style={{ color: '#00246b', fontSize: '16px' }}
+                  style={{ color: '#cb8b59', fontSize: '16px' }}
                 >
                   Present Address
                 </Typography>
@@ -180,7 +180,7 @@ const AddressTab = ({ handleSubmit, theme, userData }) => {
                 <Typography
                   variant="h6"
                   align="left"
-                  style={{ color: '#00246b', fontSize: '16px' }}
+                  style={{ color: '#cb8b59', fontSize: '16px' }}
                 >
                   Permanant Address
                 </Typography>
@@ -273,7 +273,7 @@ const AddressTab = ({ handleSubmit, theme, userData }) => {
                 <Typography
                   variant="h6"
                   align="left"
-                  style={{ color: '#00246b', fontSize: '16px' }}
+                  style={{ color: '#cb8b59', fontSize: '16px' }}
                 >
                   Emergency Address/Contact
                 </Typography>

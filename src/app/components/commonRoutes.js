@@ -33,6 +33,9 @@ const commonRoutes = {
     groupMasterDelete: '/group-master/delete',
     groupMasterEdit: '/group-master/edit',
   },
+  holiday: {
+    holidaylist: '/holidays',
+  },
   employeeMaster: {
     employeeMasterlist: '/employee-master',
     employeeMasterAdd: '/employee-master/add',
@@ -87,7 +90,12 @@ const commonRoutes = {
   localizaion: {
     localizationSplitList: '/localization',
   },
-
+  referral: {
+    referrallist: '/referral',
+  },
+  documentcenter: {
+    documentcenter: '/documentcenter',
+  },
   // powerBIClient: '/powerBIClient',
 };
 

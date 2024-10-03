@@ -166,6 +166,7 @@ const ChangePassword = () => {
                       <LoadingButton
                         type="submit"
                         color="primary"
+                        style={{ backgroundColor: '#22cfe2' }}
                         variant="contained"
                         sx={{ mb: 4, mt: 3 }}
                         onClick={handleSubmit}

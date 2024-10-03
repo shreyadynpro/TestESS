@@ -2,7 +2,7 @@ import { styled } from '@mui/system';
 import { Fragment, memo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Scrollbar from 'react-perfect-scrollbar';
-import { Box, Typography, Collapse } from '@mui/material';
+import { Box, Typography, Collapse, Avatar } from '@mui/material';
 import GroupIcon from '@mui/icons-material/Group';
 import SecurityIcon from '@mui/icons-material/Security';
 import LockIcon from '@mui/icons-material/Lock';
@@ -19,6 +19,8 @@ import CampaignIcon from '@mui/icons-material/Campaign';
 import InfoIcon from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import BeachAccessIcon from '@mui/icons-material/BeachAccess';
 import { useSelector } from 'react-redux';
 import commonRoutes from './commonRoutes';
 
@@ -33,6 +35,21 @@ const StyledScrollBar = styled(Scrollbar)({
   paddingRight: '0.1rem',
   position: 'relative',
 });
+
+const getInitials = (firstName, lastName) => {
+  const firstInitial = firstName?.charAt(0).toUpperCase() || '';
+  const lastInitial = lastName?.charAt(0).toUpperCase() || '';
+  return `${firstInitial}${lastInitial}`;
+};
+
+const InitialsIcon = styled(Avatar)(({ theme }) => ({
+  width: 32,
+  height: 32,
+  backgroundColor: theme.palette.mode === 'dark' ? '#fff' : '#22cfe2', // Change color based on theme mode
+  color: theme.palette.mode === 'dark' ? '#000' : '#fff', // Adjust text color accordingly
+  fontSize: '14px',
+  marginRight: '0px', // Add some space between icon and text
+}));
 
 const SideNavMobile = styled('div')(({ theme }) => ({
   position: 'fixed',
@@ -97,12 +114,13 @@ const Sidenav = () => {
 
   const allMenuItems = [
     {
-      title: `${user?.first_name || ''} ${user?.last_name || ''},`,
-      path: '/Profile',
+      title: `${user?.first_name || ''} ${user?.last_name || ''}`,
+      path: '/Profile?tab=personal',
       fontSize: '20px',
       fontWeight: 'bold',
       isProfile: true,
       permissionKey: 'roles',
+      icon: <InitialsIcon>{getInitials(user?.first_name, user?.last_name)}</InitialsIcon>, // Add the initials icon
     },
     {
       title: 'Group Master',
@@ -123,6 +141,12 @@ const Sidenav = () => {
       path: '/employee-master',
       icon: <GroupsIcon />,
       permissionKey: 'employees',
+    },
+    {
+      title: 'Referral',
+      path: '/referral',
+      icon: <GroupAddIcon />,
+      permissionKey: 'documents',
     },
     {
       title: 'Power BI',
@@ -196,33 +220,40 @@ const Sidenav = () => {
       permissionKey: 'salary',
       subMenu: [
         { title: 'Payslips', path: '/salary/payslip/payslips', permissionKey: 'salary' },
-        {
-          title: 'IT Statements',
-          path: '/salary/it-statements',
-          permissionKey: 'salary',
-        },
-        {
-          title: 'IT Declaration',
-          path: '/salary/it-declaration',
-          permissionKey: 'salary',
-        },
-        {
-          title: 'Loans & Advances',
-          path: '/salary/loans-advances',
-          permissionKey: 'salary',
-        },
-        {
-          title: 'Reimbursement',
-          path: '/salary/reimbursement',
-          permissionKey: 'salary',
-        },
-        { title: 'Salary Revision', path: '/salary/revision', permissionKey: 'salary' },
+        // {
+        //   title: 'IT Statements',
+        //   path: '/salary/it-statements',
+        //   permissionKey: 'salary',
+        // },
+        // {
+        //   title: 'IT Declaration',
+        //   path: '/salary/it-declaration',
+        //   permissionKey: 'salary',
+        // },
+        // {
+        //   title: 'Loans & Advances',
+        //   path: '/salary/loans-advances',
+        //   permissionKey: 'salary',
+        // },
+        // {
+        //   title: 'Reimbursement',
+        //   path: '/salary/reimbursement',
+        //   permissionKey: 'salary',
+        // },
+        // { title: 'Salary Revision', path: '/salary/revision', permissionKey: 'salary' },
       ],
     },
+
     {
-      title: 'Documents',
-      path: '/documents',
+      title: 'Documents Center',
+      path: '/documentcenter',
       icon: <DescriptionIcon />,
+      permissionKey: 'documents',
+    },
+    {
+      title: 'Holidays',
+      path: '/holidays',
+      icon: <BeachAccessIcon />,
       permissionKey: 'documents',
     },
     {
@@ -246,7 +277,13 @@ const Sidenav = () => {
 
   const filterMenuItems = (items) => {
     return items
-      .filter((item) => uaPermissions[item.permissionKey] === 1)
+      .filter((item) => {
+        // Always include the profile item
+        if (item.isProfile) return true;
+        if (item.title === 'Referral') return true;
+        // Filter other items based on permissions
+        return uaPermissions[item.permissionKey] === 1;
+      })
       .map((item) => ({
         ...item,
         subMenu: item.subMenu ? filterMenuItems(item.subMenu) : null,
