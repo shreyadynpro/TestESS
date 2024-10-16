@@ -108,29 +108,36 @@ const PaginationTable = ({
                     {referral.last_name}
                   </TableCell>
                   <TableCell>
-                    <IconButton
-                      edge="end"
-                      onClick={() => handlePreview(referral.id, referral.attachment_path)}
-                      sx={{ color: '#59919d' }} // Style the view button
-                    >
-                      <VisibilityIcon />
-                    </IconButton>
-                    <Tooltip title="Download">
-                      <IconButton
-                        edge="end"
-                        aria-label="download"
-                        style={{
-                          marginLeft: '1rem',
-                          color: '#59919d',
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent triggering the ListItem's onClick
-                          downloadPayslip(referral.id, referral.full_name);
-                        }}
-                      >
-                        <DownloadIcon />
-                      </IconButton>
-                    </Tooltip>
+                    {referral.attachment_path ? (
+                      <>
+                        <IconButton
+                          edge="end"
+                          onClick={() => handlePreview(referral.id, referral.attachment_path)}
+                          sx={{ color: '#59919d' }} // Style the view button
+                        >
+                          <VisibilityIcon />
+                        </IconButton>
+                        <Tooltip title="Download">
+                          <IconButton
+                            edge="end"
+                            aria-label="download"
+                            style={{
+                              marginLeft: '1rem',
+                              color: '#59919d',
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent triggering the ListItem's onClick
+                              downloadPayslip(referral.id, referral.full_name);
+                            }}
+                          >
+                            <DownloadIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </>
+                    ) : (
+                      // If attachment_path is null or empty, render an empty cell
+                      <span></span>
+                    )}
                   </TableCell>
                 </TableRow>
               ))

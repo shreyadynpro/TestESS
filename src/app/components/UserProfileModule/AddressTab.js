@@ -217,12 +217,7 @@ const AddressTab = ({ handleSubmit, theme, userData }) => {
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
                   <InputLabel>City</InputLabel>
-                  <Select
-                    name="city"
-                    value={userData.alt_address_city}
-                    onChange={handleChange}
-                    disabled
-                  >
+                  <Select name="city" value={userData.alt_address_city} onChange={handleChange}>
                     <MenuItem value="">Select a city</MenuItem>
                     <MenuItem value="Mumbai">Mumbai</MenuItem>
                     <MenuItem value="Pune">Pune</MenuItem>
