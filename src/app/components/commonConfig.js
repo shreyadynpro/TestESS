@@ -104,6 +104,10 @@ const commonConfig = {
     getHolidays: `${baseURL}/holidays`,
     referral_attachment_review: `${baseURL}/referral_attachment_review`,
     downloadReferraDoc: `${baseURL}/downloadReferraDoc`,
+    itr_template_download: `${baseURL}/downloadITRTemplate`,
+    uploadITR: `${baseURL}/itr_attchment`,
+    getitr: `${baseURL}/getitr`,
+    getitrlist: `${baseURL}/getitrlist`,
   },
 };
 

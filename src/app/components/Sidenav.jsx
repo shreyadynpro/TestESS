@@ -272,6 +272,12 @@ const Sidenav = () => {
       icon: <CampaignIcon />,
       permissionKey: 'activities',
     },
+    {
+      title: 'Project Information',
+      icon: <MonetizationOnIcon />,
+      path: '/projectinfo',
+      permissionKey: 'documents',
+    },
     { title: 'Help', path: '/help', icon: <InfoIcon />, permissionKey: 'help' },
   ];
 

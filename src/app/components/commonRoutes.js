@@ -96,6 +96,9 @@ const commonRoutes = {
   documentcenter: {
     documentcenter: '/documentcenter',
   },
+  projectinfo: {
+    projectinfo: '/projectinfo',
+  },
   // powerBIClient: '/powerBIClient',
 };
 

@@ -109,11 +109,20 @@ const HolidayList = () => {
                   marginBottom: '16px',
                 }}
               >
-                Holidays List{' '}
-                <p>
-                  (*Holiday list for Dynpro India Internal employees as per their base locations)
-                </p>
+                Holidays List
               </span>
+            </Grid>
+            <Grid item xs={12}>
+              <p
+                style={{
+                  fontSize: '13px',
+                  color: 'red',
+                }}
+              >
+                (*Please note that the holiday list is applicable only to Dynpro India’s employees
+                based on their respective locations. This list does not apply to employees working
+                at client sites or remotely.)
+              </p>
             </Grid>
             {/* <Grid item xs={12} sm={3} md={3} lg={2}>
               <AppTableSearchBox onSearch={handleSearch} top="148px" />
