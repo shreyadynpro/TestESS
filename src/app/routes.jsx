@@ -23,6 +23,7 @@ import EmployeeMasterModuleRoutes from './components/EmployeeModule/employeeModu
 import HolidayModuleRoutes from './components/HolidayModule/holidayModuleRoutes';
 import ReferralModuleRoutes from './components/ReferralModule/referralModuleRoutes';
 import DocumentCenterRoutes from './components/DocumentCenter/documentCenterRoutes';
+import ProjectInfoRoutes from './components/ProjectInfo/projectInfoRoutes';
 // import EmployeeList from './components/EmployeeList/EmployeeList';
 import Tasks from './components/ToDo/Tasks';
 import Payslips from './components/Salary/Payslip/Payslips';
@@ -48,6 +49,7 @@ const routes = [
       ...clientModuleRoutes,
       ...GroupMasterModuleRoutes,
       ...HolidayModuleRoutes,
+      ...ProjectInfoRoutes,
       ...ReferralModuleRoutes,
       ...DocumentCenterRoutes,
       ...roleModuleRoutes,

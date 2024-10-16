@@ -1,110 +1,66 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import {
   Box,
   Card,
   CardContent,
-  CardActionArea,
   Typography,
   Grid,
   IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  styled,
+  Tooltip,
   List,
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
-  TextField,
-  Button,
+  CardActions,
 } from '@mui/material';
-import { useReducer } from 'react';
-import DescriptionIcon from '@mui/icons-material/Description';
-import PolicyIcon from '@mui/icons-material/Policy';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import ArticleIcon from '@mui/icons-material/Article';
-import GetAppIcon from '@mui/icons-material/GetApp'; // Icon for download
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+
+import GetAppIcon from '@mui/icons-material/GetApp';
 import axios from 'axios';
 import commonConfig from '../commonConfig';
 import { getAccessToken } from 'app/utils/utils';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import UploadIcon from '@mui/icons-material/Upload';
+import UploadITRDialog from '../DocumentCenter/UploadITRDialog';
 import SnackbarUtils from 'SnackbarUtils';
-import { useNavigate } from 'react-router-dom';
-import DownloadAllIcon from '@mui/icons-material/CloudDownload';
-import commonRoutes from 'app/components/commonRoutes';
-import PayslipDialog from './PayslipDialog';
-import DocumentDialog from './DocumentDialog';
 
-const StyledListItemText = styled(ListItemText)(({ theme }) => ({
-  color: '#59919d',
-  fontWeight: 'bold !important',
-  fontSize: '22px !important',
-}));
-
-const sections = [
-  {
-    title: 'Company Policy',
-    icon: <PolicyIcon />,
-    description: 'Policies and regulations.',
-    bgColor: '#ffebee',
-    category: 'CompanyPolicy',
-  },
-  // {
-  //   title: 'Form16',
-  //   icon: <DescriptionIcon />,
-  //   description: 'Annual tax documents.',
-  //   bgColor: '#f3e5f5',
-  //   category: 'Form16',
-  // },
-  // {
-  //   title: 'Payslip',
-  //   icon: <AccountBalanceIcon />,
-  //   description: 'Monthly salary breakdown.',
-  //   bgColor: '#e8f5e9',
-  //   category: 'Payslip',
-  // },
-  // {
-  //   title: 'IT Declaration',
-  //   icon: <ArticleIcon />,
-  //   description: 'Income tax declaration.',
-  //   bgColor: '#fff3e0',
-  //   category: 'ITDeclaration',
-  // },
-  // {
-  //   title: 'Add Referral',
-  //   icon: <PersonAddIcon />, // Make sure to import this icon
-  //   description: 'Add a new referral.',
-  //   bgColor: '#e3f2fd', // You can choose any background color
-  //   category: 'AddReferral',
-  // },
-];
-// Define reducer function
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'LOADING':
-      return { ...state, loading: action.bool };
-    default:
-      return state;
-  }
-};
 const DocumentCenter = () => {
-  const [open, setOpen] = useState(false);
-  const [payslipOpen, setPayslipOpen] = useState(false); // New state for Payslip dialog
-  const [selectedSection, setSelectedSection] = useState(null);
   const [documents, setDocuments] = useState([]);
-  const [payslipData, setPayslipData] = useState([]); // New state for Payslip data
   const authToken = getAccessToken();
   const [loading, setLoading] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const initialITRData = {
+    fy: '2024-2025',
+    attachment: null,
+  };
+
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case 'SEARCHED':
+        return { ...state, searched: action.newVal };
+      case 'PAGE_CHANGED':
+        return { ...state, page: action.no };
+      case 'DATA_CHANGED':
+        return { ...state, data: [...action.newData] };
+      case 'OPEN':
+        return { ...state, open: action.bool };
+      case 'LOADING':
+        return { ...state, loading: action.bool };
+      default:
+        return state;
+    }
+  };
 
   const [state, dispatch] = useReducer(reducer, {
-    loading: false,
+    searched: '',
+    page: 0,
+    data: [],
     open: false,
-    responseError: '',
-    hasError: false,
+    loading: false,
   });
-  const navigate = useNavigate();
+  const [itrData, setItrData] = useState(initialITRData);
+  const [hasITR, setHasITR] = useState(false);
 
-  // Fetch data for other sections
   const fetchData = async (sectionTitle) => {
     try {
       setLoading(true);
@@ -116,20 +72,30 @@ const DocumentCenter = () => {
       });
       setLoading(false);
       if (response && response.data && response.data.Response) {
-        setDocuments(response.data.Response); // Bind documents to state
+        const response1 = await axios.get(commonConfig.urls.getitrlist, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        setLoading(false);
+        if (response1 && response1.data && response1.data.Response) {
+          // Check if ITR data exists
+          if (response1.data.Response.length > 0) {
+            setHasITR(true);
+          }
+        }
+        setDocuments(response.data.Response);
       }
     } catch (error) {
       setLoading(false);
       console.error(error?.message || 'Something went wrong!');
     }
   };
-
-  // Fetch Payslip data
-  const fetchPayslipData = async () => {
+  const getitrdata = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(commonConfig.urls.getMonths, {
-        // Replace with the new Payslip API
+      const response = await axios.get(commonConfig.urls.getitrlist, {
         headers: {
           Authorization: `Bearer ${authToken}`,
           'Content-Type': 'application/json',
@@ -137,33 +103,21 @@ const DocumentCenter = () => {
       });
       setLoading(false);
       if (response && response.data && response.data.Response) {
-        setPayslipData(response.data.Response); // Bind Payslip data to state
+        // Check if ITR data exists
+        if (response.data.Response.length > 0) {
+          setHasITR(true);
+        }
       }
     } catch (error) {
       setLoading(false);
-      console.error('Error fetching Payslip data:', error);
+      console.error(error?.message || 'Something went wrong!');
     }
   };
 
-  const handleOpenDialog = (section) => {
-    setSelectedSection(section);
-    if (section.category === 'Payslip') {
-      fetchPayslipData();
-      setPayslipOpen(true);
-    } else {
-      fetchData(section.category);
-      setOpen(true);
-    }
-  };
+  useEffect(() => {
+    fetchData('CompanyPolicy');
+  }, []);
 
-  const handleCloseDialog = () => {
-    setOpen(false);
-    setSelectedSection(null);
-  };
-
-  const handleClosePayslipDialog = () => {
-    setPayslipOpen(false);
-  };
   const handlePreview = async (doc_id, name) => {
     try {
       const response = await axios.get(commonConfig.urls.docs_download + '/' + doc_id, {
@@ -171,34 +125,36 @@ const DocumentCenter = () => {
           Authorization: `Bearer ${authToken}`,
           'Content-Type': 'application/json',
         },
-        responseType: 'blob', // Important to handle binary data
       });
 
-      // Create a blob URL for the response data and specify the type as 'application/pdf'
-      const blob = new Blob([response.data], { type: 'application/pdf' });
-      const url = window.URL.createObjectURL(blob);
+      if (response.status === 200) {
+        // Get the presigned URL from the response
+        const { file_url } = response.data;
 
-      // Open the PDF in a new tab
-      window.open(url, '_blank');
+        // Open the document in a new tab
+        window.open(file_url, '_blank');
+      } else {
+        console.error('Failed to generate the document preview.');
+      }
     } catch (error) {
       console.error('Error previewing the document:', error);
     }
   };
-  // Function to handle document download
-  const handleDownload = async (doc_id, name) => {
+
+  const handleDownload = async () => {
     try {
-      const response = await axios.get(commonConfig.urls.docs_download + '/' + doc_id, {
+      const response = await axios.get(commonConfig.urls.itr_template_download, {
         headers: {
           Authorization: `Bearer ${authToken}`,
           'Content-Type': 'application/json',
         },
-        responseType: 'blob', // Important to handle binary data
+        responseType: 'blob',
       });
 
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `${name}.pdf`); // Use a dynamic filename
+      link.setAttribute('download', `IT Declaration FY 2024-25.xlsx`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -206,25 +162,20 @@ const DocumentCenter = () => {
       console.error('Error downloading the document:', error);
     }
   };
-  //Download Payslip
-  const downloadPayslip = async (payslipname) => {
-    const splitname = payslipname.split(' ');
+  const downloadSubmittedITR = async () => {
     try {
-      const response = await axios.get(
-        commonConfig.urls.generatePayslipPdf + '/' + splitname[0] + '/' + splitname[1],
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            'Content-Type': 'application/json',
-          },
-          responseType: 'blob', // Important to handle binary data
-        }
-      );
+      const response = await axios.get(commonConfig.urls.getitr, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+        responseType: 'blob',
+      });
 
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `${payslipname}.pdf`); // Use a dynamic filename
+      link.setAttribute('download', `IT_Declaration_24_25.xlsx`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -233,31 +184,56 @@ const DocumentCenter = () => {
     }
   };
 
-  // Function to download all payslips
-  const downloadAllPayslips = async () => {
-    try {
-      const payslipMonths = payslipData.map((payslip) => payslip.month_year);
-      const response = await axios.post(
-        commonConfig.urls.generatePayslipZip, // API for downloading all payslips
-        { payslipmonths: payslipMonths },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-            'Content-Type': 'application/json',
-          },
-          responseType: 'blob', // Important to handle binary data
-        }
-      );
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setItrData((prevData) => ({
+      ...prevData,
+      attachment: file,
+    }));
+  };
 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `All_Payslips.zip`); // Download as a zip file
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleSubmitITR = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('fy', itrData.fy);
+
+    if (itrData.attachment) {
+      formData.append('attachment', itrData.attachment);
+    }
+
+    try {
+      setLoading(true);
+      const response = await axios.post(commonConfig.urls.uploadITR, formData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      setLoading(false);
+      if (response && response.data.Status === 'Failed') {
+        SnackbarUtils.error(
+          Object.values(response.data.Errors)
+            .map((item) => item.toString())
+            .toString()
+        );
+      } else if (response && response.data.Status === 'Success') {
+        SnackbarUtils.success('ITR Submitted successfully');
+        handleCloseDialog();
+      } else {
+        SnackbarUtils.error('Something went wrong!!');
+      }
     } catch (error) {
-      console.error('Error downloading all payslips:', error);
+      dispatch({ type: 'LOADING', bool: false });
+      SnackbarUtils.error(error?.message || 'Something went wrong!!');
     }
   };
 
@@ -267,51 +243,167 @@ const DocumentCenter = () => {
         variant="h6"
         align="center"
         gutterBottom
-        sx={{ color: '#cb8b59', fontWeight: 'bold' }}
+        sx={{ color: '#cb8b59', fontWeight: 'bold', mb: 3 }}
       >
         Document Center
       </Typography>
-      <Grid container spacing={3}>
-        {sections.map((section, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
+
+      {loading ? (
+        <Typography>Loading...</Typography>
+      ) : (
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ color: '#00246b', fontWeight: 'bold', mb: 2 }}>
+            Company Policies
+          </Typography>
+          <Grid container spacing={2} justifyContent="center">
+            {documents.length > 0 ? (
+              documents.map((doc, index) => (
+                <Grid item xs={12} sm={6} md={3} key={index}>
+                  <Card
+                    sx={{
+                      border: '1px solid #59919d',
+                      borderRadius: '8px',
+                      boxShadow: 3,
+                      height: '80%',
+                    }}
+                  >
+                    <CardContent>
+                      <List>
+                        <ListItem>
+                          <ListItemText
+                            primary={doc.doc_name}
+                            sx={{ color: '#59919d', fontWeight: '400 !important' }}
+                          />
+                          <ListItemSecondaryAction>
+                            <Tooltip title="View">
+                              <IconButton
+                                edge="end"
+                                onClick={() => handlePreview(doc.id, doc.doc_name)}
+                                sx={{ color: '#59919d' }}
+                              >
+                                <VisibilityIcon />
+                              </IconButton>
+                            </Tooltip>
+                          </ListItemSecondaryAction>
+                        </ListItem>
+                      </List>
+                    </CardContent>
+                    <CardActions></CardActions>
+                  </Card>
+                </Grid>
+              ))
+            ) : (
+              <Grid item xs={12}>
+                <Typography>No documents available</Typography>
+              </Grid>
+            )}
+          </Grid>
+        </Box>
+      )}
+      <Box sx={{ mb: 2 }}>
+        <Typography variant="h6" sx={{ color: '#00246b', fontWeight: 'bold', mb: 2 }}>
+          ITR Declaration
+        </Typography>
+        <Grid container spacing={2} justifyContent="center">
+          <Grid item xs={12} sm={6} md={3}>
             <Card
-              sx={{ borderRadius: 2, boxShadow: 3, backgroundColor: section.bgColor }}
-              onClick={() => handleOpenDialog(section)}
+              sx={{
+                border: '1px solid #59919d',
+                borderRadius: '8px',
+                boxShadow: 3,
+                height: '80%',
+              }}
             >
-              <CardActionArea>
-                <CardContent sx={{ textAlign: 'center' }}>
-                  <IconButton sx={{ fontSize: 60, color: '#00246b' }}>{section.icon}</IconButton>
-                  <Typography variant="h6" sx={{ color: '#00246b', fontWeight: 'bold' }}>
-                    {section.title}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: '#757575' }}>
-                    {section.description}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
+              <CardContent>
+                <List>
+                  <ListItem>
+                    <ListItemText
+                      primary="ITR Declaration Template"
+                      sx={{ color: '#59919d', fontWeight: '400 !important' }}
+                    />
+                    <ListItemSecondaryAction>
+                      <Tooltip title="Download Template">
+                        <IconButton edge="end" sx={{ color: '#00246b' }} onClick={handleDownload}>
+                          <GetAppIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                </List>
+              </CardContent>
             </Card>
           </Grid>
-        ))}
-      </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card
+              sx={{
+                border: '1px solid #59919d',
+                borderRadius: '8px',
+                boxShadow: 3,
+                height: '80%',
+              }}
+            >
+              <CardContent>
+                <List>
+                  <ListItem>
+                    <ListItemText
+                      primary="Upload ITR Declaration for FY 24-25"
+                      sx={{ color: '#59919d', fontWeight: '400 !important' }}
+                    />
+                    <ListItemSecondaryAction>
+                      <Tooltip title="Upload ITR Declaration">
+                        <IconButton edge="end" onClick={handleOpenDialog} sx={{ color: '#00246b' }}>
+                          <UploadIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                </List>
+              </CardContent>
+            </Card>
+          </Grid>
+          {hasITR && (
+            <Grid item xs={12} sm={6} md={3}>
+              <Card
+                sx={{
+                  border: '1px solid #59919d',
+                  borderRadius: '8px',
+                  boxShadow: 3,
+                  height: '80%',
+                }}
+              >
+                <CardContent>
+                  <List>
+                    <ListItem>
+                      <ListItemText
+                        primary="Download Uploaded ITR"
+                        sx={{ color: '#59919d', fontWeight: '400 !important' }}
+                      />
+                      <ListItemSecondaryAction>
+                        <Tooltip title="Upload ITR Declaration">
+                          <IconButton
+                            edge="end"
+                            onClick={downloadSubmittedITR}
+                            sx={{ color: '#00246b' }}
+                          >
+                            <GetAppIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  </List>
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
+        </Grid>
+      </Box>
 
-      {/* Dialog for viewing other documents */}
-      <DocumentDialog
-        open={open}
+      <UploadITRDialog
+        open={openDialog}
         onClose={handleCloseDialog}
-        documents={documents}
-        loading={loading}
-        handleDownload={handleDownload}
-        handlePreview={handlePreview}
-      />
-
-      {/* Dialog for viewing Payslips */}
-      <PayslipDialog
-        open={payslipOpen}
-        onClose={handleClosePayslipDialog}
-        payslipData={payslipData}
-        loading={loading}
-        downloadPayslip={downloadPayslip}
-        downloadAllPayslips={downloadAllPayslips}
+        onSubmit={handleSubmitITR}
+        itrData={itrData}
+        onFileChange={handleFileChange}
       />
     </Box>
   );

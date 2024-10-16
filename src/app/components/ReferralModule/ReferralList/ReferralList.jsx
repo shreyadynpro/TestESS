@@ -56,7 +56,7 @@ const ReferralList = () => {
   const [page, setPage] = useState(0);
   const [searched, setSearched] = useState('');
   const [openDialog, setOpenDialog] = useState(false); // <-- Add state to manage the dialog open/close
-  const [referralData, setReferralData] = useState({
+  const initialReferralData = {
     full_name: '',
     email: '',
     contact_no: '',
@@ -64,7 +64,9 @@ const ReferralList = () => {
     experience: '',
     pan: '',
     current_location: '',
-  });
+    attachment: null, // Assuming you have a file upload field
+  };
+  const [referralData, setReferralData] = useState(initialReferralData);
   const navigate = useNavigate();
   const authToken = getAccessToken();
   const user = useSelector((state) => state.userDetails?.user);
@@ -73,6 +75,7 @@ const ReferralList = () => {
     setOpenDialog(true);
   };
   const handleCloseDialog = () => {
+    setReferralData(initialReferralData);
     setOpenDialog(false);
   };
 
@@ -142,6 +145,27 @@ const ReferralList = () => {
 
   const handleSubmitReferral = async (e) => {
     e.preventDefault();
+    const { full_name, email, contact_no, pan } = referralData;
+    // Validate PAN (e.g., Indian PAN format)
+    const panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+    if (!panPattern.test(pan)) {
+      SnackbarUtils.error('Invalid PAN format. Please enter a valid PAN.');
+      return;
+    }
+
+    // Validate Email using regex
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!emailPattern.test(email)) {
+      SnackbarUtils.error('Invalid Email format. Please enter a valid email.');
+      return;
+    }
+
+    // Validate Contact No (should be a valid 10-digit number)
+    const contactPattern = /^[0-9]{10}$/;
+    if (!contactPattern.test(contact_no)) {
+      SnackbarUtils.error('Invalid Contact No. Please enter a valid 10-digit phone number.');
+      return;
+    }
 
     const authToken = getAccessToken();
 
@@ -182,6 +206,15 @@ const ReferralList = () => {
         );
       } else if (response && response.data.Status === 'Success') {
         // Adjust condition for success
+        const response1 = await axios.post(
+          'https://talend.dynpro.com/dynMIS/upload_referral_resume/',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data', // Necessary for file uploads
+            },
+          }
+        );
         SnackbarUtils.success('Referral Added Successfully');
         handleCloseDialog();
         getReferral();
@@ -194,6 +227,7 @@ const ReferralList = () => {
       SnackbarUtils.error(error?.message || 'Something went wrong!!');
     }
   };
+
   const handlePreview = async (doc_id, name) => {
     try {
       const response = await axios.get(
