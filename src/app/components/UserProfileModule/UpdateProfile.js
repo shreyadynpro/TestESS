@@ -78,7 +78,7 @@ const UpdateProfile = ({ open, onClose, userData }) => {
     dob: '',
     gender: '',
   });
-
+  const [fileError, setFileError] = useState(false);
   const [initialData, setInitialData] = useState({});
 
   const [state, dispatch] = useReducer(reducer, {
@@ -94,6 +94,7 @@ const UpdateProfile = ({ open, onClose, userData }) => {
         fname: userData.first_name || '',
         lname: userData.last_name || '',
         pemail: userData.email1 || '',
+        identity_no: userData.identity_no || '',
         first_name: userData.first_name || '',
         last_name: userData.last_name || '',
         middle_name: userData.mid_name || '',
@@ -115,6 +116,11 @@ const UpdateProfile = ({ open, onClose, userData }) => {
         emergency_name: userData.emergency_contact_name || '',
         emergency_contact: userData.emergency_contact_no || '',
         emergency_relationship: userData.emergency_contact_relatio || '',
+        bank_name: userData.bank_name || '',
+        holder_name: userData.name_as_per_bank || '',
+        account_no: userData.bank_account_number || '',
+        branch_name: userData.branch || '',
+        bank_ifsc: userData.bank_ifsc || '',
       };
       setFormData(initialFormState);
       setInitialData(initialFormState); // Store the initial data for comparison
@@ -143,12 +149,13 @@ const UpdateProfile = ({ open, onClose, userData }) => {
       changedFields.fname = initialData.first_name;
       changedFields.lname = initialData.last_name;
       changedFields.pemail = initialData.personal_email;
+      changedFields.identity_no = initialData.identity_no;
     }
 
     return changedFields;
   };
   async function handleSubmit() {
-    const changedData = getChangedFields();
+    const changedData = getChangedFields(); // Get the changed fields
 
     // Check if no changes were detected
     if (Object.keys(changedData).length === 0) {
@@ -157,15 +164,33 @@ const UpdateProfile = ({ open, onClose, userData }) => {
     }
 
     console.log('Changed Data:', changedData);
-    onClose();
+
+    const formData = new FormData();
+
+    // Append the form data fields
+    for (const [key, value] of Object.entries(changedData)) {
+      formData.append(key, value);
+    }
+
+    // Only append the file if it exists
+    if (setFormData.attachment) {
+      formData.append('attachment', setFormData.attachment);
+    }
 
     const authToken = getAccessToken();
     try {
       dispatch({ type: 'LOADING', bool: true });
-      const response = await axios.post(commonConfig.urls.updateEmpProfile, changedData, {
-        headers: { Authorization: `Bearer ${authToken}` },
+
+      // Post the formData
+      const response = await axios.post(commonConfig.urls.updateEmpProfile, formData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'multipart/form-data', // Important for file uploads
+        },
       });
+
       dispatch({ type: 'LOADING', bool: false });
+
       if (response && response.data.Status === 'Failed') {
         SnackbarUtils.error(
           Object.values(response.data.Errors)
@@ -173,6 +198,7 @@ const UpdateProfile = ({ open, onClose, userData }) => {
             .toString()
         );
       }
+
       if (response && response.data.Status === 'Success') {
         SnackbarUtils.success('Profile Updated Successfully');
         navigate(commonRoutes.home);
@@ -183,6 +209,13 @@ const UpdateProfile = ({ open, onClose, userData }) => {
     }
   }
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFormData((prevData) => ({
+      ...prevData,
+      attachment: file, // Store the file in referralData
+    }));
+  };
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>Update Profile</DialogTitle>
@@ -217,6 +250,7 @@ const UpdateProfile = ({ open, onClose, userData }) => {
             value={formData.first_name}
             onChange={handleChange}
             variant="outlined"
+            disabled
           />
           <CustomTextField
             margin="dense"
@@ -226,6 +260,7 @@ const UpdateProfile = ({ open, onClose, userData }) => {
             value={formData.middle_name}
             onChange={handleChange}
             variant="outlined"
+            disabled
           />
           <CustomTextField
             margin="dense"
@@ -235,6 +270,7 @@ const UpdateProfile = ({ open, onClose, userData }) => {
             value={formData.last_name}
             onChange={handleChange}
             variant="outlined"
+            disabled
           />
         </Box>
         <Box display="flex" flexDirection="row" gap={2}>
@@ -246,6 +282,7 @@ const UpdateProfile = ({ open, onClose, userData }) => {
             value={formData.personal_email}
             onChange={handleChange}
             variant="outlined"
+            disabled
           />
           <CustomTextField
             margin="dense"
@@ -268,11 +305,10 @@ const UpdateProfile = ({ open, onClose, userData }) => {
             value={formData.dob}
             onChange={handleChange}
             variant="outlined"
+            disabled
             sx={{ flex: 1 }} // Adjusts the flex size to control spacing
           />
           <Box sx={{ flex: 1 }}>
-            {' '}
-            {/* Set flex to 1 to align with DOB */}
             <FormLabel component="legend">Gender</FormLabel>
             <RadioGroup
               row
@@ -280,8 +316,8 @@ const UpdateProfile = ({ open, onClose, userData }) => {
               value={formData.gender} // Gender selected by default if available
               onChange={handleChange}
             >
-              <FormControlLabel value="Male" control={<StyledRadio />} label="Male" />
-              <FormControlLabel value="Female" control={<StyledRadio />} label="Female" />
+              <FormControlLabel value="Male" control={<StyledRadio />} label="Male" disabled />
+              <FormControlLabel value="Female" control={<StyledRadio />} label="Female" disabled />
             </RadioGroup>
           </Box>
         </Box>
@@ -449,6 +485,99 @@ const UpdateProfile = ({ open, onClose, userData }) => {
             onChange={handleChange}
             variant="outlined"
           />
+        </Box>
+        <Box display="flex" flexDirection="row" gap={2}>
+          <Typography variant="h6" align="left" style={{ color: '#cb8b59', fontSize: '16px' }}>
+            Bank Account
+          </Typography>
+        </Box>
+        <Box display="flex" flexDirection="row" gap={2}>
+          <CustomTextField
+            margin="dense"
+            label="Bank Name"
+            fullWidth
+            name="bank_name"
+            value={formData.bank_name}
+            onChange={handleChange}
+            variant="outlined"
+          />
+
+          <CustomTextField
+            margin="dense"
+            label="Name as per bank"
+            fullWidth
+            name="holder_name"
+            value={formData.holder_name}
+            onChange={handleChange}
+            variant="outlined"
+          />
+        </Box>
+        <Box display="flex" flexDirection="row" gap={2}>
+          <CustomTextField
+            margin="dense"
+            label="Account No"
+            fullWidth
+            name="account_no"
+            value={formData.account_no}
+            onChange={handleChange}
+            variant="outlined"
+          />
+          <CustomTextField
+            margin="dense"
+            label="Branch Name"
+            fullWidth
+            name="branch_name"
+            value={formData.branch_name}
+            onChange={handleChange}
+            variant="outlined"
+          />
+          <CustomTextField
+            margin="dense"
+            label="IFSC Code"
+            fullWidth
+            name="bank_ifsc"
+            value={formData.bank_ifsc}
+            onChange={handleChange}
+            variant="outlined"
+          />
+        </Box>
+        {/* File upload input */}
+        <Box sx={{ mt: 2 }}>
+          <label htmlFor="file-upload">
+            Upload cheque Copy:(Max 512KB, allowed formats: jpg, jpeg, png)
+            <Button
+              variant="contained"
+              component="span"
+              sx={{
+                display: 'block',
+                marginTop: '8px',
+                backgroundColor: '#e3f2fd', // Light blue shade
+                color: '#00246b', // Darker text color for contrast
+                '&:hover': {
+                  backgroundColor: '#bbdefb', // Slightly darker on hover, still light
+                },
+              }}
+            >
+              Choose File
+            </Button>
+            <input
+              id="file-upload"
+              type="file"
+              name="attachment"
+              onChange={handleFileChange}
+              style={{
+                display: 'none', // Hide the default file input
+              }}
+            />
+          </label>
+          {fileError && (
+            <Typography color="error" sx={{ mt: 1 }}>
+              Attachment is required.
+            </Typography>
+          )}
+          {formData.attachment && (
+            <Box sx={{ mt: 1, color: 'grey' }}>Selected file: {formData.attachment.name}</Box>
+          )}
         </Box>
       </DialogContent>
       <DialogActions>
