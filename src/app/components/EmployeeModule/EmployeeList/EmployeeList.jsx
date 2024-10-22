@@ -54,7 +54,7 @@ const EmployeeList = () => {
 
   const requestSearch = (searchedVal) =>
     (tabValue === 0 ? data.active : data.inactive).filter((row) => {
-      return (row.first_name + ' ' + row.last_name + ' ' + row.email1)
+      return (row.first_name + ' ' + row.last_name + ' ' + row.email1 + ' ' + row.identity_no)
         .toLowerCase()
         .includes(searchedVal.toLowerCase());
     });

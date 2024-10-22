@@ -38,7 +38,7 @@ const Payslips = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
   const [months, setMonths] = useState([]);
   const [lastPayslip, setLastPayslip] = useState(null);
-  const [payslipData, setPayslipData] = useState({});
+  const [payslipData, setPayslipData] = useState(null);
   const [PayslipList, setPayslipList] = useState({});
   const authToken = getAccessToken();
   const [loading, setLoading] = useState(false);
@@ -95,6 +95,7 @@ const Payslips = () => {
   };
   const fetchPayslipData = async (month) => {
     try {
+      setLoading(true);
       const [monthPart, year] = month.split(' ');
 
       const data = {
@@ -104,9 +105,11 @@ const Payslips = () => {
       const response = await axios.post(commonConfig.urls.getpayslip, data, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
-      setPayslipData(response.data.Response[0]); // Assuming the API returns the payslip data
+      setPayslipData(response?.data?.Response?.[0] || null); // Assuming the API returns the payslip data
     } catch (error) {
       console.error('Failed to fetch payslip data:', error);
+    } finally {
+      setLoading(false); // End loading after fetch
     }
   };
   const fetchPayslipList = async () => {
@@ -256,7 +259,11 @@ const Payslips = () => {
             mx: 'auto',
           }}
         >
-          {payslipData && Object.keys(payslipData).length > 0 ? (
+          {loading ? (
+            // Show the loading state when data is being fetched
+            <Typography variant="body1">Loading payslip data...</Typography>
+          ) : // Once loading is complete, check if there is data
+          payslipData && Object.keys(payslipData).length > 0 ? (
             <>
               {/* Header Section */}
               <Grid container spacing={2} sx={{ mb: 1 }}>
@@ -637,7 +644,7 @@ const Payslips = () => {
               </Typography>
             </>
           ) : (
-            <Typography variant="body1">Loading payslip data...</Typography>
+            <Typography variant="body1">No Data Found</Typography>
           )}
         </Box>
       </Grid>
