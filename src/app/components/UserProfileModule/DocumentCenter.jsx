@@ -21,6 +21,7 @@ import { getAccessToken } from 'app/utils/utils';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import UploadIcon from '@mui/icons-material/Upload';
 import UploadITRDialog from '../DocumentCenter/UploadITRDialog';
+import UploadITProofDialog from '../DocumentCenter/UploadITProofDialog';
 import SnackbarUtils from 'SnackbarUtils';
 
 const DocumentCenter = () => {
@@ -28,6 +29,7 @@ const DocumentCenter = () => {
   const authToken = getAccessToken();
   const [loading, setLoading] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const [openDialog1, setOpenDialog1] = useState(false);
 
   const initialITRData = {
     fy: '2024-2025',
@@ -60,6 +62,7 @@ const DocumentCenter = () => {
   });
   const [itrData, setItrData] = useState(initialITRData);
   const [hasITR, setHasITR] = useState(false);
+  const [hasDOC, setHasDoc] = useState(false);
 
   const fetchData = async (sectionTitle) => {
     try {
@@ -70,15 +73,19 @@ const DocumentCenter = () => {
           'Content-Type': 'application/json',
         },
       });
-      setLoading(false);
+
       if (response && response.data && response.data.Response) {
+        if (response.data.Response.length > 0) {
+          setHasDoc(true);
+        }
+        setLoading(false);
         const response1 = await axios.get(commonConfig.urls.getitrlist, {
           headers: {
             Authorization: `Bearer ${authToken}`,
             'Content-Type': 'application/json',
           },
         });
-        setLoading(false);
+
         if (response1 && response1.data && response1.data.Response) {
           // Check if ITR data exists
           if (response1.data.Response.length > 0) {
@@ -200,6 +207,14 @@ const DocumentCenter = () => {
     setOpenDialog(false);
   };
 
+  const handleOpenDialog1 = () => {
+    setOpenDialog1(true);
+  };
+
+  const handleCloseDialog1 = () => {
+    setOpenDialog1(false);
+  };
+
   const handleSubmitITR = async (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -226,8 +241,56 @@ const DocumentCenter = () => {
             .toString()
         );
       } else if (response && response.data.Status === 'Success') {
-        SnackbarUtils.success('ITR Submitted successfully');
+        SnackbarUtils.success('IT declaration Submitted successfully');
         handleCloseDialog();
+      } else {
+        SnackbarUtils.error('Something went wrong!!');
+      }
+    } catch (error) {
+      dispatch({ type: 'LOADING', bool: false });
+      SnackbarUtils.error(error?.message || 'Something went wrong!!');
+    }
+  };
+  const getFinancialYear = () => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1; // Months are 0-indexed in JS
+
+    // Financial year starts in April. If before April, it belongs to the previous FY.
+    if (currentMonth < 4) {
+      return `${currentYear - 1}-${currentYear}`;
+    } else {
+      return `${currentYear}-${currentYear + 1}`;
+    }
+  };
+  const handleSubmitITProof = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('fy', getFinancialYear());
+
+    if (itrData.attachment) {
+      formData.append('attachment', itrData.attachment);
+    }
+
+    try {
+      setLoading(true);
+      const response = await axios.post(commonConfig.urls.uploadITProof, formData, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      setLoading(false);
+      if (response && response.data.Status === 'Failed') {
+        SnackbarUtils.error(
+          Object.values(response.data.Errors)
+            .map((item) => item.toString())
+            .toString()
+        );
+      } else if (response && response.data.Status === 'Success') {
+        SnackbarUtils.success('IT Proof Submitted successfully');
+        handleCloseDialog1();
       } else {
         SnackbarUtils.error('Something went wrong!!');
       }
@@ -251,61 +314,62 @@ const DocumentCenter = () => {
       {loading ? (
         <Typography>Loading...</Typography>
       ) : (
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="h6" sx={{ color: '#00246b', fontWeight: 'bold', mb: 2 }}>
-            Company Policies
-          </Typography>
-          <Grid container spacing={2} justifyContent="center">
-            {documents.length > 0 ? (
-              documents.map((doc, index) => (
-                <Grid item xs={12} sm={6} md={3} key={index}>
-                  <Card
-                    sx={{
-                      border: '1px solid #59919d',
-                      borderRadius: '8px',
-                      boxShadow: 3,
-                      height: '80%',
-                    }}
-                  >
-                    <CardContent>
-                      <List>
-                        <ListItem>
-                          <ListItemText
-                            primary={doc.doc_name}
-                            sx={{ color: '#59919d', fontWeight: '400 !important' }}
-                          />
-                          <ListItemSecondaryAction>
-                            <Tooltip title="View">
-                              <IconButton
-                                edge="end"
-                                onClick={() => handlePreview(doc.id, doc.doc_name)}
-                                sx={{ color: '#59919d' }}
-                              >
-                                <VisibilityIcon />
-                              </IconButton>
-                            </Tooltip>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                      </List>
-                    </CardContent>
-                    <CardActions></CardActions>
-                  </Card>
-                </Grid>
-              ))
-            ) : (
-              <Grid item xs={12}>
-                <Typography>No documents available</Typography>
+        <>
+          {hasDOC ? (
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="h6" sx={{ color: '#00246b', fontWeight: 'bold', mb: 2 }}>
+                Company Policies
+              </Typography>
+              <Grid container spacing={2} justifyContent="center">
+                {documents.map((doc, index) => (
+                  <Grid item xs={12} sm={6} md={3} key={index}>
+                    <Card
+                      sx={{
+                        border: '1px solid #59919d',
+                        borderRadius: '8px',
+                        boxShadow: 3,
+                        height: '80%',
+                      }}
+                    >
+                      <CardContent>
+                        <List>
+                          <ListItem>
+                            <ListItemText
+                              primary={doc.doc_name}
+                              sx={{ color: '#59919d', fontWeight: '400 !important' }}
+                            />
+                            <ListItemSecondaryAction>
+                              <Tooltip title="View">
+                                <IconButton
+                                  edge="end"
+                                  onClick={() => handlePreview(doc.id, doc.doc_name)}
+                                  sx={{ color: '#59919d' }}
+                                >
+                                  <VisibilityIcon />
+                                </IconButton>
+                              </Tooltip>
+                            </ListItemSecondaryAction>
+                          </ListItem>
+                        </List>
+                      </CardContent>
+                      <CardActions></CardActions>
+                    </Card>
+                  </Grid>
+                ))}
               </Grid>
-            )}
-          </Grid>
-        </Box>
+            </Box>
+          ) : (
+            <Typography>No documents available</Typography>
+          )}
+        </>
       )}
+
       <Box sx={{ mb: 2 }}>
         <Typography variant="h6" sx={{ color: '#00246b', fontWeight: 'bold', mb: 2 }}>
-          ITR Declaration
+          IT Declaration
         </Typography>
         <Grid container spacing={2} justifyContent="center">
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={4} md={3}>
             <Card
               sx={{
                 border: '1px solid #59919d',
@@ -318,7 +382,7 @@ const DocumentCenter = () => {
                 <List>
                   <ListItem>
                     <ListItemText
-                      primary="ITR Declaration Template"
+                      primary="Download FY 24-25 IT Declaration Template"
                       sx={{ color: '#59919d', fontWeight: '400 !important' }}
                     />
                     <ListItemSecondaryAction>
@@ -333,7 +397,7 @@ const DocumentCenter = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={4} md={3}>
             <Card
               sx={{
                 border: '1px solid #59919d',
@@ -346,11 +410,11 @@ const DocumentCenter = () => {
                 <List>
                   <ListItem>
                     <ListItemText
-                      primary="Upload ITR Declaration for FY 24-25"
+                      primary="Upload Fill IT Declaration"
                       sx={{ color: '#59919d', fontWeight: '400 !important' }}
                     />
                     <ListItemSecondaryAction>
-                      <Tooltip title="Upload ITR Declaration">
+                      <Tooltip title="Upload IT Declaration">
                         <IconButton edge="end" onClick={handleOpenDialog} sx={{ color: '#00246b' }}>
                           <UploadIcon />
                         </IconButton>
@@ -362,7 +426,7 @@ const DocumentCenter = () => {
             </Card>
           </Grid>
           {hasITR && (
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid item xs={12} sm={4} md={3}>
               <Card
                 sx={{
                   border: '1px solid #59919d',
@@ -375,11 +439,11 @@ const DocumentCenter = () => {
                   <List>
                     <ListItem>
                       <ListItemText
-                        primary="Download Uploaded ITR"
+                        primary="Download Fill IT Declaration"
                         sx={{ color: '#59919d', fontWeight: '400 !important' }}
                       />
                       <ListItemSecondaryAction>
-                        <Tooltip title="Upload ITR Declaration">
+                        <Tooltip title="Upload IT Declaration">
                           <IconButton
                             edge="end"
                             onClick={downloadSubmittedITR}
@@ -395,6 +459,38 @@ const DocumentCenter = () => {
               </Card>
             </Grid>
           )}
+          <Grid item xs={12} sm={4} md={3}>
+            <Card
+              sx={{
+                border: '1px solid #59919d',
+                borderRadius: '8px',
+                boxShadow: 3,
+                height: '80%',
+              }}
+            >
+              <CardContent>
+                <List>
+                  <ListItem>
+                    <ListItemText
+                      primary="Upload IT Proof"
+                      sx={{ color: '#59919d', fontWeight: '400 !important' }}
+                    />
+                    <ListItemSecondaryAction>
+                      <Tooltip title="Upload IT Proof">
+                        <IconButton
+                          edge="end"
+                          onClick={handleOpenDialog1}
+                          sx={{ color: '#00246b' }}
+                        >
+                          <UploadIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                </List>
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
       </Box>
 
@@ -402,6 +498,13 @@ const DocumentCenter = () => {
         open={openDialog}
         onClose={handleCloseDialog}
         onSubmit={handleSubmitITR}
+        itrData={itrData}
+        onFileChange={handleFileChange}
+      />
+      <UploadITProofDialog
+        open={openDialog1}
+        onClose={handleCloseDialog1}
+        onSubmit={handleSubmitITProof}
         itrData={itrData}
         onFileChange={handleFileChange}
       />

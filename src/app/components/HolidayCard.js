@@ -63,8 +63,18 @@ const HolidayCard = () => {
 
   return (
     <StyledProfileCard>
-      <p style={{ marginBottom: '1px' }}>
-        (*Holiday list for Dynpro India Internal employees as per their base locations)
+      <p
+        style={{
+          marginBottom: '1px',
+          width: '70%',
+          textAlign: 'center',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
+      >
+        (*Please note that the holiday list applies only to employees working in offices at their
+        respective locations. This list does not apply to employees working at client sites or
+        remotely.)
       </p>
       <CardContent>
         {/* Tab for locations */}

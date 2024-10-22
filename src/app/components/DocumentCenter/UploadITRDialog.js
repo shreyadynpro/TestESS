@@ -28,11 +28,11 @@ const UploadITRDialog = ({ open, onClose, itrData, onChange, onSubmit, onFileCha
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Upload ITR Declaration</DialogTitle>
+      <DialogTitle>Upload IT Declaration</DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent>
           <Typography variant="body2" sx={{ mb: 2 }}>
-            Please upload your ITR declaration for FY 2024-25.
+            Please upload your IT declaration for FY 2024-25.
           </Typography>
           <hr />
           <TextField

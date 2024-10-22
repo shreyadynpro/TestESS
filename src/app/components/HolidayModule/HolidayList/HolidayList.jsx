@@ -119,9 +119,9 @@ const HolidayList = () => {
                   color: 'red',
                 }}
               >
-                (*Please note that the holiday list is applicable only to Dynpro India’s employees
-                based on their respective locations. This list does not apply to employees working
-                at client sites or remotely.)
+                (*Please note that the holiday list applies only to employees working in offices at
+                their respective locations. This list does not apply to employees working at client
+                sites or remotely..)
               </p>
             </Grid>
             {/* <Grid item xs={12} sm={3} md={3} lg={2}>
