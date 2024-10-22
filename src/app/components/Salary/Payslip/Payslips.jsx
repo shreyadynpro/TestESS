@@ -514,7 +514,7 @@ const Payslips = () => {
                           </>
                         )}
 
-                        <Box>{payslipData.statutory_bonus_salary}</Box>
+                        <Box>{payslipData.statutory_bonus}</Box>
                         <Box>{payslipData.gratuity}</Box>
                         {payslipData.salary_type !== 'Monthly' && (
                           <>
