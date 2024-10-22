@@ -79,6 +79,7 @@ const PaginationTable = ({
             <TableCell>PAN</TableCell>
             <TableCell>Current Location</TableCell>
             <TableCell>Referred By</TableCell>
+            <TableCell>Referred At</TableCell>
             <TableCell>Attachment</TableCell>
           </TableRow>
         </TableHead>
@@ -107,6 +108,8 @@ const PaginationTable = ({
                     {referral.first_name}&nbsp;
                     {referral.last_name}
                   </TableCell>
+                  <TableCell>{new Date(referral.created_at).toISOString().split('T')[0]}</TableCell>
+
                   <TableCell>
                     {referral.attachment_path ? (
                       <>

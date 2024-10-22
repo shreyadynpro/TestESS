@@ -106,8 +106,14 @@ const commonConfig = {
     downloadReferraDoc: `${baseURL}/downloadReferraDoc`,
     itr_template_download: `${baseURL}/downloadITRTemplate`,
     uploadITR: `${baseURL}/itr_attchment`,
+    uploadITProof: `${baseURL}/store_it_proof`,
     getitr: `${baseURL}/getitr`,
     getitrlist: `${baseURL}/getitrlist`,
+    getstates: `${baseURL}/getstates`,
+    gettechpark: `${baseURL}/gettechpark`,
+    getestablishmentaddress: `${baseURL}/getestablishmentaddress`,
+    getworklocation: `${baseURL}/getworklocation`,
+    projinfo: `${baseURL}/projinfo`,
   },
 };
 

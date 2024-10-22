@@ -142,12 +142,7 @@ const Sidenav = () => {
       icon: <GroupsIcon />,
       permissionKey: 'employees',
     },
-    {
-      title: 'Referral',
-      path: '/referral',
-      icon: <GroupAddIcon />,
-      permissionKey: 'documents',
-    },
+
     {
       title: 'Power BI',
       path: '/reports',
@@ -186,70 +181,82 @@ const Sidenav = () => {
       ],
     },
     {
-      title: 'Leave',
-      path: '/leave',
-      icon: <EventNoteIcon />,
-      permissionKey: 'leaves',
-      subMenu: [
-        { title: 'Leave Type Master', path: '/leave/sick', permissionKey: 'leaves' },
-        { title: 'Leave Apply', path: '/leave/casual', permissionKey: 'leaves' },
-        { title: 'Grant Leave', path: '/leave/grant', permissionKey: 'leaves' },
-        { title: 'Leave Balance', path: '/leave/balance', permissionKey: 'leaves' },
-        {
-          title: 'Leave Approval Tracking',
-          path: '/leave/approval-tracking',
-          permissionKey: 'leaves',
-        },
-        { title: 'Leave Calendar', path: '/leave/calendar', permissionKey: 'leaves' },
-        {
-          title: 'Manage Holiday Calendar',
-          path: '/leave/manage-calendar',
-          permissionKey: 'leaves',
-        },
-        {
-          title: 'Holiday Calendar',
-          path: '/leave/holiday-calendar',
-          permissionKey: 'leaves',
-        },
-      ],
-    },
-    {
-      title: 'Salary',
-      path: '/salary',
-      icon: <MonetizationOnIcon />,
-      permissionKey: 'salary',
-      subMenu: [
-        { title: 'Payslips', path: '/salary/payslip/payslips', permissionKey: 'salary' },
-        // {
-        //   title: 'IT Statements',
-        //   path: '/salary/it-statements',
-        //   permissionKey: 'salary',
-        // },
-        // {
-        //   title: 'IT Declaration',
-        //   path: '/salary/it-declaration',
-        //   permissionKey: 'salary',
-        // },
-        // {
-        //   title: 'Loans & Advances',
-        //   path: '/salary/loans-advances',
-        //   permissionKey: 'salary',
-        // },
-        // {
-        //   title: 'Reimbursement',
-        //   path: '/salary/reimbursement',
-        //   permissionKey: 'salary',
-        // },
-        // { title: 'Salary Revision', path: '/salary/revision', permissionKey: 'salary' },
-      ],
-    },
-
-    {
       title: 'Documents Center',
       path: '/documentcenter',
       icon: <DescriptionIcon />,
       permissionKey: 'documents',
     },
+    {
+      title: 'Project Information',
+      icon: <MonetizationOnIcon />,
+      path: '/projectinfo',
+      permissionKey: 'documents',
+    },
+    {
+      title: 'Salary Slips',
+      path: '/salary/payslip/payslips',
+      permissionKey: 'salary',
+      icon: <MonetizationOnIcon />,
+    },
+    // {
+    //   title: 'Leave',
+    //   path: '/leave',
+    //   icon: <EventNoteIcon />,
+    //   permissionKey: 'leaves',
+    //   subMenu: [
+    //     { title: 'Leave Type Master', path: '/leave/sick', permissionKey: 'leaves' },
+    //     { title: 'Leave Apply', path: '/leave/casual', permissionKey: 'leaves' },
+    //     { title: 'Grant Leave', path: '/leave/grant', permissionKey: 'leaves' },
+    //     { title: 'Leave Balance', path: '/leave/balance', permissionKey: 'leaves' },
+    //     {
+    //       title: 'Leave Approval Tracking',
+    //       path: '/leave/approval-tracking',
+    //       permissionKey: 'leaves',
+    //     },
+    //     { title: 'Leave Calendar', path: '/leave/calendar', permissionKey: 'leaves' },
+    //     {
+    //       title: 'Manage Holiday Calendar',
+    //       path: '/leave/manage-calendar',
+    //       permissionKey: 'leaves',
+    //     },
+    //     {
+    //       title: 'Holiday Calendar',
+    //       path: '/leave/holiday-calendar',
+    //       permissionKey: 'leaves',
+    //     },
+    //   ],
+    // },
+    // {
+    //   title: 'Salary',
+    //   path: '/salary',
+    //   icon: <MonetizationOnIcon />,
+    //   permissionKey: 'salary',
+    //   subMenu: [
+    //     { title: 'Payslips', path: '/salary/payslip/payslips', permissionKey: 'salary' },
+    //     // {
+    //     //   title: 'IT Statements',
+    //     //   path: '/salary/it-statements',
+    //     //   permissionKey: 'salary',
+    //     // },
+    //     // {
+    //     //   title: 'IT Declaration',
+    //     //   path: '/salary/it-declaration',
+    //     //   permissionKey: 'salary',
+    //     // },
+    //     // {
+    //     //   title: 'Loans & Advances',
+    //     //   path: '/salary/loans-advances',
+    //     //   permissionKey: 'salary',
+    //     // },
+    //     // {
+    //     //   title: 'Reimbursement',
+    //     //   path: '/salary/reimbursement',
+    //     //   permissionKey: 'salary',
+    //     // },
+    //     // { title: 'Salary Revision', path: '/salary/revision', permissionKey: 'salary' },
+    //   ],
+    // },
+
     {
       title: 'Holidays',
       path: '/holidays',
@@ -266,16 +273,11 @@ const Sidenav = () => {
         { title: 'Monthly', path: '/attendance/monthly', permissionKey: 'attendanceMonthly' },
       ],
     },
+
     {
-      title: 'Activities',
-      path: '/activities',
-      icon: <CampaignIcon />,
-      permissionKey: 'activities',
-    },
-    {
-      title: 'Project Information',
-      icon: <MonetizationOnIcon />,
-      path: '/projectinfo',
+      title: 'Referral',
+      path: '/referral',
+      icon: <GroupAddIcon />,
       permissionKey: 'documents',
     },
     { title: 'Help', path: '/help', icon: <InfoIcon />, permissionKey: 'help' },
