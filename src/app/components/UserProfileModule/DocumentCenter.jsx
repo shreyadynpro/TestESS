@@ -410,7 +410,7 @@ const DocumentCenter = () => {
                 <List>
                   <ListItem>
                     <ListItemText
-                      primary="Upload Fill IT Declaration"
+                      primary="Upload Filled IT Declaration"
                       sx={{ color: '#59919d', fontWeight: '400 !important' }}
                     />
                     <ListItemSecondaryAction>
@@ -425,7 +425,7 @@ const DocumentCenter = () => {
               </CardContent>
             </Card>
           </Grid>
-          {hasITR && (
+          {/* {hasITR && (
             <Grid item xs={12} sm={4} md={3}>
               <Card
                 sx={{
@@ -439,7 +439,7 @@ const DocumentCenter = () => {
                   <List>
                     <ListItem>
                       <ListItemText
-                        primary="Download Fill IT Declaration"
+                        primary="Download Filled IT Declaration"
                         sx={{ color: '#59919d', fontWeight: '400 !important' }}
                       />
                       <ListItemSecondaryAction>
@@ -458,7 +458,7 @@ const DocumentCenter = () => {
                 </CardContent>
               </Card>
             </Grid>
-          )}
+          )} */}
           <Grid item xs={12} sm={4} md={3}>
             <Card
               sx={{
