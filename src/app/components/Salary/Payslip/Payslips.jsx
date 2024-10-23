@@ -488,11 +488,7 @@ const Payslips = () => {
 
                         <Box>{payslipData.statutory_bonus_salary}</Box>
                         <Box>{payslipData.gratuity}</Box>
-                        {payslipData.salary_type !== 'Monthly' && (
-                          <>
-                            <Box> {payslipData.shift_allowance_e}</Box>
-                          </>
-                        )}
+                        <Box>-</Box>
                         <Box>-</Box>
                         <Box sx={{ mt: 2, mb: 1 }}>{payslipData.gratuity_employer_salary}</Box>
                         <Box>{payslipData.pf_emp_salary}</Box>
