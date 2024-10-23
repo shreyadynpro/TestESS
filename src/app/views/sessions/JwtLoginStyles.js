@@ -24,9 +24,10 @@ export const JWTRoot = styled(JustifyBox)(() => ({
   margin: 0,
   backgroundColor: '#ffffff', // White background
   '& .card': {
-    maxWidth: 500,
+    width: '70%', // Full width to take up available space
+    maxWidth: '500px', // Set a max-width to prevent the form from becoming too wide
     minHeight: 530,
-    margin: '10rem',
+    margin: '10rem auto', // Center the card with auto margins
     display: 'flex',
     borderRadius: 12,
     alignItems: 'center',
@@ -44,12 +45,19 @@ export const JWTRoot = styled(JustifyBox)(() => ({
   },
   '@media (max-width: 768px)': {
     '& .card': {
-      margin: '2rem',
+      maxWidth: '90%', // Make the form responsive for tablet screens
+      margin: '2rem auto',
     },
   },
   '@media (max-width: 480px)': {
     '& .card': {
-      margin: '1rem',
+      maxWidth: '95%', // Even more responsive for smaller screens
+      margin: '1rem auto',
+    },
+  },
+  '@media (min-width: 1440px)': {
+    '& .card': {
+      maxWidth: '600px', // Keep the max-width the same for larger screens to prevent it from getting too wide
     },
   },
 }));
