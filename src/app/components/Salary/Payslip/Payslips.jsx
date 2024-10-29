@@ -197,7 +197,7 @@ const Payslips = () => {
           width="23.5%"
         >
           <Typography variant="h3" sx={{ fontSize: '1.8rem', mr: '100px' }}>
-            PAYSLIPS
+            Salary Slips
           </Typography>
           <Tooltip title="Download All Payslips">
             <IconButton onClick={downloadAllPayslips} sx={{ color: '#00246b' }}>
