@@ -72,9 +72,9 @@ const HolidayCard = () => {
           marginRight: 'auto',
         }}
       >
-        (*Please note that the holiday list applies only to employees working in offices at their
-        respective locations. This list does not apply to employees working at client sites or
-        remotely.)
+        (*Please note that this holiday list applies only to DynPro offices at respective locations
+        and employees working in these offices. Resources deployed on client projects must follow
+        holiday list issued by respective client location.)
       </p>
       <CardContent>
         {/* Tab for locations */}

@@ -114,7 +114,7 @@ const PayslipCard = () => {
     <StyledCard>
       <CardContent>
         <Typography variant="h6" align="center" color={'white'} gutterBottom>
-          Payslips
+          Salary Slips
         </Typography>
 
         {months && months.length > 0 ? (
