@@ -114,6 +114,7 @@ const commonConfig = {
     getestablishmentaddress: `${baseURL}/getestablishmentaddress`,
     getworklocation: `${baseURL}/getworklocation`,
     projinfo: `${baseURL}/projinfo`,
+    getprojinfo: `${baseURL}/getprojinfo`,
   },
 };
 
