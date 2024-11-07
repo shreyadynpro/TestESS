@@ -325,31 +325,80 @@ export default function HorizontalLinearStepper() {
       console.error(error?.message || 'Something went wrong!!');
     }
   };
+  const fetchProjectInfo = async () => {
+    try {
+      setLoading(true);
+      const response = await axios(commonConfig.urls.getprojinfo, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      setLoading(false);
+      if (response?.data?.Response) {
+        console.log('========', response.data.Response[0].client_emp_id);
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+
+          pan: user?.identity_no || '',
+          email: user?.email || '',
+          avserires_no: response.data.Response[0].client_emp_id || '',
+          name_of_city: response.data.Response[0].client_location || '',
+          work_location: response.data.Response[0].work_location || '',
+          name_of_building: response.data.Response[0].name_of_building || '',
+          floor_no: response.data.Response[0].floor_no || '',
+          mobile_no: response.data.Response[0].phone_mobile || '',
+          official_email: response.data.Response[0].candidate_email_id || '',
+          present_address: response.data.Response[0].alt_address_street || '',
+          present_city: response.data.Response[0].alt_address_city || '',
+          present_state: response.data.Response[0].alt_address_state || '',
+          present_zip: response.data.Response[0].alt_address_postalcode || '',
+          permanent_address: response.data.Response[0].primary_address_street || '',
+          permanant_city: response.data.Response[0].primary_address_city || '',
+          permanant_state: response.data.Response[0].primary_address_state || '',
+          permanant_zip: response.data.Response[0].primary_address_postalcode || '',
+          project_name: response.data.Response[0].project || '',
+          pm_name: response.data.Response[0].project_manager || '',
+          pm_email: response.data.Response[0].project_manager_email || '',
+          pm_mobile: response.data.Response[0].project_manager_mobile || '',
+          shift_timing: response.data.Response[0].shift_timing || '',
+          rotational_timing: response.data.Response[0].rotational_shift || '',
+          end_client_name: response.data.Response[0].end_client_name || '',
+          establishment_address: response.data.Response[0].establishment_address || '',
+          end_client_address: response.data.Response[0].end_client_address || '',
+        }));
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error(error?.message || 'Something went wrong!!');
+    }
+  };
   useEffect(() => {
     fetchData();
     fetchState(); // Fetch states on component mount
     fetchTechPark();
     fetchEstAddress();
     fetchWorkLocation();
+    fetchProjectInfo();
   }, []); // Empty dependency array ensures it runs only once
-  useEffect(() => {
-    if (userData) {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        emp_name: `${user?.first_name || ''} ${user?.last_name || ''}`,
-        pan: user?.identity_no || '',
-        email: user?.email || '',
-        present_address: userData?.primary_address_street || '',
-        present_city: userData?.primary_address_city || '',
-        present_state: userData?.primary_address_state || '',
-        present_zip: userData?.primary_address_postalcode || '',
-        permanent_address: userData?.alt_address_street || '',
-        permanant_city: userData?.alt_address_city || '',
-        permanant_state: userData?.alt_address_state || '',
-        permanant_zip: userData?.alt_address_postalcode || '',
-      }));
-    }
-  }, [userData, user]);
+  // useEffect(() => {
+  //   if (userData) {
+  //     setFormData((prevFormData) => ({
+  //       ...prevFormData,
+  //       emp_name: `${user?.first_name || ''} ${user?.last_name || ''}`,
+  //       pan: user?.identity_no || '',
+  //       email: user?.email || '',
+  //       present_address: userData?.primary_address_street || '',
+  //       present_city: userData?.primary_address_city || '',
+  //       present_state: userData?.primary_address_state || '',
+  //       present_zip: userData?.primary_address_postalcode || '',
+  //       permanent_address: userData?.alt_address_street || '',
+  //       permanant_city: userData?.alt_address_city || '',
+  //       permanant_state: userData?.alt_address_state || '',
+  //       permanant_zip: userData?.alt_address_postalcode || '',
+  //     }));
+  //   }
+  // }, [userData, user]);
   const requiredFields = [
     [
       'emp_name',
@@ -667,11 +716,11 @@ export default function HorizontalLinearStepper() {
                   <InputLabel>Work Location*</InputLabel>
                   <Select
                     name="name_of_city"
-                    value={formData.name_of_city}
+                    value={formData.work_location}
                     onChange={handleInputChange}
                     label="City*" // Add label prop for proper accessibility
                     required
-                    error={!!errors.name_of_city}
+                    error={!!errors.work_location}
                   >
                     <MenuItem value="">Select a city</MenuItem>
                     {workLocation.map((locations) => (
@@ -704,11 +753,11 @@ export default function HorizontalLinearStepper() {
                       <InputLabel>Tech Park*</InputLabel>
                       <Select
                         name="work_location"
-                        value={formData.work_location}
+                        value={formData.name_of_city}
                         onChange={handleInputChange}
                         label="Tech Park*"
                         required={!formData.notInAddressList1}
-                        error={!!errors.work_location}
+                        error={!!errors.name_of_city}
                       >
                         <MenuItem value="">Select a Tech Park</MenuItem>
                         {techparks.map((park) => (
