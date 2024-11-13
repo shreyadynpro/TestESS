@@ -344,7 +344,7 @@ const UpdateProfile = ({ open, onClose, userData }) => {
           </Typography>
         </Box>
         <Box display="flex" flexDirection="row" gap={2}>
-          <CustomTextField
+          {/* <CustomTextField
             margin="dense"
             label="Country Name"
             fullWidth
@@ -352,7 +352,7 @@ const UpdateProfile = ({ open, onClose, userData }) => {
             value={formData.present_country}
             onChange={handleChange}
             variant="outlined"
-          />
+          /> */}
           <CustomTextField
             margin="dense"
             label="State"
