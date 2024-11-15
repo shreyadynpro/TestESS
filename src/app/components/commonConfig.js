@@ -115,6 +115,9 @@ const commonConfig = {
     getworklocation: `${baseURL}/getworklocation`,
     projinfo: `${baseURL}/projinfo`,
     getprojinfo: `${baseURL}/getprojinfo`,
+    getattendance: `${baseURL}/attendance`,
+    getattendance_month: `${baseURL}/attendance_months`,
+    itproofcheck: `${baseURL}/itproofcheck`,
   },
 };
 
