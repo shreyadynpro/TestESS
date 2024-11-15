@@ -61,7 +61,8 @@ const DocumentCenter = () => {
     loading: false,
   });
   const [itrData, setItrData] = useState(initialITRData);
-  const [hasITR, setHasITR] = useState(false);
+  const [hasITR, setHasITR] = useState(true);
+  const [HasITProof, setHasITProof] = useState(true);
   const [hasDOC, setHasDoc] = useState(false);
 
   const fetchData = async (sectionTitle) => {
@@ -89,16 +90,31 @@ const DocumentCenter = () => {
         if (response1 && response1.data && response1.data.Response) {
           // Check if ITR data exists
           if (response1.data.Response.length > 0) {
-            setHasITR(true);
+            setHasITR(false);
           }
         }
+
         setDocuments(response.data.Response);
+        const response2 = await axios.get(commonConfig.urls.itproofcheck, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response2 && response2.data && response2.data.Response) {
+          // Check if ITR data exists
+          if (response2.data.Response.length > 0) {
+            setHasITProof(false);
+          }
+        }
       }
     } catch (error) {
       setLoading(false);
       console.error(error?.message || 'Something went wrong!');
     }
   };
+
   const getitrdata = async () => {
     try {
       setLoading(true);
@@ -112,7 +128,7 @@ const DocumentCenter = () => {
       if (response && response.data && response.data.Response) {
         // Check if ITR data exists
         if (response.data.Response.length > 0) {
-          setHasITR(true);
+          setHasITR(false);
         }
       }
     } catch (error) {
@@ -124,7 +140,11 @@ const DocumentCenter = () => {
   useEffect(() => {
     fetchData('CompanyPolicy');
   }, []);
-
+  useEffect(() => {
+    console.log('hasITR state changed:', hasITR);
+    console.log('HasITProof state changed:', HasITProof);
+    console.log('hasDOC state changed:', hasDOC);
+  }, [hasITR, HasITProof, hasDOC]);
   const handlePreview = async (doc_id, name) => {
     try {
       const response = await axios.get(commonConfig.urls.docs_download + '/' + doc_id, {
@@ -267,7 +287,7 @@ const DocumentCenter = () => {
     e.preventDefault();
     const formData = new FormData();
     formData.append('fy', getFinancialYear());
-
+    console.log('=======', formData);
     if (itrData.attachment) {
       formData.append('attachment', itrData.attachment);
     }
@@ -397,34 +417,40 @@ const DocumentCenter = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={4} md={3}>
-            <Card
-              sx={{
-                border: '1px solid #59919d',
-                borderRadius: '8px',
-                boxShadow: 3,
-                height: '80%',
-              }}
-            >
-              <CardContent>
-                <List>
-                  <ListItem>
-                    <ListItemText
-                      primary="Upload Filled IT Declaration"
-                      sx={{ color: '#59919d', fontWeight: '400 !important' }}
-                    />
-                    <ListItemSecondaryAction>
-                      <Tooltip title="Upload IT Declaration">
-                        <IconButton edge="end" onClick={handleOpenDialog} sx={{ color: '#00246b' }}>
-                          <UploadIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                </List>
-              </CardContent>
-            </Card>
-          </Grid>
+          {hasITR && (
+            <Grid item xs={12} sm={4} md={3}>
+              <Card
+                sx={{
+                  border: '1px solid #59919d',
+                  borderRadius: '8px',
+                  boxShadow: 3,
+                  height: '80%',
+                }}
+              >
+                <CardContent>
+                  <List>
+                    <ListItem>
+                      <ListItemText
+                        primary="Upload Filled IT Declaration"
+                        sx={{ color: '#59919d', fontWeight: '400 !important' }}
+                      />
+                      <ListItemSecondaryAction>
+                        <Tooltip title="Upload IT Declaration">
+                          <IconButton
+                            edge="end"
+                            onClick={handleOpenDialog}
+                            sx={{ color: '#00246b' }}
+                          >
+                            <UploadIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  </List>
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
           {/* {hasITR && (
             <Grid item xs={12} sm={4} md={3}>
               <Card
@@ -459,48 +485,51 @@ const DocumentCenter = () => {
               </Card>
             </Grid>
           )} */}
-          <Grid item xs={12} sm={4} md={3}>
-            <Card
-              sx={{
-                border: '1px solid #59919d',
-                borderRadius: '8px',
-                boxShadow: 3,
-                height: '80%',
-              }}
-            >
-              <CardContent>
-                <List>
-                  <ListItem>
-                    <ListItemText
-                      primary="Upload IT Proof"
-                      sx={{ color: '#59919d', fontWeight: '400 !important' }}
-                    />
-                    <ListItemSecondaryAction>
-                      <Tooltip title="Upload IT Proof">
-                        <IconButton
-                          edge="end"
-                          onClick={handleOpenDialog1}
-                          sx={{ color: '#00246b' }}
-                        >
-                          <UploadIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                </List>
-              </CardContent>
-            </Card>
-          </Grid>
+          {HasITProof && (
+            <Grid item xs={12} sm={4} md={3}>
+              <Card
+                sx={{
+                  border: '1px solid #59919d',
+                  borderRadius: '8px',
+                  boxShadow: 3,
+                  height: '80%',
+                }}
+              >
+                <CardContent>
+                  <List>
+                    <ListItem>
+                      <ListItemText
+                        primary="Upload IT Proof"
+                        sx={{ color: '#59919d', fontWeight: '400 !important' }}
+                      />
+                      <ListItemSecondaryAction>
+                        <Tooltip title="Upload IT Proof">
+                          <IconButton
+                            edge="end"
+                            onClick={handleOpenDialog1}
+                            sx={{ color: '#00246b' }}
+                          >
+                            <UploadIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  </List>
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
         </Grid>
       </Box>
 
       <UploadITRDialog
         open={openDialog}
         onClose={handleCloseDialog}
-        onSubmit={handleSubmitITR}
+        onSubmit={handleSubmitITR} // This is where you're handling the form submission
         itrData={itrData}
         onFileChange={handleFileChange}
       />
+
       <UploadITProofDialog
         open={openDialog1}
         onClose={handleCloseDialog1}
