@@ -79,6 +79,8 @@ const UpdateProfile = ({ open, onClose, userData }) => {
     gender: '',
   });
   const [fileError, setFileError] = useState(false);
+  const [fileError1, setFileError1] = useState(false);
+  const [fileError2, setFileError2] = useState(false);
   const [initialData, setInitialData] = useState({});
 
   const [state, dispatch] = useReducer(reducer, {
@@ -136,6 +138,9 @@ const UpdateProfile = ({ open, onClose, userData }) => {
   const getChangedFields = () => {
     const changedFields = {};
     let hasChanges = false;
+    let addressChanged = false;
+    let paraddressChanged = false;
+    let bankChanged = false;
 
     Object.keys(formData).forEach((key) => {
       if (formData[key] !== initialData[key]) {
@@ -144,7 +149,41 @@ const UpdateProfile = ({ open, onClose, userData }) => {
       }
     });
 
-    // Always include fname if there are any changes
+    if (
+      formData.bank_name !== initialData.bank_name ||
+      formData.holder_name !== initialData.holder_name ||
+      formData.account_no !== initialData.account_no ||
+      formData.branch_name !== initialData.branch_name ||
+      formData.bank_ifsc !== initialData.bank_ifsc
+    ) {
+      bankChanged = true;
+    }
+
+    // Set fileError1 to true if address has changed
+    setFileError(bankChanged);
+    // Check if any primary address fields have changed
+    if (
+      formData.present_state !== initialData.present_state ||
+      formData.present_city !== initialData.present_city ||
+      formData.present_address !== initialData.present_address ||
+      formData.present_pincode !== initialData.present_pincode
+    ) {
+      addressChanged = true;
+    }
+    // Set fileError1 to true if address has changed
+    setFileError1(addressChanged);
+
+    // Check if any primary address fields have changed
+    if (
+      formData.permanant_state !== initialData.permanant_state ||
+      formData.permanant_city !== initialData.permanant_city ||
+      formData.permanant_address !== initialData.permanant_address ||
+      formData.permanant_pincode !== initialData.permanant_pincode
+    ) {
+      paraddressChanged = true;
+    }
+    setFileError2(paraddressChanged);
+    // Always include fname, lname, pemail, and identity_no if there are any changes
     if (hasChanges) {
       changedFields.fname = initialData.first_name;
       changedFields.lname = initialData.last_name;
@@ -152,29 +191,47 @@ const UpdateProfile = ({ open, onClose, userData }) => {
       changedFields.identity_no = initialData.identity_no;
     }
 
-    return changedFields;
+    return { changedFields, addressChanged, paraddressChanged, bankChanged };
   };
   async function handleSubmit() {
-    const changedData = getChangedFields(); // Get the changed fields
-
+    const { changedFields, addressChanged, paraddressChanged, bankChanged } = getChangedFields(); // Get changed fields and address change status
+    // console.log('Changed Data:', changedFields);
     // Check if no changes were detected
-    if (Object.keys(changedData).length === 0) {
+    if (Object.keys(changedFields).length === 0) {
       SnackbarUtils.warning('No changes detected');
       return;
     }
+    // Check if address proof is required but not provided
+    if (bankChanged && !changedFields.attachment) {
+      SnackbarUtils.error('Cheque Attachment is required');
+      return; // Stop the form submission
+    }
+    if (addressChanged && !changedFields.present_address_proof) {
+      SnackbarUtils.error('Attachment is required for present address proof');
+      return; // Stop the form submission
+    }
+    if (paraddressChanged && !changedFields.pre_address_proof) {
+      SnackbarUtils.error('Attachment is required for permanant address proof');
+      return; // Stop the form submission
+    }
 
-    console.log('Changed Data:', changedData);
+    console.log('Changed Data:', changedFields);
 
     const formData = new FormData();
-
     // Append the form data fields
-    for (const [key, value] of Object.entries(changedData)) {
+    for (const [key, value] of Object.entries(changedFields)) {
       formData.append(key, value);
     }
 
     // Only append the file if it exists
     if (setFormData.attachment) {
       formData.append('attachment', setFormData.attachment);
+    }
+    if (setFormData.present_address_proof) {
+      formData.append('present_address_proof', setFormData.present_address_proof);
+    }
+    if (setFormData.pre_address_proof) {
+      formData.append('pre_address_proof', setFormData.pre_address_proof);
     }
 
     const authToken = getAccessToken();
@@ -215,6 +272,29 @@ const UpdateProfile = ({ open, onClose, userData }) => {
       ...prevData,
       attachment: file, // Store the file in referralData
     }));
+    if (file) {
+      setFileError(false);
+    }
+  };
+  const handleFileChange1 = (e) => {
+    const file1 = e.target.files[0];
+    setFormData((prevData) => ({
+      ...prevData,
+      present_address_proof: file1, // Store the file in referralData
+    }));
+    if (file1) {
+      setFileError1(false);
+    }
+  };
+  const handleFileChange2 = (e) => {
+    const file2 = e.target.files[0];
+    setFormData((prevData) => ({
+      ...prevData,
+      pre_address_proof: file2, // Store the file in referralData
+    }));
+    if (file2) {
+      setFileError2(false);
+    }
   };
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -394,7 +474,45 @@ const UpdateProfile = ({ open, onClose, userData }) => {
             sx={{ width: '32%' }}
           />
         </Box>
-
+        <Box sx={{ mt: 2 }}>
+          <label htmlFor="present_address_proof_upload">
+            Upload Present Address Proof:(Max 512KB, allowed formats: jpg, jpeg, png)
+            <Button
+              variant="contained"
+              component="span"
+              sx={{
+                display: 'block',
+                marginTop: '8px',
+                backgroundColor: '#e3f2fd', // Light blue shade
+                color: '#00246b', // Darker text color for contrast
+                '&:hover': {
+                  backgroundColor: '#bbdefb', // Slightly darker on hover, still light
+                },
+              }}
+            >
+              Choose File
+            </Button>
+            <input
+              id="present_address_proof_upload"
+              type="file"
+              name="present_address_proof"
+              onChange={handleFileChange1}
+              style={{
+                display: 'none', // Hide the default file input
+              }}
+            />
+          </label>
+          {fileError1 && (
+            <Typography color="error" sx={{ mt: 1 }}>
+              Attachment is required.
+            </Typography>
+          )}
+          {formData.present_address_proof && (
+            <Box sx={{ mt: 1, color: 'grey' }}>
+              Selected file: {formData.present_address_proof.name}
+            </Box>
+          )}
+        </Box>
         <Box display="flex" flexDirection="row" gap={2}>
           <Typography variant="h6" align="left" style={{ color: '#cb8b59', fontSize: '16px' }}>
             Permanant Address
@@ -440,7 +558,45 @@ const UpdateProfile = ({ open, onClose, userData }) => {
             variant="outlined"
           />
         </Box>
-
+        <Box sx={{ mt: 2 }}>
+          <label htmlFor="pre_address_proof_upload">
+            Upload Permanant Address Proof:(Max 512KB, allowed formats: jpg, jpeg, png)
+            <Button
+              variant="contained"
+              component="span"
+              sx={{
+                display: 'block',
+                marginTop: '8px',
+                backgroundColor: '#e3f2fd', // Light blue shade
+                color: '#00246b', // Darker text color for contrast
+                '&:hover': {
+                  backgroundColor: '#bbdefb', // Slightly darker on hover, still light
+                },
+              }}
+            >
+              Choose File
+            </Button>
+            <input
+              id="pre_address_proof_upload"
+              type="file"
+              name="pre_address_proof"
+              onChange={handleFileChange2}
+              style={{
+                display: 'none', // Hide the default file input
+              }}
+            />
+          </label>
+          {fileError2 && (
+            <Typography color="error" sx={{ mt: 1 }}>
+              Attachment is required.
+            </Typography>
+          )}
+          {formData.pre_address_proof && (
+            <Box sx={{ mt: 1, color: 'grey' }}>
+              Selected file: {formData.pre_address_proof.name}
+            </Box>
+          )}
+        </Box>
         <Box display="flex" flexDirection="row" gap={2}>
           <Typography variant="h6" align="left" style={{ color: '#cb8b59', fontSize: '16px' }}>
             Emergency Address/Contact

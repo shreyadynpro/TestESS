@@ -8,11 +8,13 @@ import {
   Button,
   Typography,
   Box,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
 
 const UploadITProofDialog = ({ open, onClose, itrData, onChange, onSubmit, onFileChange }) => {
   const [fileError, setFileError] = React.useState(false); // State to track file error
-
+  const [isChecked, setIsChecked] = useState(false);
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent the default form submission
 
@@ -26,6 +28,9 @@ const UploadITProofDialog = ({ open, onClose, itrData, onChange, onSubmit, onFil
     onSubmit(e);
   };
 
+  const handleCheckboxChange = (e) => {
+    setIsChecked(e.target.checked); // Update checkbox state
+  };
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
       <DialogTitle style={{ marginBottom: '0px' }}>Upload IT Proof for FY 2024-25</DialogTitle>
@@ -171,6 +176,23 @@ const UploadITProofDialog = ({ open, onClose, itrData, onChange, onSubmit, onFil
               <Box sx={{ mt: 1, color: 'grey' }}>Selected file: {itrData.attachment.name}</Box>
             )}
           </Box>
+          <Box sx={{ mt: 2 }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isChecked}
+                  onChange={handleCheckboxChange}
+                  color="primary"
+                  sx={{
+                    '&.Mui-checked': {
+                      color: '#00246b', // Set the color when checked (e.g., dark blue)
+                    },
+                  }}
+                />
+              }
+              label="Once you submit the IT declaration, no further changes can be made"
+            />
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button
@@ -190,6 +212,7 @@ const UploadITProofDialog = ({ open, onClose, itrData, onChange, onSubmit, onFil
             type="submit"
             variant="contained"
             sx={{ backgroundColor: '#00246b', color: 'white' }}
+            disabled={!isChecked}
           >
             Submit
           </Button>
