@@ -122,7 +122,7 @@ export default function HorizontalLinearStepper() {
     notInAddressList2: false,
   });
   const [errors, setErrors] = React.useState({
-    work_location: false,
+    name_of_city: false,
     other_tech_park: false,
     establishment_address: false,
     other_address: false,
@@ -149,8 +149,8 @@ export default function HorizontalLinearStepper() {
       }
     } else {
       // If "Not in Address List" is unchecked, validate the dropdown
-      if (!formData.work_location) {
-        newErrors.work_location = true; // Mark error for dropdown
+      if (!formData.name_of_city) {
+        newErrors.name_of_city = true; // Mark error for dropdown
       }
     }
 
@@ -179,7 +179,7 @@ export default function HorizontalLinearStepper() {
 
     const isValid = requiredForCurrentStep.every((field) => {
       // Skip validation for 'work_location' if the checkbox 'notInAddressList1' is checked
-      if (field === 'work_location' && formData.notInAddressList1) {
+      if (field === 'name_of_city' && formData.notInAddressList1) {
         // Enforce validation for 'other_tech_park' when 'notInAddressList1' is checked
         if (!formData.other_tech_park) {
           newErrors.other_tech_park = true;
@@ -336,7 +336,8 @@ export default function HorizontalLinearStepper() {
       });
       setLoading(false);
       if (response?.data?.Response) {
-        console.log('========', response.data.Response[0].client_emp_id);
+        const fetchtechpark = response.data.Response[0].client_location || '';
+        const estadd = response.data.Response[0].establishment_address || '';
         setFormData((prevFormData) => ({
           ...prevFormData,
 
@@ -367,6 +368,28 @@ export default function HorizontalLinearStepper() {
           establishment_address: response.data.Response[0].establishment_address || '',
           end_client_address: response.data.Response[0].end_client_address || '',
         }));
+        if (
+          fetchtechpark &&
+          !techparks.some((techpark) => techpark.fetchtechpark === fetchtechpark)
+        ) {
+          const newTechPark = {
+            id: techparks.length + 101, // Generate a unique id (or get from backend if available)
+            city: response.data.Response[0].work_location,
+            techpark_name: fetchtechpark, // Set the techpark_name as per your logic
+          };
+
+          setTechPark((prevTechParks) => [...prevTechParks, newTechPark]);
+        }
+
+        if (estadd && !estAddress.some((estAddress) => estAddress.estadd === estadd)) {
+          const newestAddress = {
+            id: techparks.length + 101, // Generate a unique id (or get from backend if available)
+            city: response.data.Response[0].work_location,
+            establishment_address: response.data.Response[0].establishment_address, // Set the techpark_name as per your logic
+          };
+
+          setEstAddress((prevEstAddr) => [...prevEstAddr, newestAddress]);
+        }
       }
     } catch (error) {
       setLoading(false);
@@ -381,6 +404,7 @@ export default function HorizontalLinearStepper() {
     fetchWorkLocation();
     fetchProjectInfo();
   }, []); // Empty dependency array ensures it runs only once
+
   // useEffect(() => {
   //   if (userData) {
   //     setFormData((prevFormData) => ({
@@ -442,7 +466,7 @@ export default function HorizontalLinearStepper() {
     if (name === 'notInAddressList1') {
       setErrors((prevErrors) => ({
         ...prevErrors,
-        work_location: checked ? false : prevErrors.work_location, // Clear or retain the error based on checkbox
+        name_of_city: checked ? false : prevErrors.name_of_city, // Clear or retain the error based on checkbox
         other_tech_park: !checked ? false : prevErrors.other_tech_park,
       }));
     } else if (name === 'notInAddressList2') {
@@ -715,7 +739,7 @@ export default function HorizontalLinearStepper() {
                 <CustomFormControl fullWidth>
                   <InputLabel>Work Location*</InputLabel>
                   <Select
-                    name="name_of_city"
+                    name="work_location"
                     value={formData.work_location}
                     onChange={handleInputChange}
                     label="City*" // Add label prop for proper accessibility
@@ -735,7 +759,7 @@ export default function HorizontalLinearStepper() {
                 <CustomFormControl
                   fullWidth
                   error={
-                    formData.notInAddressList1 ? !!errors.other_tech_park : !!errors.work_location
+                    formData.notInAddressList1 ? !!errors.other_tech_park : !!errors.name_of_city
                   }
                 >
                   {formData.notInAddressList1 ? (
@@ -752,7 +776,7 @@ export default function HorizontalLinearStepper() {
                     <React.Fragment>
                       <InputLabel>Tech Park*</InputLabel>
                       <Select
-                        name="work_location"
+                        name="name_of_city"
                         value={formData.name_of_city}
                         onChange={handleInputChange}
                         label="Tech Park*"
