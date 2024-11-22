@@ -36,6 +36,10 @@ const commonRoutes = {
   holiday: {
     holidaylist: '/holidays',
   },
+  attendance: {
+    attendancelist: '/attendance',
+  },
+
   employeeMaster: {
     employeeMasterlist: '/employee-master',
     employeeMasterAdd: '/employee-master/add',
@@ -98,6 +102,10 @@ const commonRoutes = {
   },
   projectinfo: {
     projectinfo: '/projectinfo',
+  },
+  leaves: {
+    leaveHistory: '/leave/history',
+    applyLeave: '/leaveapply',
   },
   // powerBIClient: '/powerBIClient',
 };

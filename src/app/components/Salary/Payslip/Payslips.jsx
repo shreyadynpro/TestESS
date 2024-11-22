@@ -443,7 +443,7 @@ const Payslips = () => {
                       >
                         <Box sx={{ fontWeight: 'bold', mb: 1 }}>Component - A</Box>
                         <Box>Basic Salary</Box>
-                        <Box>House Rent Allowance</Box>
+                        <Box>HRA</Box>
 
                         {payslipData.salary_type == 'Monthly' && (
                           <>
@@ -528,7 +528,7 @@ const Payslips = () => {
                         sx={{ border: '1px solid black', padding: '0px 16px' }}
                       >
                         <Box>Profession Tax</Box>
-                        <Box>Tax Deducted at Source</Box>
+                        <Box>TDS</Box>
                         <Box>Other Deductions</Box>
                         <Box>Employee PF</Box>
                         <Box>ESI</Box>
