@@ -118,6 +118,9 @@ const commonConfig = {
     getattendance: `${baseURL}/attendance`,
     getattendance_month: `${baseURL}/attendance_months`,
     itproofcheck: `${baseURL}/itproofcheck`,
+    leavehistory: `${baseURL}/leavehistory`,
+    getleavedata: `${baseURL}/getdata`,
+    applyleave: `${baseURL}/applyleave`,
   },
 };
 
