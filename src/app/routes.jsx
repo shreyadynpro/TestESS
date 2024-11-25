@@ -21,9 +21,11 @@ import commonRoutes from './components/commonRoutes';
 import BIDemo from './views/dashboard/BIDemo';
 import EmployeeMasterModuleRoutes from './components/EmployeeModule/employeeModuleRoutes';
 import HolidayModuleRoutes from './components/HolidayModule/holidayModuleRoutes';
+import AttendanceModuleRoutes from './components/AttendanceModule/attendanceModuleRoutes';
 import ReferralModuleRoutes from './components/ReferralModule/referralModuleRoutes';
 import DocumentCenterRoutes from './components/DocumentCenter/documentCenterRoutes';
 import ProjectInfoRoutes from './components/ProjectInfo/projectInfoRoutes';
+import LeaveModuleRoutes from './components/LeaveModule/leaveModuleRoutes';
 // import EmployeeList from './components/EmployeeList/EmployeeList';
 import Tasks from './components/ToDo/Tasks';
 import Payslips from './components/Salary/Payslip/Payslips';
@@ -49,12 +51,14 @@ const routes = [
       ...clientModuleRoutes,
       ...GroupMasterModuleRoutes,
       ...HolidayModuleRoutes,
+      ...AttendanceModuleRoutes,
       ...ProjectInfoRoutes,
       ...ReferralModuleRoutes,
       ...DocumentCenterRoutes,
       ...roleModuleRoutes,
       ...localizationModuleRoutes,
       ...EmployeeMasterModuleRoutes,
+      ...LeaveModuleRoutes,
       { path: commonRoutes.powerBIClient, element: <BIDemo /> },
       { path: commonRoutes.home, element: <Home /> },
       { path: commonRoutes.tasks, element: <Tasks /> },

@@ -188,8 +188,32 @@ const PayslipCard = () => {
 
 const Home = () => {
   const user = useSelector((state) => state.userDetails?.user);
+  const [HasITProofdoc, setHasITProofdoc] = useState(true);
   const theme = useTheme();
+  useEffect(() => {
+    const authToken = getAccessToken();
 
+    const checkItProof = async () => {
+      try {
+        const response = await axios.get(commonConfig.urls.itproofcheck, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        if (response && response.data && response.data.Response) {
+          // Check if ITR data exists
+          if (response.data.Response.length > 0) {
+            setHasITProofdoc(false);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to check IT proof:', error);
+      }
+    };
+
+    checkItProof();
+  }, []);
   const getGreeting = () => {
     const hours = new Date().getHours();
     if (hours < 12) return 'Good Morning';
@@ -211,6 +235,39 @@ const Home = () => {
           {getGreeting()} {user?.first_name || ''},
         </h3>
       </StyledDiv>
+      {HasITProofdoc && (
+        <>
+          <div
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px', // Shift to the right side
+              maxWidth: '400px', // Limit the width of the message
+              backgroundColor: '#fdecea', // Light red background for emphasis
+              color: '#c62828', // Dark red text for contrast
+              padding: '10px',
+              borderRadius: '8px',
+              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+              fontSize: '14px',
+              fontWeight: 500,
+              animation: 'blink-animation 5s infinite', // Add animation
+            }}
+          >
+            <strong>Note:</strong> You have not uploaded your IT Proofs. Please upload them as soon
+            as possible. The last date is <strong>20 Dec 2024</strong>.
+          </div>
+
+          <style>
+            {`
+        @keyframes blink-animation {
+          0% { opacity: 1; }
+          50% { opacity: 0; }
+          100% { opacity: 1; }
+        }
+      `}
+          </style>
+        </>
+      )}
 
       {/* Center Grid for content */}
       <Grid container justifyContent="center" spacing={2} style={{ marginTop: '40px' }}>
