@@ -15,6 +15,7 @@ import {
 const UploadITProofDialog = ({ open, onClose, itrData, onChange, onSubmit, onFileChange }) => {
   const [fileError, setFileError] = React.useState(false); // State to track file error
   const [isChecked, setIsChecked] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent the default form submission
 
@@ -25,7 +26,14 @@ const UploadITProofDialog = ({ open, onClose, itrData, onChange, onSubmit, onFil
     }
 
     // Call the onSubmit prop if all checks pass
-    onSubmit(e);
+    setIsSubmitting(true); // Disable the button immediately after submission
+
+    try {
+      onSubmit(e); // Call the onSubmit prop
+    } catch (error) {
+      console.error('Error submitting the form:', error);
+      setIsSubmitting(false); // Re-enable the button if there's an error
+    }
   };
 
   const handleCheckboxChange = (e) => {
@@ -212,7 +220,7 @@ const UploadITProofDialog = ({ open, onClose, itrData, onChange, onSubmit, onFil
             type="submit"
             variant="contained"
             sx={{ backgroundColor: '#00246b', color: 'white' }}
-            disabled={!isChecked}
+            disabled={!isChecked || isSubmitting}
           >
             Submit
           </Button>
