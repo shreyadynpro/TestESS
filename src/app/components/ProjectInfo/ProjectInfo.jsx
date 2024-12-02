@@ -723,8 +723,10 @@ export default function HorizontalLinearStepper() {
                   margin="normal"
                   value={formData.floor_no}
                   onChange={handleInputChange}
+                  type="number" // Added type attribute
                 />
               </Grid>
+
               <Grid item xs={6}>
                 <CustomTextField
                   label="Block Name/Building Name"
