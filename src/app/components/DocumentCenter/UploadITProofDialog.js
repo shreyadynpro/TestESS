@@ -14,8 +14,11 @@ import {
 
 const UploadITProofDialog = ({ open, onClose, itrData, onChange, onSubmit, onFileChange }) => {
   const [fileError, setFileError] = React.useState(false); // State to track file error
+  const [fileSizeError, setFileSizeError] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
+
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent the default form submission
 
@@ -35,7 +38,21 @@ const UploadITProofDialog = ({ open, onClose, itrData, onChange, onSubmit, onFil
       setIsSubmitting(false); // Re-enable the button if there's an error
     }
   };
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
 
+    if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        setFileSizeError(true); // File is too large
+        setFileError(false); // Reset the file error
+        itrData.attachment = null; // Clear the attachment
+      } else {
+        setFileSizeError(false); // File size is within the limit
+        setFileError(false); // Reset the file error
+        onFileChange(e); // Call the parent handler
+      }
+    }
+  };
   const handleCheckboxChange = (e) => {
     setIsChecked(e.target.checked); // Update checkbox state
   };
@@ -169,7 +186,7 @@ const UploadITProofDialog = ({ open, onClose, itrData, onChange, onSubmit, onFil
                 id="file-upload"
                 type="file"
                 name="attachment"
-                onChange={onFileChange}
+                onChange={handleFileChange}
                 style={{
                   display: 'none', // Hide the default file input
                 }}
@@ -180,7 +197,12 @@ const UploadITProofDialog = ({ open, onClose, itrData, onChange, onSubmit, onFil
                 Attachment is required.
               </Typography>
             )}
-            {itrData.attachment && (
+            {fileSizeError && (
+              <Typography color="error" sx={{ mt: 1 }}>
+                File size exceeds 10MB. Please upload a smaller file.
+              </Typography>
+            )}
+            {itrData.attachment && !fileSizeError && (
               <Box sx={{ mt: 1, color: 'grey' }}>Selected file: {itrData.attachment.name}</Box>
             )}
           </Box>
