@@ -16,6 +16,7 @@ import {
 
 import GetAppIcon from '@mui/icons-material/GetApp';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import commonConfig from '../commonConfig';
 import { getAccessToken } from 'app/utils/utils';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -23,6 +24,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import UploadITRDialog from '../DocumentCenter/UploadITRDialog';
 import UploadITProofDialog from '../DocumentCenter/UploadITProofDialog';
 import SnackbarUtils from 'SnackbarUtils';
+import commonRoutes from '../commonRoutes';
 
 const DocumentCenter = () => {
   const [documents, setDocuments] = useState([]);
@@ -30,6 +32,7 @@ const DocumentCenter = () => {
   const [loading, setLoading] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [openDialog1, setOpenDialog1] = useState(false);
+  const navigate = useNavigate();
 
   const initialITRData = {
     fy: '2024-2025',
@@ -140,11 +143,7 @@ const DocumentCenter = () => {
   useEffect(() => {
     fetchData('CompanyPolicy');
   }, []);
-  useEffect(() => {
-    console.log('hasITR state changed:', hasITR);
-    console.log('HasITProof state changed:', HasITProof);
-    console.log('hasDOC state changed:', hasDOC);
-  }, [hasITR, HasITProof, hasDOC]);
+
   const handlePreview = async (doc_id, name) => {
     try {
       const response = await axios.get(commonConfig.urls.docs_download + '/' + doc_id, {
@@ -263,6 +262,7 @@ const DocumentCenter = () => {
       } else if (response && response.data.Status === 'Success') {
         SnackbarUtils.success('IT declaration Submitted successfully');
         handleCloseDialog();
+        fetchData('CompanyPolicy');
       } else {
         SnackbarUtils.error('Something went wrong!!');
       }
@@ -287,7 +287,6 @@ const DocumentCenter = () => {
     e.preventDefault();
     const formData = new FormData();
     formData.append('fy', getFinancialYear());
-    console.log('=======', formData);
     if (itrData.attachment) {
       formData.append('attachment', itrData.attachment);
     }
@@ -311,6 +310,7 @@ const DocumentCenter = () => {
       } else if (response && response.data.Status === 'Success') {
         SnackbarUtils.success('IT Proof Submitted successfully');
         handleCloseDialog1();
+        fetchData('CompanyPolicy');
       } else {
         SnackbarUtils.error('Something went wrong!!');
       }
