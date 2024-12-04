@@ -13,17 +13,34 @@ import {
 } from '@mui/material';
 
 const UploadITRDialog = ({ open, onClose, itrData, onChange, onSubmit, onFileChange }) => {
-  const [fileError, setFileError] = useState(false); // State to track file error
+  const [fileError, setFileError] = useState(null); // State to track file error
   const [isChecked, setIsChecked] = useState(false); // State to track checkbox status
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const MAX_FILE_SIZE_MB = 5;
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Check if file size exceeds 5 MB
+      if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+        setFileError(`File size should not exceed ${MAX_FILE_SIZE_MB} MB.`);
+        return;
+      }
+
+      // Clear any previous errors and call the parent `onFileChange` handler
+      setFileError(null);
+      onFileChange(event);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent the default form submission
 
     // Check if a file is selected
     if (!itrData.attachment) {
-      setFileError(true); // Set file error if no file is selected
-      return; // Exit if no file
+      setFileError('Attachment is required.');
+      return;
     }
 
     setIsSubmitting(true); // Disable the button immediately after submission
@@ -81,7 +98,7 @@ const UploadITRDialog = ({ open, onClose, itrData, onChange, onSubmit, onFileCha
                 id="file-upload"
                 type="file"
                 name="attachment"
-                onChange={onFileChange}
+                onChange={handleFileChange}
                 style={{
                   display: 'none', // Hide the default file input
                 }}
@@ -89,10 +106,10 @@ const UploadITRDialog = ({ open, onClose, itrData, onChange, onSubmit, onFileCha
             </label>
             {fileError && (
               <Typography color="error" sx={{ mt: 1 }}>
-                Attachment is required.
+                {fileError}
               </Typography>
             )}
-            {itrData.attachment && (
+            {itrData.attachment && !fileError && (
               <Box sx={{ mt: 1, color: 'grey' }}>Selected file: {itrData.attachment.name}</Box>
             )}
           </Box>
@@ -132,7 +149,7 @@ const UploadITRDialog = ({ open, onClose, itrData, onChange, onSubmit, onFileCha
             type="submit"
             variant="contained"
             sx={{ backgroundColor: '#00246b', color: 'white' }}
-            disabled={!isChecked || isSubmitting}
+            disabled={!isChecked || isSubmitting || fileError}
           >
             Submit
           </Button>
