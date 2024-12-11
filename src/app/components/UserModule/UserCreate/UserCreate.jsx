@@ -54,8 +54,6 @@ const UserCreate = () => {
   const navigate = useNavigate();
 
   async function sendDataToServer(data) {
-    console.log('Post Data', data);
-
     const authToken = getAccessToken();
     try {
       dispatch({ type: 'LOADING', bool: true });

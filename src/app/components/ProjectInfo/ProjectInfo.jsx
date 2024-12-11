@@ -501,7 +501,6 @@ export default function HorizontalLinearStepper() {
       dispatch({ type: 'LOADING', bool: false });
       SnackbarUtils.error(error?.message || 'Something went wrong!!');
     }
-    console.log('Form Data Submitted:', formData);
   }
 
   const renderStepContent = (step) => {

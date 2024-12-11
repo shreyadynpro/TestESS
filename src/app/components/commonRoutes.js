@@ -39,6 +39,9 @@ const commonRoutes = {
   attendance: {
     attendancelist: '/attendance',
   },
+  salarySlip: {
+    salarySlipList: '/salaryslips',
+  },
 
   employeeMaster: {
     employeeMasterlist: '/employee-master',

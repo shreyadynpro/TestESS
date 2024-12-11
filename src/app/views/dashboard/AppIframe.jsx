@@ -32,7 +32,6 @@ const ErrorContainer = styled('div')(() => ({
 }));
 
 export default function AppIframe({ dashId = '', clientId = '', loadPowerBi = false }) {
-  console.log('dashid', dashId, 'clientid', clientId, 'loadpwe', loadPowerBi);
   const [data, setData] = useState('');
   const [error, setError] = useState('');
   const currentUserPermission = useSelector((state) => state.userType.userIsA);

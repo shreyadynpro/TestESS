@@ -151,7 +151,6 @@ const ApplyLeave = () => {
   };
 
   async function sendDataToServer(data) {
-    console.log('POST DATA===', data);
     try {
       setLoading(true);
       const response = await axios.post(commonConfig.urls.applyleave, data, {
@@ -192,7 +191,6 @@ const ApplyLeave = () => {
           enableReinitialize
           validationSchema={validationSchema}
           onSubmit={(values) => {
-            console.log('values====', values); // Log values to verify if they are correct
             if (values.leave_duration === 'Half Day') {
               values.total_applied_leave = 0.5;
               values.to_date = values.from_date;

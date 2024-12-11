@@ -91,7 +91,6 @@ const ReferralTab = ({ theme, ReferralData }) => {
   const handleSubmitReferral = async (e) => {
     e.preventDefault();
     // Add your API call here to submit the referralData
-    console.log(referralData); // Send this data to your API
     // After submitting, close the dialog
     const authToken = getAccessToken();
     try {
