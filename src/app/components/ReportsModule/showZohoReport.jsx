@@ -17,7 +17,6 @@ const ShowReport = () => {
   }, [id]);
 
   const fetchReportData = async (reportId) => {
-    console.log('Erffectttttttt');
     try {
       setLoading(true);
       const response = await axios.post(
@@ -28,7 +27,6 @@ const ShowReport = () => {
         }
       );
       setLoading(false);
-      console.log(response.data);
       if (response && response.data) {
         const reportData = response.data;
         const privateUrl = reportData.data.privateUrl;

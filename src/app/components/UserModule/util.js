@@ -51,6 +51,12 @@ const initialValues = {
     documents_edit: false,
     documents_delete: false,
     documents_view: false,
+    holiday: false,
+    referral: false,
+    attendance: false,
+    projectinfo: false,
+    attendance: false,
+    admin_salaryslips: false,
   },
   checked: [],
 };
@@ -88,17 +94,23 @@ const CreateUserSchema = Yup.object().shape({
       .label('Lastname'),
     email: Yup.string().email('Invalid email').required('Required').label('Email'),
     password: Yup.string()
-      .required(
-        'Must Contain 8 Characters, 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Case Character'
-      )
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-        'Must Contain 8 Characters, 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Case Character'
-      )
-      .max(16)
+      .when('employeeType', {
+        is: 'Billable', // Apply rules if employeeType is "Billable"
+        then: Yup.string()
+          .required(
+            'Must Contain 8 Characters, 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Case Character'
+          )
+          .matches(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
+            'Must Contain 8 Characters, 1 Uppercase, 1 Lowercase, 1 Number and 1 Special Case Character'
+          )
+          .max(16, 'Too Long!'),
+        otherwise: Yup.string().max(16, 'Too Long!'), // Optional for "Non-Billable"
+      })
       .label('Password'),
     role_id: Yup.number().required('Kindly select a role').label('Role').nullable(),
     group_id: Yup.number().required('Kindly select a Group').label('Group').nullable(),
+    employeeType: Yup.string().required('Please select an employee type').label('Employee Type'),
   }),
 });
 

@@ -41,6 +41,12 @@ const initialValues = {
   documents_edit: false,
   documents_delete: false,
   documents_view: false,
+  holiday: false,
+  referral: false,
+  attendance: false,
+  projectinfo: false,
+  attendance: false,
+  admin_salaryslips: false,
 };
 const CreateRoleSchema = Yup.object().shape({
   role: Yup.string().required('Role is Required'),

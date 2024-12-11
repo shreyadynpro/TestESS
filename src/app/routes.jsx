@@ -26,6 +26,7 @@ import ReferralModuleRoutes from './components/ReferralModule/referralModuleRout
 import DocumentCenterRoutes from './components/DocumentCenter/documentCenterRoutes';
 import ProjectInfoRoutes from './components/ProjectInfo/projectInfoRoutes';
 import LeaveModuleRoutes from './components/LeaveModule/leaveModuleRoutes';
+import SalarySlipsAdminRoutes from './components/SalarySlipsAdmin/salarySlipsAdminRoutes';
 // import EmployeeList from './components/EmployeeList/EmployeeList';
 import Tasks from './components/ToDo/Tasks';
 import Payslips from './components/Salary/Payslip/Payslips';
@@ -59,6 +60,7 @@ const routes = [
       ...localizationModuleRoutes,
       ...EmployeeMasterModuleRoutes,
       ...LeaveModuleRoutes,
+      ...SalarySlipsAdminRoutes,
       { path: commonRoutes.powerBIClient, element: <BIDemo /> },
       { path: commonRoutes.home, element: <Home /> },
       { path: commonRoutes.tasks, element: <Tasks /> },

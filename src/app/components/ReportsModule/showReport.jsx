@@ -29,7 +29,6 @@ const ShowReport = () => {
         }
       );
       setLoading(false);
-      console.log(response.data);
       if (response && response.data) {
         const reportData = response.data;
         setReportConfig({

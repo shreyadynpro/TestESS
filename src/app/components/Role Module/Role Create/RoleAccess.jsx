@@ -116,6 +116,63 @@ export default function RoleAccess() {
         'documents_delete',
         'documents_view',
       ])}
+      {/* documents */}
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <FormControlLabel
+          control={
+            <AppThemeCheckbox
+              onChange={() => setFieldValue('referral', !values.referral)}
+              checked={values.referral}
+            />
+          }
+          label="Referral"
+        />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <FormControlLabel
+          control={
+            <AppThemeCheckbox
+              onChange={() => setFieldValue('projectinfo', !values.projectinfo)}
+              checked={values.projectinfo}
+            />
+          }
+          label="Project Information"
+        />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <FormControlLabel
+          control={
+            <AppThemeCheckbox
+              onChange={() => setFieldValue('holiday', !values.holiday)}
+              checked={values.holiday}
+            />
+          }
+          label="Holiday"
+        />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <FormControlLabel
+          control={
+            <AppThemeCheckbox
+              onChange={() => setFieldValue('attendance', !values.attendance)}
+              checked={values.attendance}
+            />
+          }
+          label="Attendance"
+        />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <FormControlLabel
+          control={
+            <AppThemeCheckbox
+              onChange={() => setFieldValue('admin_salaryslips', !values.admin_salaryslips)}
+              checked={values.admin_salaryslips}
+            />
+          }
+          label="Admin Salaryslips"
+        />
+      </Grid>
+      <Divider className="form-group-divider" />
     </div>
   );
 }

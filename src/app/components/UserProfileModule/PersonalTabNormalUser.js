@@ -48,7 +48,6 @@ const PersonalTabNormalUser = ({ handleSubmit, theme }) => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const user = useSelector((state) => state.userDetails?.user);
-  console.log('=====================', user);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({

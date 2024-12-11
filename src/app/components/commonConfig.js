@@ -99,6 +99,7 @@ const commonConfig = {
     docs: `${baseURL}/docs`,
     docs_download: `${baseURL}/docs_download`,
     generatePayslipPdf: `${baseURL}/generatePayslipPdf`,
+    generatePayslipPdfAdmin: `${baseURL}/generatePayslipPdfAdmin`,
     generatePayslipZip: `${baseURL}/generatePayslipZip`,
     getReferralProfile: `${baseURL}/referral`,
     getHolidays: `${baseURL}/holidays`,
@@ -121,6 +122,7 @@ const commonConfig = {
     leavehistory: `${baseURL}/leavehistory`,
     getleavedata: `${baseURL}/getdata`,
     applyleave: `${baseURL}/applyleave`,
+    getAllPaySlip: `${baseURL}/getAllPaySlip`,
   },
 };
 
