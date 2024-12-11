@@ -213,6 +213,12 @@ const Sidenav = () => {
       permissionKey: 'attendance',
     },
     {
+      title: 'SalarySlips',
+      path: '/salaryslips',
+      icon: <EventIcon />,
+      permissionKey: 'admin_salaryslips',
+    },
+    {
       title: 'Leave',
       path: '/leave/history',
       icon: <EventIcon />,

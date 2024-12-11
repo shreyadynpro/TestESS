@@ -74,6 +74,46 @@ export default function PersonalInfo({ showPassword }) {
       autoComplete="off"
     >
       <div>
+        {/* Radio Button Group */}
+        <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+          Employee Type
+        </label>
+        <div style={{ display: 'flex', gap: '16px' }}>
+          <label>
+            <input
+              type="radio"
+              name="employeeType"
+              value="Billable"
+              checked={values.personalInfo.employeeType === 'Billable'}
+              onChange={handleChange('personalInfo.employeeType')}
+              onBlur={handleBlur}
+            />
+            Billable
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="employeeType"
+              value="Non-Billable"
+              checked={values.personalInfo.employeeType === 'Non-Billable'}
+              onChange={handleChange('personalInfo.employeeType')}
+              onBlur={handleBlur}
+            />
+            Non-Billable
+          </label>
+        </div>
+        {/* Error Message */}
+        {errors.personalInfo &&
+          touched.personalInfo &&
+          touched.personalInfo.employeeType &&
+          errors.personalInfo.employeeType && (
+            <span style={{ color: 'red', fontSize: '12px' }}>
+              {errors.personalInfo.employeeType}
+            </span>
+          )}
+      </div>
+
+      <div>
         <AppThemeTextField
           id="personalInfo.first_name"
           required
@@ -144,13 +184,13 @@ export default function PersonalInfo({ showPassword }) {
       {showPassword && (
         <div>
           <AppThemeTextField
-            required
             id="personalInfo.password"
             label="Password"
             type="password"
             style={{ width: '100%' }}
             onChange={handleChange('personalInfo.password')}
             onBlur={handleBlur}
+            value={values.personalInfo.password}
             error={Boolean(
               errors.personalInfo &&
                 touched.personalInfo &&
@@ -162,6 +202,24 @@ export default function PersonalInfo({ showPassword }) {
         </div>
       )}
 
+      <div>
+        <AppThemeTextField
+          id="personalInfo.dynmis_empid"
+          required
+          label="Employee Id"
+          placeholder="Enter DynMis Emp Id"
+          style={{ width: '100%' }}
+          value={values.personalInfo.dynmis_empid}
+          onChange={handleChange('personalInfo.dynmis_empid')}
+          onBlur={handleBlur}
+          error={Boolean(
+            errors.personalInfo &&
+              touched.personalInfo &&
+              touched.personalInfo.dynmis_empid &&
+              errors.personalInfo.dynmis_empid
+          )}
+        />
+      </div>
       <div>
         <AppThemeTextField
           variant="standard"

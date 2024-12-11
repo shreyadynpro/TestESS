@@ -195,7 +195,6 @@ const UpdateProfile = ({ open, onClose, userData }) => {
   };
   async function handleSubmit() {
     const { changedFields, addressChanged, paraddressChanged, bankChanged } = getChangedFields(); // Get changed fields and address change status
-    // console.log('Changed Data:', changedFields);
     // Check if no changes were detected
     if (Object.keys(changedFields).length === 0) {
       SnackbarUtils.warning('No changes detected');
@@ -214,8 +213,6 @@ const UpdateProfile = ({ open, onClose, userData }) => {
       SnackbarUtils.error('Attachment is required for permanant address proof');
       return; // Stop the form submission
     }
-
-    console.log('Changed Data:', changedFields);
 
     const formData = new FormData();
     // Append the form data fields
