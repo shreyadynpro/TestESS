@@ -104,6 +104,13 @@ const PaginationTable = ({ data = [], fetchData, onPageSet, page, loading, handl
           )}
         </TableBody>
       </StyledTable>
+      <AppPaginateTableFooter
+        page={page}
+        data={data}
+        rowsPerPage={rowsPerPage}
+        handleChangePage={handleChangePage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+      />
     </Box>
   );
 };
