@@ -117,7 +117,65 @@ export default function UserAccess() {
         'documents_delete',
         'documents_view',
       ])}
-
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <FormControlLabel
+          control={
+            <AppThemeCheckbox
+              onChange={() => setFieldValue('userAccess.referral', !values.userAccess.referral)}
+              checked={values.userAccess.referral}
+            />
+          }
+          label="Referral"
+        />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <FormControlLabel
+          control={
+            <AppThemeCheckbox
+              onChange={() =>
+                setFieldValue('userAccess.projectinfo', !values.userAccess.projectinfo)
+              }
+              checked={values.userAccess.projectinfo}
+            />
+          }
+          label="Project Information"
+        />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <FormControlLabel
+          control={
+            <AppThemeCheckbox
+              onChange={() => setFieldValue('userAccess.holiday', !values.userAccess.holiday)}
+              checked={values.userAccess.holiday}
+            />
+          }
+          label="Holiday"
+        />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <FormControlLabel
+          control={
+            <AppThemeCheckbox
+              onChange={() => setFieldValue('userAccess.attendance', !values.userAccess.attendance)}
+              checked={values.userAccess.attendance}
+            />
+          }
+          label="Attendance"
+        />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <FormControlLabel
+          control={
+            <AppThemeCheckbox
+              onChange={() =>
+                setFieldValue('userAccess.admin_salaryslips', !values.userAccess.admin_salaryslips)
+              }
+              checked={values.userAccess.admin_salaryslips}
+            />
+          }
+          label="Admin Salaryslips"
+        />
+      </Grid>
       <Divider className="form-group-divider" />
     </div>
   );

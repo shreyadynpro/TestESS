@@ -64,7 +64,6 @@ const ChangePassword = ({ open, onClose }) => {
       const response = await axios.post(commonConfig.urls.changepassword, formData, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
-      console.log('Response', response);
       if (response?.data?.Status === 401) {
         setErrorMessage(response?.data?.Message || 'Something went wrong.');
       } else if (response?.data?.Status === 200) {

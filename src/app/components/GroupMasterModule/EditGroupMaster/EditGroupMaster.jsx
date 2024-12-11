@@ -38,7 +38,6 @@ export default function EditGroupMaster() {
 
   useEffect(() => {
     if (groupInfo) {
-      console.log('Response Obj======', groupInfo);
       setInitialValues(
         groupModuleUtils.createInitalValues(groupInfo) || groupModuleUtils.initialValues
       );

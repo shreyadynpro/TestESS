@@ -76,7 +76,6 @@ const AppUserEditForm = () => {
             userModuleUtils.createInitalValues(userInfo) || userModuleUtils.initialValues
           }
           onSubmit={(values) => {
-            console.log('Submit Data', values);
             sendDataToServer({
               ...values.personalInfo,
               role_access: userModuleUtils.retUserAccessObj(values.userAccess),
