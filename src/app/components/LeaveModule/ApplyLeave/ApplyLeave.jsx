@@ -57,6 +57,7 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
 const ApplyLeave = () => {
   const [loading, setLoading] = useState(false);
   const [LeaveData, setLeaveData] = useState([]);
+  const [isFromDateDisabled, setIsFromDateDisabled] = useState(true);
   const [initialValues, setInitialValues] = useState({
     name: '',
     reporting_manager_name: '',
@@ -256,7 +257,7 @@ const ApplyLeave = () => {
                   <Grid item xs={6} mt={2}>
                     <FormControl
                       fullWidth
-                      error={touched.leave_duration && Boolean(errors.leave_duration)} // Add error state here
+                      error={touched.leave_duration && Boolean(errors.leave_duration)}
                     >
                       <InputLabel>Leave Duration</InputLabel>
                       <Select
@@ -264,23 +265,18 @@ const ApplyLeave = () => {
                         value={values.leave_duration}
                         label="Leave Duration"
                         onChange={(e) => {
-                          setFieldValue('leave_duration', e.target.value);
-                          if (e.target.value === 'Half Day') {
-                            // Disable `to_date` and set it to the same as `from_date`
-                            setFieldValue('to_date', values.from_date);
-                            setFieldValue('total_applied_leave', 0.5);
-                          } else if (e.target.value === 'Full Day') {
-                            // Enable date selection
-                            setFieldValue('total_applied_leave', 1);
-                          }
+                          const leaveDuration = e.target.value;
+                          setFieldValue('leave_duration', leaveDuration);
+
+                          // Enable "From Date" if a duration is selected
+                          setIsFromDateDisabled(!leaveDuration);
                         }}
                       >
                         <MenuItem value="Half Day">Half Day</MenuItem>
                         <MenuItem value="Full Day">Full Day</MenuItem>
                       </Select>
                       <FormHelperText>
-                        {touched.leave_duration && errors.leave_duration}{' '}
-                        {/* Display error message */}
+                        {touched.leave_duration && errors.leave_duration}
                       </FormHelperText>
                     </FormControl>
                   </Grid>
@@ -302,8 +298,8 @@ const ApplyLeave = () => {
                       onChange={(e) => {
                         setFieldValue('from_date', e.target.value);
                         if (values.leave_duration === 'Half Day') {
-                          setFieldValue('to_date', e.target.value); // Automatically set to_date to from_date
-                          setFieldValue('total_applied_leave', 0.5); // Set total applied leave for Half Day
+                          setFieldValue('to_date', e.target.value);
+                          setFieldValue('total_applied_leave', 0.5);
                         } else {
                           handleTotalLeaveCalculation(
                             e.target.value,
@@ -314,6 +310,7 @@ const ApplyLeave = () => {
                           );
                         }
                       }}
+                      disabled={isFromDateDisabled} // Dynamically enable/disable based on state
                       error={touched.from_date && Boolean(errors.from_date)}
                       helperText={touched.from_date && errors.from_date}
                     />
