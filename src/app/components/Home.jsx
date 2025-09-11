@@ -189,9 +189,14 @@ const PayslipCard = () => {
 const Home = () => {
   const user = useSelector((state) => state.userDetails?.user);
   const [HasITProofdoc, setHasITProofdoc] = useState(true);
+  const [userRoleId, setUserRoleId] = useState(null);
   const theme = useTheme();
+  
   useEffect(() => {
     const authToken = getAccessToken();
+    // Get roleId from localStorage
+    const roleId = localStorage.getItem('roleId');
+    setUserRoleId(roleId);
 
     const checkItProof = async () => {
       try {
@@ -214,11 +219,19 @@ const Home = () => {
 
     checkItProof();
   }, []);
+  
   const getGreeting = () => {
     const hours = new Date().getHours();
     if (hours < 12) return 'Good Morning';
     if (hours < 18) return 'Good Afternoon';
     return 'Good Evening';
+  };
+
+  // Function to check if Salary Slips should be shown
+  const shouldShowSalarySlips = () => {
+    // Hide Salary Slips for vendors (9), consultants (10), and secondment (11)
+    const id = userRoleId ?? localStorage.getItem('roleId') ?? '';
+    return !['9', '10', '11'].includes(String(id));
   };
 
   return (
@@ -280,9 +293,11 @@ const Home = () => {
             {/* <Grid item xs={12} sm={4}>
               <PayslipSummaryCard />
             </Grid> */}
-            <Grid item xs={12} sm={4}>
-              <PayslipCard />
-            </Grid>
+            {shouldShowSalarySlips() && (
+              <Grid item xs={12} sm={4}>
+                <PayslipCard />
+              </Grid>
+            )}
             <Grid item xs={12} sm={4}>
               <CalenderCard />
             </Grid>

@@ -23,6 +23,7 @@ import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import BeachAccessIcon from '@mui/icons-material/BeachAccess';
 import EventIcon from '@mui/icons-material/Event';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { useSelector } from 'react-redux';
 import commonRoutes from './commonRoutes';
 
@@ -195,6 +196,13 @@ const Sidenav = () => {
       permissionKey: 'projectinfo',
     },
     {
+      title: 'Timesheet',
+      path: commonRoutes.timesheet?.timesheet || '/timesheet',
+      icon: <AccessTimeIcon />,
+      permissionKey: 'attendance',
+      allowAll: true,
+    },
+    {
       title: 'Salary Slips',
       path: '/salary/payslip/payslips',
       permissionKey: 'salary',
@@ -239,6 +247,8 @@ const Sidenav = () => {
       .filter((item) => {
         // Always include the profile item
         if (item.isProfile) return true;
+        // Always include items explicitly allowed for all
+        if (item.allowAll) return true;
         // Filter other items based on permissions
         return uaPermissions[item.permissionKey] === 1;
       })

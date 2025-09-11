@@ -27,6 +27,7 @@ import DocumentCenterRoutes from './components/DocumentCenter/documentCenterRout
 import ProjectInfoRoutes from './components/ProjectInfo/projectInfoRoutes';
 import LeaveModuleRoutes from './components/LeaveModule/leaveModuleRoutes';
 import SalarySlipsAdminRoutes from './components/SalarySlipsAdmin/salarySlipsAdminRoutes';
+import TimesheetRoutes from './components/Timesheet/timesheetRoutes';
 // import EmployeeList from './components/EmployeeList/EmployeeList';
 import Tasks from './components/ToDo/Tasks';
 import Payslips from './components/Salary/Payslip/Payslips';
@@ -56,6 +57,7 @@ const routes = [
       ...ProjectInfoRoutes,
       ...ReferralModuleRoutes,
       ...DocumentCenterRoutes,
+      ...TimesheetRoutes,
       ...roleModuleRoutes,
       ...localizationModuleRoutes,
       ...EmployeeMasterModuleRoutes,

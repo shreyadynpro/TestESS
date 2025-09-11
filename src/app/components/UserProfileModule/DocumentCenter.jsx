@@ -626,6 +626,32 @@ const DocumentCenter = () => {
   const [HasITProof, setHasITProof] = useState(true);
   const [hasDOC, setHasDoc] = useState(false);
 
+  // Role-based visibility: Vendor (roleId = 9), Consultant (roleId = 10), Secondment (roleId = 11)
+  const roleId = localStorage.getItem('roleId');
+  const hideRestrictedSections = ['9', '10', '11'].includes(roleId);
+  const allowedDocsByRole = roleId === '9'
+    ? [
+        'DynPro Code of Ethics & Business Conduct',
+        'HIPAA Security Awareness & Training',
+        'Vendor Guidelines/Policies',
+      ]
+    : (roleId === '10' || roleId === '11'
+        ? [
+            'DynPro Code of Ethics & Business Conduct',
+            'HIPAA Security Awareness & Training',
+          ]
+        : null);
+  const allowedDocsSet = allowedDocsByRole
+    ? new Set(allowedDocsByRole.map((s) => s.toLowerCase().trim()))
+    : null;
+  const displayedDocuments = allowedDocsSet
+    ? (Array.isArray(documents)
+        ? documents.filter((doc) =>
+            allowedDocsSet.has(String(doc?.doc_name || '').toLowerCase().trim())
+          )
+        : [])
+    : documents;
+
   // NEW: Function to fetch appointment letter details
   const fetchAppointmentLetter = async () => {
     try {
@@ -666,8 +692,6 @@ const DocumentCenter = () => {
       setHasAppointmentLetter(false);
     }
   };
-
-  // NEW: Function to handle appointment letter preview - REMOVED as per requirement
 
   // NEW: Function to handle appointment letter download - FIXED to use direct URL approach
   const handleAppointmentLetterDownload = () => {
@@ -955,54 +979,56 @@ const DocumentCenter = () => {
         Document Center
       </Typography>
 
-      {/* NEW: Appointment Letter Section - Added at the top */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h6" sx={{ color: '#00246b', fontWeight: 'bold', mb: 2 }}>
-          Appointment Letter
-        </Typography>
-        {appointmentLetterLoading ? (
-          <Typography>Loading appointment letter...</Typography>
-        ) : hasAppointmentLetter ? (
-          <Grid container spacing={2} justifyContent="flex-start">
-            <Grid item xs={12} sm={6} md={4}>
-              <Card
-                sx={{
-                  border: '1px solid #59919d',
-                  borderRadius: '8px',
-                  boxShadow: 3,
-                  height: '80%',
-                }}
-              >
-                <CardContent>
-                  <List>
-                    <ListItem>
-                      <ListItemText
-                        primary="Appointment Letter"
-                        secondary={appointmentLetter?.file_name || 'View your appointment letter'}
-                        sx={{ color: '#59919d', fontWeight: '400 !important' }}
-                      />
-                      <ListItemSecondaryAction>
-                        <Tooltip title="Download">
-                          <IconButton
-                            edge="end"
-                            onClick={handleAppointmentLetterDownload}
-                            sx={{ color: '#00246b' }}
-                          >
-                            <GetAppIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                  </List>
-                </CardContent>
-                <CardActions></CardActions>
-              </Card>
+      {/* Appointment Letter Section - hidden for Vendor/Consultant/Secondment (roleId 9,10,11) */}
+      {!hideRestrictedSections && (
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h6" sx={{ color: '#00246b', fontWeight: 'bold', mb: 2 }}>
+            Appointment Letter
+          </Typography>
+          {appointmentLetterLoading ? (
+            <Typography>Loading appointment letter...</Typography>
+          ) : hasAppointmentLetter ? (
+            <Grid container spacing={2} justifyContent="flex-start">
+              <Grid item xs={12} sm={6} md={4}>
+                <Card
+                  sx={{
+                    border: '1px solid #59919d',
+                    borderRadius: '8px',
+                    boxShadow: 3,
+                    height: '80%',
+                  }}
+                >
+                  <CardContent>
+                    <List>
+                      <ListItem>
+                        <ListItemText
+                          primary="Appointment Letter"
+                          secondary={appointmentLetter?.file_name || 'View your appointment letter'}
+                          sx={{ color: '#59919d', fontWeight: '400 !important' }}
+                        />
+                        <ListItemSecondaryAction>
+                          <Tooltip title="Download">
+                            <IconButton
+                              edge="end"
+                              onClick={handleAppointmentLetterDownload}
+                              sx={{ color: '#00246b' }}
+                            >
+                              <GetAppIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </ListItemSecondaryAction>
+                      </ListItem>
+                    </List>
+                  </CardContent>
+                  <CardActions></CardActions>
+                </Card>
+              </Grid>
             </Grid>
-          </Grid>
-        ) : (
-          <Typography>No appointment letter available</Typography>
-        )}
-      </Box>
+          ) : (
+            <Typography>No appointment letter available</Typography>
+          )}
+        </Box>
+      )}
 
       {loading ? (
         <Typography>Loading...</Typography>
@@ -1014,7 +1040,7 @@ const DocumentCenter = () => {
                 Company Policies
               </Typography>
               <Grid container spacing={2} justifyContent="center">
-                {documents.map((doc, index) => (
+                {displayedDocuments.map((doc, index) => (
                   <Grid item xs={12} sm={6} md={3} key={index}>
                     <Card
                       sx={{
@@ -1057,40 +1083,13 @@ const DocumentCenter = () => {
         </>
       )}
 
-      <Box sx={{ mb: 2 }}>
-        <Typography variant="h6" sx={{ color: '#00246b', fontWeight: 'bold', mb: 2 }}>
-          IT Declaration
-        </Typography>
-        <Grid container spacing={2} justifyContent="flex-start">
-          <Grid item xs={12} sm={4} md={3}>
-            <Card
-              sx={{
-                border: '1px solid #59919d',
-                borderRadius: '8px',
-                boxShadow: 3,
-                height: '80%',
-              }}
-            >
-              <CardContent>
-                <List>
-                  <ListItem>
-                    <ListItemText
-                      primary="Download FY 24-25 IT Declaration Template"
-                      sx={{ color: '#59919d', fontWeight: '400 !important' }}
-                    />
-                    <ListItemSecondaryAction>
-                      <Tooltip title="Download Template">
-                        <IconButton edge="end" sx={{ color: '#00246b' }} onClick={handleDownload}>
-                          <GetAppIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                </List>
-              </CardContent>
-            </Card>
-          </Grid>
-          {hasITR && (
+      {/* IT Declaration section - hidden for Vendor/Consultant/Secondment (roleId 9,10,11) */}
+      {!hideRestrictedSections && (
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="h6" sx={{ color: '#00246b', fontWeight: 'bold', mb: 2 }}>
+            IT Declaration
+          </Typography>
+          <Grid container spacing={2} justifyContent="flex-start">
             <Grid item xs={12} sm={4} md={3}>
               <Card
                 sx={{
@@ -1104,50 +1103,12 @@ const DocumentCenter = () => {
                   <List>
                     <ListItem>
                       <ListItemText
-                        primary="Upload Filled IT Declaration"
+                        primary="Download FY 24-25 IT Declaration Template"
                         sx={{ color: '#59919d', fontWeight: '400 !important' }}
                       />
                       <ListItemSecondaryAction>
-                        <Tooltip title="Upload IT Declaration">
-                          <IconButton
-                            edge="end"
-                            onClick={handleOpenDialog}
-                            sx={{ color: '#00246b' }}
-                          >
-                            <UploadIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                  </List>
-                </CardContent>
-              </Card>
-            </Grid>
-          )}
-          {/* {hasITR && (
-            <Grid item xs={12} sm={4} md={3}>
-              <Card
-                sx={{
-                  border: '1px solid #59919d',
-                  borderRadius: '8px',
-                  boxShadow: 3,
-                  height: '80%',
-                }}
-              >
-                <CardContent>
-                  <List>
-                    <ListItem>
-                      <ListItemText
-                        primary="Download Filled IT Declaration"
-                        sx={{ color: '#59919d', fontWeight: '400 !important' }}
-                      />
-                      <ListItemSecondaryAction>
-                        <Tooltip title="Upload IT Declaration">
-                          <IconButton
-                            edge="end"
-                            onClick={downloadSubmittedITR}
-                            sx={{ color: '#00246b' }}
-                          >
+                        <Tooltip title="Download Template">
+                          <IconButton edge="end" sx={{ color: '#00246b' }} onClick={handleDownload}>
                             <GetAppIcon />
                           </IconButton>
                         </Tooltip>
@@ -1157,43 +1118,77 @@ const DocumentCenter = () => {
                 </CardContent>
               </Card>
             </Grid>
-          )} */}
-          {HasITProof && (
-            <Grid item xs={12} sm={4} md={3}>
-              <Card
-                sx={{
-                  border: '1px solid #59919d',
-                  borderRadius: '8px',
-                  boxShadow: 3,
-                  height: '80%',
-                }}
-              >
-                <CardContent>
-                  <List>
-                    <ListItem>
-                      <ListItemText
-                        primary="Upload IT Proof"
-                        sx={{ color: '#59919d', fontWeight: '400 !important' }}
-                      />
-                      <ListItemSecondaryAction>
-                        <Tooltip title="Upload IT Proof">
-                          <IconButton
-                            edge="end"
-                            onClick={handleOpenDialog1}
-                            sx={{ color: '#00246b' }}
-                          >
-                            <UploadIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                  </List>
-                </CardContent>
-              </Card>
-            </Grid>
-          )}
-        </Grid>
-      </Box>
+            {hasITR && (
+              <Grid item xs={12} sm={4} md={3}>
+                <Card
+                  sx={{
+                    border: '1px solid #59919d',
+                    borderRadius: '8px',
+                    boxShadow: 3,
+                    height: '80%',
+                  }}
+                >
+                  <CardContent>
+                    <List>
+                      <ListItem>
+                        <ListItemText
+                          primary="Upload Filled IT Declaration"
+                          sx={{ color: '#59919d', fontWeight: '400 !important' }}
+                        />
+                        <ListItemSecondaryAction>
+                          <Tooltip title="Upload IT Declaration">
+                            <IconButton
+                              edge="end"
+                              onClick={handleOpenDialog}
+                              sx={{ color: '#00246b' }}
+                            >
+                              <UploadIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </ListItemSecondaryAction>
+                      </ListItem>
+                    </List>
+                  </CardContent>
+                </Card>
+              </Grid>
+            )}
+            {HasITProof && (
+              <Grid item xs={12} sm={4} md={3}>
+                <Card
+                  sx={{
+                    border: '1px solid #59919d',
+                    borderRadius: '8px',
+                    boxShadow: 3,
+                    height: '80%',
+                  }}
+                >
+                  <CardContent>
+                    <List>
+                      <ListItem>
+                        <ListItemText
+                          primary="Upload IT Proof"
+                          sx={{ color: '#59919d', fontWeight: '400 !important' }}
+                        />
+                        <ListItemSecondaryAction>
+                          <Tooltip title="Upload IT Proof">
+                            <IconButton
+                              edge="end"
+                              onClick={handleOpenDialog1}
+                              sx={{ color: '#00246b' }}
+                            >
+                              <UploadIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </ListItemSecondaryAction>
+                      </ListItem>
+                    </List>
+                  </CardContent>
+                </Card>
+              </Grid>
+            )}
+          </Grid>
+        </Box>
+      )}
 
       <UploadITRDialog
         open={openDialog}

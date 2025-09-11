@@ -129,6 +129,8 @@ const SalarySlipList = () => {
         }
       );
 
+      console.log("This is the response data---", response.data)
+
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;

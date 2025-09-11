@@ -102,6 +102,7 @@ export const AuthProvider = ({ children }) => {
     if (response.status === 200) {
       localStorage.setItem(commonConfig.tokens.accessToken, response.data.Response.access_token);
       localStorage.setItem("identityNo", response.data.Response.user[0].identity_no);  // added to store pan in local for appointment letter
+      localStorage.setItem("roleId", response.data.Response.user[0].role_id); // added to store the role id for managing vendor, secondment , consultant 
       const accessToken = response.data.Response.access_token;
       const user = response.data.Response.user[0];
       const userPermissions = response.data.Response.user_access;

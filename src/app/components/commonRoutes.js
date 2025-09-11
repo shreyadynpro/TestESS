@@ -106,6 +106,9 @@ const commonRoutes = {
   projectinfo: {
     projectinfo: '/projectinfo',
   },
+  timesheet: {
+    timesheet: '/timesheet',
+  },
   leaves: {
     leaveHistory: '/leave/history',
     applyLeave: '/leaveapply',
