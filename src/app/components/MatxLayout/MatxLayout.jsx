@@ -11,18 +11,38 @@ import AppAboutModule from '../AppAboutModule';
 import AppInviteUserModule from '../AppInviteUserModule';
 import AppTimer from '../AppTimer';
 import AppSnackbar from '../ReusableComponents/AppSnackbar';
+import { TermsPolicyModal, termsService } from '../TermsPolicyModal';
 import commonConfig from '../commonConfig';
 import { MatxLayouts } from './index';
 
 const MatxLayout = (props) => {
   const { settings } = useSettings();
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
   const dispatch = useDispatch();
   const handlePrompt = () => setModalIsOpen(true);
   const { idleTimer, setIdle } = useIdleTimeout({
     onPrompt: handlePrompt,
     idleTime: 1,
   });
+
+  // Check if terms acceptance is required
+  useEffect(() => {
+    const checkTermsAcceptance = () => {
+      if (termsService.isTermsAcceptanceRequired()) {
+        setShowTermsModal(true);
+      }
+    };
+    
+    // Small delay to ensure localStorage is populated after login
+    const timer = setTimeout(checkTermsAcceptance, 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleTermsComplete = () => {
+    setShowTermsModal(false);
+    SnackbarUtils.success('Terms & Policy acceptance completed successfully!');
+  };
 
   useEffect(() => {
     let timeoutId;
@@ -131,6 +151,13 @@ const MatxLayout = (props) => {
       <AppAboutModule />
       <AppInviteUserModule />
       <AppSnackbar />
+      
+      {/* Terms & Policy Modal - Mandatory for first-time users */}
+      <TermsPolicyModal 
+        open={showTermsModal} 
+        onComplete={handleTermsComplete} 
+      />
+      
       <Layout {...props} />
     </MatxSuspense>
   );

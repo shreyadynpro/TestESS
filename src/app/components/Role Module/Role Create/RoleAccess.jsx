@@ -165,6 +165,17 @@ export default function RoleAccess() {
         <FormControlLabel
           control={
             <AppThemeCheckbox
+              onChange={() => setFieldValue('timesheet', !values.timesheet)}
+              checked={values.timesheet}
+            />
+          }
+          label="Timesheet"
+        />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <FormControlLabel
+          control={
+            <AppThemeCheckbox
               onChange={() => setFieldValue('admin_salaryslips', !values.admin_salaryslips)}
               checked={values.admin_salaryslips}
             />

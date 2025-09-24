@@ -46,6 +46,7 @@ const initialValues = {
   attendance: false,
   projectinfo: false,
   attendance: false,
+  timesheet: false,
   admin_salaryslips: false,
 };
 const CreateRoleSchema = Yup.object().shape({

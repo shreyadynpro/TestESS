@@ -176,6 +176,23 @@ export default function UserAccess() {
           label="Admin Salaryslips"
         />
       </Grid>
+
+{/* modified for timesheet */}
+
+<Grid item xs={12} sm={6} md={4} lg={3}>
+        <FormControlLabel
+          control={
+            <AppThemeCheckbox
+              onChange={() =>
+                setFieldValue('userAccess.timesheet', !values.userAccess.timesheet)
+              }
+              checked={values.userAccess.timesheet}
+            />
+          }
+          label="Timesheet"
+        />
+      </Grid>
+
       <Divider className="form-group-divider" />
     </div>
   );

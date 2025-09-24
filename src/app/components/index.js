@@ -16,3 +16,4 @@ export { default as MatxTheme } from './MatxTheme/MatxTheme';
 export { default as MatxVerticalNav } from './MatxVerticalNav/MatxVerticalNav';
 export { default as MatxVerticalNavExpansionPanel } from './MatxVerticalNav/MatxVerticalNavExpansionPanel';
 export { default as SimpleCard } from './SimpleCard';
+export { TermsPolicyModal, termsService } from './TermsPolicyModal';

@@ -199,8 +199,7 @@ const Sidenav = () => {
       title: 'Timesheet',
       path: commonRoutes.timesheet?.timesheet || '/timesheet',
       icon: <AccessTimeIcon />,
-      permissionKey: 'attendance',
-      allowAll: true,
+      permissionKey: 'timesheet',
     },
     {
       title: 'Salary Slips',

@@ -62,6 +62,7 @@ const initialValues = {
     attendance: false,
     projectinfo: false,
     attendance: false,
+    timesheet: false,
     admin_salaryslips: false,
   },
   checked: [],
@@ -116,6 +117,7 @@ const initialEditValues = {
     attendance: false,
     projectinfo: false,
     attendance: false,
+    timesheet: false,
     admin_salaryslips: false,
   },
 
