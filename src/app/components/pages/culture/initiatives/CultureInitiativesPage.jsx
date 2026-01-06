@@ -83,10 +83,15 @@ const IconBox = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(2),
   transition: 'all 0.3s ease',
   '& .material-icons': {
-    fontSize: '24px',
+    fontSize: '2.0rem !important',
+    width:'30px',
+    height:'30px',
     color: theme.palette.getContrastText(
       theme.palette.mode === 'dark' ? theme.palette.primary.dark : theme.palette.primary.light
     ),
+    display:'flex',
+    alignItems:'center',
+    justifyContent:'center'
   },
   '&:hover': {
     backgroundColor: theme.palette.primary.main,
@@ -474,9 +479,11 @@ const CultureInitiativesPage = () => {
                         backgroundColor: 'primary.main',
                         color: 'white',
                         fontWeight: 500,
-                        fontSize: '0.8rem', // Added this line to increase font size
-                        '& .MuiChip-label': {
-                        fontSize: '0.8rem' // Ensure the label itself gets the size
+                        height: '28px',
+                        '& .MuiChip-label': { 
+                          fontSize: '0.9rem',
+                          padding: '0 8px',
+                          fontWeight: 600
                         }
                       }}
                     />
@@ -485,18 +492,32 @@ const CultureInitiativesPage = () => {
                     </Typography>
                   </Box>
                 </Box>
-                <CardContent sx={{ p: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                    <IconBox>
-                      <span className="material-icons" style={{ fontSize: '1.5rem' }}>
+                <CardContent sx={{ p: '8px 12px 8px', '&:last-child': { paddingBottom: '8px' } }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: '-2px' }}>
+                    <IconBox sx={{ minWidth: '20px', '& .material-icons': { fontSize: '0.9rem' } }}>
+                      <span className="material-icons">
                         {event.icon}
                       </span>
                     </IconBox>
-                    <Typography variant="subtitle2" color="text.secondary" sx={{ ml: 1 }}>
+                    <Typography variant="subtitle2" sx={{ 
+                      ml: 0.5, 
+                      fontSize: '0.95rem', 
+                      fontWeight: 500, 
+                      lineHeight: 1,
+                      color: 'text.primary',
+                      transform: 'translateY(1px)'
+                    }}>
                       {event.tag}
                     </Typography>
                   </Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7, mb: 2 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ 
+                    fontSize: '0.85rem', 
+                    lineHeight: 1.2, 
+                    mt: 0,
+                    pt: 0,
+                    display: 'block',
+                    transform: 'translateY(-2px)'
+                  }}>
                     {event.description}
                   </Typography>
                 </CardContent>

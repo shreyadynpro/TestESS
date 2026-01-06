@@ -39,14 +39,9 @@ const faqSections = [
     title: 'Getting Started',
     items: [
       {
-        question: 'How do I access the Employee Self-Service Portal?',
-        answer:
-          'Log in using your company credentials. Contact HR at hrsupport-1@dynproindia.com if you experience login issues.',
-      },
-      {
         question: 'What can I do on the Employee Self-Service Portal?',
         answer:
-          'You can view and update personal information, access pay slips, apply for leave, view company policies, submit expense claims, update emergency contacts, and access your employment documents.',
+          'You can view and update personal information, access pay slips, view company policies, update emergency contacts, and access your employment documents.',
       },
       {
         question: 'Is my information secure on the portal?',
@@ -66,7 +61,7 @@ const faqSections = [
       {
         question: 'What documents do I need to submit when updating information?',
         answer:
-          'Provide relevant supporting documents such as address proof for address changes, updated academic certificates for qualifications, or marriage certificate for marital status changes.',
+          'Provide relevant supporting documents such as address proof for address changes,NDA,Bank Account details.',
       },
       {
         question: 'How long does it take for my information updates to be approved?',
