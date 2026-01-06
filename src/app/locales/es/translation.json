@@ -1,0 +1,20 @@
+{
+  "app": {
+    "name": "DynPro India",
+    "loading": "Cargando...",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "apply": "Aplicar",
+    "success": "¡Éxito!",
+    "error": "Error",
+    "preferencesSaved": "¡Preferencias guardadas correctamente!",
+    "welcome": "Bienvenido"
+  },
+  "preferences": {
+    "title": "Preferencias",
+    "dateFormat": "Formato de fecha",
+    "language": "Idioma",
+    "languageChangeNote": "Los cambios de idioma se aplicarán después de hacer clic en \"Aplicar\"",
+    "preview": "Vista previa"
+  }
+}

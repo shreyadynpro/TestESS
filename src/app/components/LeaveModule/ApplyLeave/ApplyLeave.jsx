@@ -19,9 +19,9 @@ import { getAccessToken } from 'app/utils/utils';
 import axios from 'axios';
 import { Field, Formik } from 'formik';
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import commonConfig from '../../commonConfig';
 import * as Yup from 'yup';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Container = styled('div')(({ theme }) => ({
   margin: '30px',
@@ -55,19 +55,48 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
 }));
 
 const ApplyLeave = () => {
+  //set for query params
+  const location = useLocation();
+
+  // Extract query parameters first
+  const searchParams = new URLSearchParams(location.search);
+  const selectedDate = searchParams.get('selected_date');
+  const autoDuration = searchParams.get('auto_duration');
+
   const [loading, setLoading] = useState(false);
   const [LeaveData, setLeaveData] = useState([]);
   const [isFromDateDisabled, setIsFromDateDisabled] = useState(true);
-  const [initialValues, setInitialValues] = useState({
-    name: '',
-    reporting_manager_name: '',
-    paid_leave_balance: '',
-    leave_duration: '',
-    from_date: '',
-    to_date: '',
-    total_applied_leave: 0,
-    reason: '',
-  });
+
+  // Compute initial values from API data and URL params
+  const computeInitialValues = (apiData) => {
+    if (!apiData) {
+      return {
+        name: '',
+        reporting_manager_name: '',
+        paid_leave_balance: '',
+        leave_duration: autoDuration || '',
+        from_date: selectedDate || '',
+        to_date: autoDuration === 'Full Day' ? selectedDate : '',
+        total_applied_leave: autoDuration === 'Full Day' ? 1 : 0,
+        reason: '',
+      };
+    }
+
+    return {
+      name: `${apiData.first_name || ''} ${apiData.last_name || ''}`.trim(),
+      reporting_manager_name: `${apiData.manager_fname || ''} ${
+        apiData.manager_lname || ''
+      }`.trim(),
+      paid_leave_balance: apiData.user_leave_count || 0,
+      leave_duration: autoDuration || '',
+      from_date: selectedDate || '',
+      to_date: autoDuration === 'Full Day' ? selectedDate : '',
+      total_applied_leave: autoDuration === 'Full Day' ? 1 : 0,
+      reason: '',
+    };
+  };
+
+  const [formValues, setFormValues] = useState(computeInitialValues());
 
   const navigate = useNavigate();
   const authToken = getAccessToken();
@@ -89,16 +118,14 @@ const ApplyLeave = () => {
         const data = response.data.Response[0];
         setLeaveData(data);
 
-        setInitialValues({
-          name: `${data.first_name} ${data.last_name}`,
-          reporting_manager_name: `${data.manager_fname} ${data.manager_lname}`,
-          paid_leave_balance: data.user_leave_count || 0,
-          leave_duration: '',
-          from_date: '',
-          to_date: '',
-          total_applied_leave: 0,
-          reason: '',
-        });
+        // Update form values with API data and URL params
+        const newValues = computeInitialValues(data);
+        setFormValues(newValues);
+
+        // Enable from_date field if duration is preset
+        if (autoDuration) {
+          setIsFromDateDisabled(false);
+        }
       }
     } catch (error) {
       setLoading(false);
@@ -109,6 +136,9 @@ const ApplyLeave = () => {
   useEffect(() => {
     getData();
   }, []);
+
+  // Log when formValues change
+  useEffect(() => {}, [formValues]);
 
   const validationSchema = Yup.object().shape({
     from_date: Yup.date()
@@ -188,8 +218,9 @@ const ApplyLeave = () => {
 
       <Container sx={{ display: 'flex', justifyContent: 'center', minWidth: '570px' }}>
         <Formik
-          initialValues={initialValues}
-          enableReinitialize
+          key={JSON.stringify(formValues)} // Force re-render when formValues change
+          initialValues={formValues}
+          enableReinitialize={true}
           validationSchema={validationSchema}
           onSubmit={(values) => {
             if (values.leave_duration === 'Half Day') {
@@ -267,9 +298,29 @@ const ApplyLeave = () => {
                         onChange={(e) => {
                           const leaveDuration = e.target.value;
                           setFieldValue('leave_duration', leaveDuration);
-
-                          // Enable "From Date" if a duration is selected
                           setIsFromDateDisabled(!leaveDuration);
+
+                          // Only update total_applied_leave if we have a from_date
+                          if (values.from_date) {
+                            if (leaveDuration === 'Half Day') {
+                              setFieldValue('total_applied_leave', 0.5);
+                              setFieldValue('to_date', values.from_date);
+                            } else if (leaveDuration === 'Full Day') {
+                              // For Full Day, only update if we have both dates
+                              if (values.to_date) {
+                                const from = new Date(values.from_date);
+                                const to = new Date(values.to_date);
+                                const totalDays = (to - from) / (1000 * 60 * 60 * 24) + 1;
+                                setFieldValue('total_applied_leave', totalDays);
+                              } else {
+                                setFieldValue('total_applied_leave', 1);
+                                setFieldValue('to_date', values.from_date);
+                              }
+                            }
+                          } else {
+                            // Clear total_applied_leave if no date is selected
+                            setFieldValue('total_applied_leave', '0');
+                          }
                         }}
                       >
                         <MenuItem value="Half Day">Half Day</MenuItem>
@@ -340,7 +391,7 @@ const ApplyLeave = () => {
                           }
                         }
                       }}
-                      disabled={values.leave_duration === 'Half Day'} // Disable for Half Day
+                      disabled={!values.leave_duration || values.leave_duration === 'Half Day'} // Disable for Half Day
                       error={touched.to_date && Boolean(errors.to_date)}
                       helperText={touched.to_date && errors.to_date}
                     />

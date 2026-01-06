@@ -26,6 +26,10 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { useSelector } from 'react-redux';
 import commonRoutes from './commonRoutes';
+import Diversity3Icon from '@mui/icons-material/Diversity3';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+
 
 const SidenavContainer = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -238,7 +242,24 @@ const Sidenav = () => {
       icon: <GroupAddIcon />,
       permissionKey: 'referral',
     },
-    { title: 'Help', path: '/help', icon: <InfoIcon />, permissionKey: 'help' },
+     {
+      title: 'Cultural Initiatives',
+      path: '/culture/initiatives',
+      icon: <Diversity3Icon />,
+      allowAll: true,
+    },
+    {
+      title: 'FAQ',
+      path: '/faq',
+      icon: <HelpOutlineIcon />,
+      allowAll: true,
+    },
+    {
+      title: 'Support',
+      path: '/support',
+      icon: <SupportAgentIcon />,
+      allowAll: true,
+    },
   ];
 
   const filterMenuItems = (items) => {

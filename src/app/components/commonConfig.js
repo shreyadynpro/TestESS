@@ -1,6 +1,7 @@
 const serverIp = '44.199.193.239';
 const baseURL = 'https://ess.dynprocloud.com:8443/api';
 // const baseURL = 'http://127.0.0.1:8000/api';
+// const baseURL = 'http://127.0.0.1:8000/api';
 
 const commonConfig = {
   tokens: {
@@ -34,7 +35,7 @@ const commonConfig = {
     getLookerClientCategoryWiseAll: `${baseURL}/getLookerClientCategoryWise`,
     getLookerClientCategoryWiseUserAccess: `${baseURL}/clientCateWiseUserAccess`,
     getLookerClientCategoryWiseAllNew: `${baseURL}/getLookerClientCategoryWiseNew`,
-    getClientCateWiseUserAccesAllsNew: `${baseURL}/clientCateWiseUserAccessNew`,
+    getClientCateWiseUserAccessAllNew: `${baseURL}/clientCateWiseUserAccessNew`,
     getClientCategory: `${baseURL}/get_clientCategory`,
     getSubCategory: `${baseURL}/get_subcategory`,
     getUserAccessClients: `${baseURL}/getUserAccessClients`,
@@ -106,7 +107,7 @@ const commonConfig = {
     referral_attachment_review: `${baseURL}/referral_attachment_review`,
     downloadReferraDoc: `${baseURL}/downloadReferraDoc`,
     itr_template_download: `${baseURL}/downloadITRTemplate`,
-    uploadITR: `${baseURL}/itr_attchment`,
+    uploadITR: `${baseURL}/itr_attachment`,
     uploadITProof: `${baseURL}/store_it_proof`,
     getitr: `${baseURL}/getitr`,
     getitrlist: `${baseURL}/getitrlist`,

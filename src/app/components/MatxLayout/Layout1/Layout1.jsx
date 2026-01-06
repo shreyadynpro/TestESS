@@ -11,6 +11,7 @@ import SidenavTheme from '../../MatxTheme/SidenavTheme/SidenavTheme';
 import SecondarySidebar from '../../SecondarySidebar/SecondarySidebar';
 import Layout1Sidenav from './Layout1Sidenav';
 import Layout1Topbar from './Layout1Topbar';
+import SearchSuggestionsProvider from '../../SearchSuggestionsProvider';
 
 const Layout1Root = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -86,6 +87,7 @@ const Layout1 = () => {
   }, [isMdScreen]);
   return (
     <Layout1Root className={layoutClasses}>
+      <SearchSuggestionsProvider />
       {showSidenav && sidenavMode !== 'close' && (
         <SidenavTheme>
           <Layout1Sidenav />

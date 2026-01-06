@@ -14,8 +14,7 @@ import commonRoutes from 'app/components/commonRoutes';
 import DynpEssLT from 'app/components/AppLandingPage/assets/images/DynESS_LT.png';
 import useAuth from 'app/hooks/useAuth';
 import { Formik } from 'formik';
-import { useRef, useState } from 'react';
-import ReCAPTCHA from 'react-google-recaptcha';
+import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { BackgroundImageBox, ContentBox, JWTRoot } from './JwtLoginStyles'; // Import styles
@@ -34,8 +33,6 @@ const validationSchema = Yup.object().shape({
 
 const JwtLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [disableSubmit, setDisableSubmit] = useState(true);
-  const captchaRef = useRef(null);
   const theme = useTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -45,7 +42,7 @@ const JwtLogin = () => {
     setLoading(true);
     try {
       await login(values.email, values.password);
-      navigate('/');
+      navigate('/home');
     } catch (error) {
       setLoading(false);
     }
@@ -129,21 +126,18 @@ const JwtLogin = () => {
                       />
                       <NavLink
                         to={commonRoutes.session.forgot_password}
-                        style={{ color: '#01256c', marginLeft: '70%' }}
+                        style={{
+                          color: '#01256c',
+                          marginLeft: '70%',
+                          display: 'block',
+                          marginBottom: '16px',
+                        }}
                       >
                         Forgot password?
                       </NavLink>
-                      <ReCAPTCHA
-                        sitekey={process.env.REACT_APP_SITE_KEY}
-                        ref={captchaRef}
-                        onChange={(value) => {
-                          if (value) setDisableSubmit(false);
-                        }}
-                        onExpired={() => setDisableSubmit(true)}
-                      />
                       <LoadingButton
-                        disabled={!Object.keys(errors).length === 0 || disableSubmit}
                         type="submit"
+                        disabled={Object.keys(errors).length > 0}
                         loading={loading}
                         variant="contained"
                         sx={{

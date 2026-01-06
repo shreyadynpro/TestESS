@@ -18,7 +18,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { termsService } from './termsService';
-
+import SnackbarUtils from 'SnackbarUtils';
+import TermsAndPolicyApi from 'app/api/TermsAndPolicy';
+ 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
     maxWidth: '90vw',
@@ -27,20 +29,20 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
     height: '700px',
   },
 }));
-
+ 
 const PdfViewer = styled('iframe')({
   width: '100%',
   height: '500px',
   border: '1px solid #ddd',
   borderRadius: '4px',
 });
-
+ 
 const ProgressContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   marginBottom: theme.spacing(2),
 }));
-
+ 
 const DocumentHeader = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -49,12 +51,12 @@ const DocumentHeader = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.grey[50],
   borderRadius: theme.shape.borderRadius,
 }));
-
+ 
 const TermsPolicyModal = ({ open, onComplete }) => {
   const [currentDocIndex, setCurrentDocIndex] = useState(0);
   const [acceptedDocs, setAcceptedDocs] = useState({});
   const [isAccepted, setIsAccepted] = useState(false);
-
+ 
   // PDF documents configuration
   const documents = [
     {
@@ -76,20 +78,20 @@ const TermsPolicyModal = ({ open, onComplete }) => {
       path: '/Acknowledgement/CRM5-1.0-POSH-Awareness & Education.pdf'
     }
   ];
-
+ 
   const currentDoc = documents[currentDocIndex];
   const totalDocs = documents.length;
   const progressPercent = ((currentDocIndex + 1) / totalDocs) * 100;
-
+ 
   useEffect(() => {
     // Reset acceptance checkbox when document changes
     setIsAccepted(false);
   }, [currentDocIndex]);
-
+ 
   const logAcceptance = (document) => {
     const identityNo = localStorage.getItem('identityNo');
     const timestamp = new Date().toISOString();
-    
+   
     const logEntry = {
       identityNo,
       filename: document.filename,
@@ -98,24 +100,24 @@ const TermsPolicyModal = ({ open, onComplete }) => {
       userAgent: navigator.userAgent,
       ipAddress: 'client-side', // Will be updated when API is implemented
     };
-
+ 
     // Use the service method that automatically saves to JSON file
     return termsService.addLogEntry(logEntry);
   };
-
-  const handleAccept = () => {
+ 
+  const handleAccept = async () => {
     if (!isAccepted) return;
-
+ 
     // Log the acceptance
     logAcceptance(currentDoc);
-
+ 
     // Mark current document as accepted
     const newAcceptedDocs = {
       ...acceptedDocs,
       [currentDoc.filename]: true
     };
     setAcceptedDocs(newAcceptedDocs);
-
+ 
     // Move to next document or complete
     if (currentDocIndex < documents.length - 1) {
       setCurrentDocIndex(currentDocIndex + 1);
@@ -128,24 +130,39 @@ const TermsPolicyModal = ({ open, onComplete }) => {
         documentsAccepted: documents.map(doc => doc.filename),
         totalDocuments: documents.length
       };
-      
+     
       localStorage.setItem('termsAcceptanceCompleted', JSON.stringify(completionData));
       localStorage.setItem(`termsCompleted_${identityNo}`, 'true');
-      
+     
+      // Call backend API to record policies acceptance (non-blocking for UX)
+      try {
+        const userId = localStorage.getItem('userUniqueId');
+        if (userId) {
+          await TermsAndPolicyApi.acceptUserPolicies(userId);
+        } else {
+          // Warn if user id missing but still allow completion
+          SnackbarUtils.warning('User ID not found; could not sync policy acceptance.');
+        }
+      } catch (error) {
+        // Do not block user flow; just notify
+        const errMsg = error?.response?.data?.Message || 'Failed to sync policy acceptance to server.';
+        SnackbarUtils.warning(errMsg);
+      }
+     
       onComplete();
     }
   };
-
+ 
   const handlePrevious = () => {
     if (currentDocIndex > 0) {
       setCurrentDocIndex(currentDocIndex - 1);
     }
   };
-
+ 
   const getAcceptedCount = () => {
     return Object.keys(acceptedDocs).length;
   };
-
+ 
   return (
     <StyledDialog
       open={open}
@@ -164,14 +181,14 @@ const TermsPolicyModal = ({ open, onComplete }) => {
           </Typography>
         </Box>
       </DialogTitle>
-
+ 
       <DialogContent>
         {/* Progress Indicator */}
         <ProgressContainer>
           <Box width="100%" mr={1}>
-            <LinearProgress 
-              variant="determinate" 
-              value={progressPercent} 
+            <LinearProgress
+              variant="determinate"
+              value={progressPercent}
               sx={{ height: 8, borderRadius: 4 }}
             />
           </Box>
@@ -181,7 +198,7 @@ const TermsPolicyModal = ({ open, onComplete }) => {
             </Typography>
           </Box>
         </ProgressContainer>
-
+ 
         {/* Document Info */}
         <DocumentHeader>
           <PictureAsPdfIcon color="primary" sx={{ mr: 1 }} />
@@ -195,7 +212,7 @@ const TermsPolicyModal = ({ open, onComplete }) => {
             <CheckCircleIcon color="success" />
           )}
         </DocumentHeader>
-
+ 
         {/* PDF Viewer */}
         <Box mb={2}>
           <PdfViewer
@@ -203,7 +220,7 @@ const TermsPolicyModal = ({ open, onComplete }) => {
             title={currentDoc.title}
           />
         </Box>
-
+ 
         {/* Acceptance Checkbox */}
         <Paper elevation={1} sx={{ p: 2, backgroundColor: 'grey.50' }}>
           <FormControlLabel
@@ -224,13 +241,13 @@ const TermsPolicyModal = ({ open, onComplete }) => {
             }
             label={
               <Typography variant="body1">
-                I have read and understood the <strong>{currentDoc.title}</strong> document 
+                I have read and understood the <strong>{currentDoc.title}</strong> document
                 and agree to comply with all the terms and policies mentioned therein.
               </Typography>
             }
           />
         </Paper>
-
+ 
         {/* Progress Summary */}
         <Box mt={2}>
           <Typography variant="body2" color="textSecondary" align="center">
@@ -238,7 +255,7 @@ const TermsPolicyModal = ({ open, onComplete }) => {
           </Typography>
         </Box>
       </DialogContent>
-
+ 
       <DialogActions sx={{ p: 3, justifyContent: 'space-between' }}>
         <Button
           onClick={handlePrevious}
@@ -247,7 +264,7 @@ const TermsPolicyModal = ({ open, onComplete }) => {
         >
           Previous
         </Button>
-        
+       
         <Box>
           <Button
             onClick={handleAccept}
@@ -275,5 +292,5 @@ const TermsPolicyModal = ({ open, onComplete }) => {
     </StyledDialog>
   );
 };
-
+ 
 export default TermsPolicyModal;

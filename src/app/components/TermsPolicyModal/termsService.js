@@ -2,9 +2,9 @@
  * Terms & Policy Service
  * Manages user acceptance tracking and logging
  */
-
+ 
 const JSON_FILE_PATH = '/logs/terms-acceptance-logs.json';
-
+ 
 // Internal JSON file operations
 const updateInternalJSONFile = async (logs) => {
   const fileData = {
@@ -12,23 +12,23 @@ const updateInternalJSONFile = async (logs) => {
     totalEntries: logs.length,
     logs: logs
   };
-  
+ 
   try {
     // Note: This is a client-side limitation - browsers cannot directly write to files
     // In production, this would need to be handled via an API call to the backend
     console.log('Internal JSON file would be updated with:', fileData);
     console.log(`File path: ${JSON_FILE_PATH}`);
-    
+   
     // For now, we'll store in localStorage with a special key for internal tracking
     localStorage.setItem('internal_terms_logs', JSON.stringify(fileData));
-    
+   
     return true;
   } catch (error) {
     console.error('Error updating internal JSON file:', error);
     return false;
   }
 };
-
+ 
 // Helper function for admin download (when needed)
 const downloadJSONFile = (data, filename) => {
   const jsonString = JSON.stringify(data, null, 2);
@@ -42,7 +42,7 @@ const downloadJSONFile = (data, filename) => {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 };
-
+ 
 export const termsService = {
   /**
    * Check if user has completed terms acceptance
@@ -51,22 +51,39 @@ export const termsService = {
    */
   hasUserCompletedTerms: (identityNo) => {
     if (!identityNo) return false;
-    
+   
     const completed = localStorage.getItem(`termsCompleted_${identityNo}`);
     return completed === 'true';
   },
-
+ 
   /**
-   * Check if terms acceptance is required for current user
+   * Check if terms acceptance is required based on API response fields
+   * @param {Object} user - User object from API response
+   * @returns {boolean} - Whether terms modal should be shown
+   */
+  isTermsAcceptanceRequiredFromAPI: (user) => {
+    if (!user) return false;
+   
+    // Check if any of the acceptance dates are null or empty
+    const hipaaDate = user.hipaa_sec_acc_date;
+    const ethicsDate = user.code_ethics_acc_date;
+    const poshDate = user.posh_acceptance_date;
+   
+    // If any date is null, undefined, or empty string, show the modal
+    return !hipaaDate || !ethicsDate || !poshDate;
+  },
+ 
+  /**
+   * Check if terms acceptance is required for current user (legacy localStorage method)
    * @returns {boolean} - Whether terms modal should be shown
    */
   isTermsAcceptanceRequired: () => {
     const identityNo = localStorage.getItem('identityNo');
     if (!identityNo) return false;
-    
+   
     return !termsService.hasUserCompletedTerms(identityNo);
   },
-
+ 
   /**
    * Get all acceptance logs for current user
    * @returns {Array} - Array of acceptance log entries
@@ -74,11 +91,11 @@ export const termsService = {
   getUserAcceptanceLogs: () => {
     const identityNo = localStorage.getItem('identityNo');
     if (!identityNo) return [];
-    
+   
     const allLogs = JSON.parse(localStorage.getItem('termsAcceptanceLogs') || '[]');
     return allLogs.filter(log => log.identityNo === identityNo);
   },
-
+ 
   /**
    * Get all acceptance logs (admin function)
    * @returns {Array} - Array of all acceptance log entries
@@ -86,7 +103,7 @@ export const termsService = {
   getAllAcceptanceLogs: () => {
     return JSON.parse(localStorage.getItem('termsAcceptanceLogs') || '[]');
   },
-
+ 
   /**
    * Get internal JSON file data
    * @returns {Object} - Internal JSON file data with metadata
@@ -108,7 +125,7 @@ export const termsService = {
       };
     }
   },
-
+ 
   /**
    * Get completion data for current user
    * @returns {Object|null} - Completion data or null if not completed
@@ -116,43 +133,43 @@ export const termsService = {
   getUserCompletionData: () => {
     const identityNo = localStorage.getItem('identityNo');
     if (!identityNo) return null;
-    
+   
     const completionData = localStorage.getItem('termsAcceptanceCompleted');
     if (!completionData) return null;
-    
+   
     const parsed = JSON.parse(completionData);
     return parsed.identityNo === identityNo ? parsed : null;
   },
-
+ 
   /**
    * Clear all terms data (admin function - use with caution)
    */
   clearAllTermsData: () => {
     const keys = Object.keys(localStorage);
     keys.forEach(key => {
-      if (key.startsWith('termsCompleted_') || 
-          key === 'termsAcceptanceLogs' || 
+      if (key.startsWith('termsCompleted_') ||
+          key === 'termsAcceptanceLogs' ||
           key === 'termsAcceptanceCompleted') {
         localStorage.removeItem(key);
       }
     });
   },
-
+ 
   /**
    * Reset terms for specific user (admin function)
    * @param {string} identityNo - User's PAN number
    */
   resetUserTerms: (identityNo) => {
     if (!identityNo) return;
-    
+   
     // Remove completion flag
     localStorage.removeItem(`termsCompleted_${identityNo}`);
-    
+   
     // Remove logs for this user
     const allLogs = JSON.parse(localStorage.getItem('termsAcceptanceLogs') || '[]');
     const filteredLogs = allLogs.filter(log => log.identityNo !== identityNo);
     localStorage.setItem('termsAcceptanceLogs', JSON.stringify(filteredLogs));
-    
+   
     // Remove completion data if it belongs to this user
     const completionData = localStorage.getItem('termsAcceptanceCompleted');
     if (completionData) {
@@ -162,7 +179,7 @@ export const termsService = {
       }
     }
   },
-
+ 
   /**
    * Export logs as JSON file (for admin download)
    * @returns {string} - JSON string of all logs
@@ -174,10 +191,10 @@ export const termsService = {
       totalEntries: logs.length,
       logs: logs
     };
-    
+   
     return JSON.stringify(exportData, null, 2);
   },
-
+ 
   /**
    * Save current logs to JSON file (Manual admin export)
    */
@@ -188,11 +205,11 @@ export const termsService = {
       totalEntries: logs.length,
       logs: logs
     };
-    
+   
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
     downloadJSONFile(exportData, `terms-logs-export-${timestamp}.json`);
   },
-
+ 
   /**
    * Load logs from JSON file
    * @param {File} file - JSON file containing logs
@@ -205,14 +222,14 @@ export const termsService = {
         try {
           const fileContent = JSON.parse(e.target.result);
           const logs = fileContent.logs || fileContent; // Support both formats
-          
+         
           // Merge with existing logs (avoid duplicates)
           const existingLogs = termsService.getAllAcceptanceLogs();
           const mergedLogs = [...existingLogs];
-          
+         
           logs.forEach(newLog => {
-            const exists = existingLogs.some(existing => 
-              existing.identityNo === newLog.identityNo && 
+            const exists = existingLogs.some(existing =>
+              existing.identityNo === newLog.identityNo &&
               existing.filename === newLog.filename &&
               existing.acceptedAt === newLog.acceptedAt
             );
@@ -220,7 +237,7 @@ export const termsService = {
               mergedLogs.push(newLog);
             }
           });
-          
+         
           // Save merged logs
           localStorage.setItem('termsAcceptanceLogs', JSON.stringify(mergedLogs));
           console.log(`Loaded ${logs.length} entries from JSON file. Total entries: ${mergedLogs.length}`);
@@ -233,7 +250,7 @@ export const termsService = {
       reader.readAsText(file);
     });
   },
-
+ 
   /**
    * Add a log entry and update internal JSON file
    * @param {Object} logEntry - Log entry to add
@@ -242,17 +259,17 @@ export const termsService = {
     // Get existing logs
     const existingLogs = JSON.parse(localStorage.getItem('termsAcceptanceLogs') || '[]');
     existingLogs.push(logEntry);
-    
+   
     // Save to localStorage (for user functionality)
     localStorage.setItem('termsAcceptanceLogs', JSON.stringify(existingLogs));
-    
+   
     // Update internal JSON file (for internal tracking)
     updateInternalJSONFile(existingLogs);
-    
+   
     console.log('Log entry added to localStorage and internal JSON file:', logEntry);
     return logEntry;
   },
-
+ 
   /**
    * Get statistics about terms acceptance
    * @returns {Object} - Statistics object
@@ -260,14 +277,14 @@ export const termsService = {
   getAcceptanceStatistics: () => {
     const logs = termsService.getAllAcceptanceLogs();
     const uniqueUsers = [...new Set(logs.map(log => log.identityNo))];
-    
+   
     const stats = {
       totalUsers: uniqueUsers.length,
       totalAcceptances: logs.length,
       documentsAccepted: {},
       userCompletionStatus: {}
     };
-    
+   
     // Count acceptances per document
     logs.forEach(log => {
       if (!stats.documentsAccepted[log.filename]) {
@@ -275,15 +292,15 @@ export const termsService = {
       }
       stats.documentsAccepted[log.filename]++;
     });
-    
+   
     // Check completion status for each user
     uniqueUsers.forEach(identityNo => {
       stats.userCompletionStatus[identityNo] = termsService.hasUserCompletedTerms(identityNo);
     });
-    
+   
     return stats;
   },
-
+ 
   /**
    * Validate that all required documents exist
    * @returns {Object} - Validation result
@@ -294,13 +311,13 @@ export const termsService = {
       '/Acknowledgement/CRM3-Code Ethics & Business Conduct-CEBC.1.pdf',
       '/Acknowledgement/CRM5-1.0-POSH-Awareness & Education.pdf'
     ];
-    
+   
     const results = {
       allValid: true,
       missingDocuments: [],
       availableDocuments: []
     };
-    
+   
     for (const docPath of documents) {
       try {
         const response = await fetch(docPath, { method: 'HEAD' });
@@ -315,9 +332,9 @@ export const termsService = {
         results.allValid = false;
       }
     }
-    
+   
     return results;
   }
 };
-
+ 
 export default termsService;

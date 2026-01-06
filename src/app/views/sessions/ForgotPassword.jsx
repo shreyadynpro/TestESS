@@ -1,8 +1,9 @@
 import { LoadingButton } from '@mui/lab';
-import { Card, Grid, TextField, ThemeProvider } from '@mui/material';
+import { Card, Grid, TextField, ThemeProvider, IconButton, Button } from '@mui/material';
 import { Box, styled } from '@mui/system';
 import axios from 'axios';
 import { useState } from 'react';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import SnackbarUtils from 'SnackbarUtils';
 import BgImg from 'app/components/AppLandingPage/assets/images/7.jpg';
@@ -76,6 +77,21 @@ const ForgotPassword = () => {
   return (
     <ThemeProvider theme={lightModeTheme}>
       <JwtValidateOTp>
+        <IconButton
+          onClick={() => navigate(commonRoutes.home)}
+          sx={{
+            position: 'absolute',
+            top: 20,
+            left: 20,
+            color: 'white',
+            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+            '&:hover': {
+              backgroundColor: 'rgba(255, 255, 255, 0.3)',
+            },
+          }}
+        >
+          <ArrowBackIcon />
+        </IconButton>
         <Card className="card">
           <Grid container>
             <Grid item sm={6} xs={12}>
@@ -109,17 +125,28 @@ const ForgotPassword = () => {
                         error={Boolean(errors.email && touched.email)}
                         sx={{ mb: 4 }}
                       />
-                      <LoadingButton
-                        type="submit"
-                        color="primary"
-                        style={{ backgroundColor: '#22cfe2' }}
-                        variant="contained"
-                        sx={{ mb: 4, mt: 3 }}
-                        onClick={handleSubmit}
-                        loading={loading}
-                      >
-                        Send OTP
-                      </LoadingButton>
+                      <Box sx={{ display: 'flex', gap: 2, mt: 3, mb: 4 }}>
+                        <LoadingButton
+                          type="submit"
+                          color="primary"
+                          style={{ backgroundColor: '#22cfe2' }}
+                          variant="contained"
+                          fullWidth
+                          onClick={handleSubmit}
+                          loading={loading}
+                        >
+                          Send OTP
+                        </LoadingButton>
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          startIcon={<ArrowBackIcon />}
+                          onClick={() => navigate(commonRoutes.home)}
+                          fullWidth
+                        >
+                          Back
+                        </Button>
+                      </Box>
                     </form>
                   )}
                 </Formik>

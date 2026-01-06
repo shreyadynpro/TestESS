@@ -32,6 +32,10 @@ import TimesheetRoutes from './components/Timesheet/timesheetRoutes';
 import Tasks from './components/ToDo/Tasks';
 import Payslips from './components/Salary/Payslip/Payslips';
 import PayslipPDF from './components/Salary/Payslip/PayslipPDF';
+import FAQ from './components/AppLandingPage/FAQ';
+import CultureInitiativesPage from './components/pages/culture/initiatives/CultureInitiativesPage';
+import SupportPage from './components/SupportPage/SupportPage';
+import  OrgChart from './components/OrgChart/OrgChart'
 
 const routes = [
   {
@@ -68,6 +72,10 @@ const routes = [
       { path: commonRoutes.tasks, element: <Tasks /> },
       { path: commonRoutes.payslips, element: <Payslips /> },
       { path: commonRoutes.payslipPDF, element: <PayslipPDF /> },
+      { path: '/faq', element: <FAQ /> },
+      { path: '/culture/initiatives', element: <CultureInitiativesPage /> },
+      { path: '/support', element: <SupportPage /> },
+      { path: '/orgchart', element: <OrgChart /> },
     ],
   },
   ...sessionRoutes,

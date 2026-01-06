@@ -9,23 +9,23 @@ import jwtDecode from 'jwt-decode';
 import { createContext, useEffect, useReducer } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-
+ 
 const initialState = {
   isAuthenticated: false,
   isInitialised: false,
   user: null,
 };
-
+ 
 const isValidToken = (accessToken) => {
   if (!accessToken) {
     return false;
   }
-
+ 
   const decodedToken = jwtDecode(accessToken);
   const currentTime = Date.now() / 1000;
   return decodedToken.exp > currentTime;
 };
-
+ 
 const setSession = (accessToken) => {
   if (accessToken) {
     localStorage.setItem(commonConfig.tokens.accessToken, accessToken);
@@ -34,11 +34,11 @@ const setSession = (accessToken) => {
     localStorage.removeItem(commonConfig.tokens.accessToken);
     localStorage.removeItem(commonConfig.tokens.persist);
     localStorage.removeItem(commonConfig.tokens.lastScheduledTime);
-
+ 
     delete axios.defaults.headers.common.Authorization;
   }
 };
-
+ 
 const reducer = (state, action) => {
   switch (action.type) {
     case 'INIT': {
@@ -67,7 +67,7 @@ const reducer = (state, action) => {
     }
     case 'REGISTER': {
       const { user } = action.payload;
-
+ 
       return {
         ...state,
         isAuthenticated: true,
@@ -79,7 +79,7 @@ const reducer = (state, action) => {
     }
   }
 };
-
+ 
 const AuthContext = createContext({
   ...initialState,
   method: 'JWT',
@@ -87,14 +87,14 @@ const AuthContext = createContext({
   logout: () => {},
   register: () => Promise.resolve(),
 });
-
+ 
 export const AuthProvider = ({ children }) => {
   const { updateSettings } = useSettings();
   const navigate = useNavigate();
   const [state, dispatch] = useReducer(reducer, initialState);
   const dispatchX = useDispatch();
   const user = useSelector((state) => state.userDetails?.user);
-
+ 
   const login = async (email, password) => {
     const response = await axios.post(
       `${commonConfig.urls.login}?email=${email}&password=${encodeURIComponent(password)}`
@@ -102,15 +102,17 @@ export const AuthProvider = ({ children }) => {
     if (response.status === 200) {
       localStorage.setItem(commonConfig.tokens.accessToken, response.data.Response.access_token);
       localStorage.setItem("identityNo", response.data.Response.user[0].identity_no);  // added to store pan in local for appointment letter
-      localStorage.setItem("roleId", response.data.Response.user[0].role_id); // added to store the role id for managing vendor, secondment , consultant 
+      localStorage.setItem("roleId", response.data.Response.user[0].role_id); // added to store the role id for managing vendor, secondment , consultant
+      localStorage.setItem("userUniqueId", response.data.Response.user[0].id); // adding user unique id
+ 
       const accessToken = response.data.Response.access_token;
       const user = response.data.Response.user[0];
       const userPermissions = response.data.Response.user_access;
       dispatchX({ type: 'SET_TOKEN', accessToken });
-      dispatchX({ type: 'SET_USER', user });
+      dispatchX({ type: 'SET_USER', user }); // This now includes acceptance dates
       dispatchX({ type: 'SET_USERACCESS_PERMISSIONS', userPermissions });
       dispatchX({ type: 'SET_USER_TYPE', userIsA: 'viewer' });
-
+ 
       if (accessToken) {
         dispatch({
           type: 'LOGIN',
@@ -128,7 +130,7 @@ export const AuthProvider = ({ children }) => {
       }
     }
   };
-
+ 
   const register = async (firstname, lastname, email, password, confirm_password, group_code) => {
     const response = await axios.post(commonConfig.urls.register, {
       firstname,
@@ -153,7 +155,7 @@ export const AuthProvider = ({ children }) => {
       } else SnackbarUtils.error('Error');
     }
     setSession(accessToken);
-
+ 
     dispatch({
       type: 'REGISTER',
       payload: {
@@ -161,7 +163,7 @@ export const AuthProvider = ({ children }) => {
       },
     });
   };
-
+ 
   const resetStore = () => {
     dispatchX({ type: 'SET_USER_TYPE', userIsA: 'viewer' });
     dispatchX({ type: 'RESET_TOKEN' });
@@ -173,7 +175,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: 'USER_LOGOUT' });
     dispatch({ type: 'LOGOUT' });
   };
-
+ 
   const logout = () => {
     const accessToken = getAccessToken();
     axios.post(commonConfig.urls.logout, {
@@ -188,9 +190,14 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem(commonConfig.tokens.persist);
     localStorage.removeItem(commonConfig.tokens.accessToken);
     localStorage.removeItem(commonConfig.tokens.lastScheduledTime);
+    
+    // Clear session storage to reset popup state for next login
+    sessionStorage.removeItem('termsModalShownInSession');
+    sessionStorage.removeItem('changelogShownInSession');
+    
     resetStore();
   };
-
+ 
   useEffect(() => {
     (async () => {
       try {
@@ -230,11 +237,11 @@ export const AuthProvider = ({ children }) => {
       }
     })();
   }, []);
-
+ 
   if (!state.isInitialised) {
     return <MatxLoading />;
   }
-
+ 
   return (
     <AuthContext.Provider
       value={{
@@ -249,5 +256,5 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
+ 
 export default AuthContext;

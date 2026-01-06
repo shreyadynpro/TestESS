@@ -14,6 +14,7 @@ import DocumentCenter from './DocumentCenter';
 import ReferralTab from './ReferralTab';
 import ChangePassword from './ChangePassword';
 import PersonalTabNormalUser from './PersonalTabNormalUser';
+import PreferencesTab from './PreferencesTab';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -260,6 +261,7 @@ const UserProfile = () => {
                 color="primary"
                 onClick={() => setOpenDialog(true)}
                 startIcon={<Edit />}
+                disabled={user?.role_id !== 3 && user?.role_id !== 7}
               >
                 Update Profile
               </StyledButton>
@@ -296,6 +298,11 @@ const UserProfile = () => {
                   value="employment"
                   active={activeTab === 'employment'}
                 />
+                <StyledTab
+                  label="Preferences"
+                  value="preferences"
+                  active={activeTab === 'preferences'}
+                />
                 {/* <StyledTab label="Documents" value="Documents" active={activeTab === 'Documents'} />
                 <StyledTab label="Referral" value="Referral" active={activeTab === 'Referral'} /> */}
               </StyledTabs>
@@ -319,6 +326,11 @@ const UserProfile = () => {
                 {activeTab === 'employment' && (
                   <TabPanel>
                     <EmploymentTab theme userData={userdata} />
+                  </TabPanel>
+                )}
+                {activeTab === 'preferences' && (
+                  <TabPanel>
+                    <PreferencesTab theme userData={userdata} />
                   </TabPanel>
                 )}
                 {/* {activeTab === 'Documents' && (

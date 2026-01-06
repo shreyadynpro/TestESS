@@ -188,75 +188,95 @@ const Payslips = () => {
   return (
     <Container maxWidth="xl">
       <Box position="relative" mb={4}>
-        <Box
-          display="flex"
-          alignItems="center" // Align items vertically centered
-          justifyContent="space-between" // Ensure they are spaced
-          mb={2}
-          mt={2}
-          width="23.5%"
-        >
-          <Typography variant="h3" sx={{ fontSize: '1.8rem', mr: '100px' }}>
-            Salary Slips
-          </Typography>
-          <Tooltip title="Download All Payslips">
-            <IconButton onClick={downloadAllPayslips} sx={{ color: '#00246b' }}>
-              <DownloadAllIcon />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      </Box>
-
-      <Grid container spacing={4}>
-        {/* Left-side Month List */}
-        <Grid
-          item
-          xs={3}
-          style={{
-            boxShadow: '150px',
-            border: '1px solid #ddd',
-            borderRadius: '8px',
-            padding: '10px',
-            backgroundColor: '#ffffff',
-          }}
-        >
-          <List component="nav" aria-label="Months List">
-            {months.map((month) => (
-              <ListItem
-                key={month.month_year}
-                sx={{
-                  ...listItemStyle,
-                  backgroundColor: month.month_year === selectedMonth ? '#cfe2ff' : 'transparent', // Background color for selected month
-                }}
-                onClick={() => handleMonthChange(month.month_year)}
-              >
-                <ListItemText primary={month.month_year} />
-                {/* Add download icon */}
-                <Tooltip title="Download Payslips">
+        <Grid container spacing={2} alignItems="center" justifyContent="space-between">
+          <Grid item>
+            <Typography variant="h3" sx={{ fontSize: '1.8rem' }}>
+              Salary Slips
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Box display="flex" alignItems="center" gap={2}>
+              <FormControl variant="outlined" size="small" sx={{ minWidth: 220, mr: 2, mt: 2 }}>
+                <InputLabel
+                  id="month-select-label"
+                  shrink={true}
+                  sx={{
+                    color: 'rgba(0, 0, 0, 0.6)',
+                    position: 'relative',
+                    transform: 'translate(0, -8px)',
+                    '&.Mui-focused': {
+                      color: '#00246b',
+                    },
+                  }}
+                >
+                  Select Month
+                </InputLabel>
+                <Select
+                  labelId="month-select-label"
+                  id="month-select"
+                  value={selectedMonth}
+                  onChange={(e) => handleMonthChange(e.target.value)}
+                  label="Select Month"
+                  notched
+                  sx={{
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#00246b',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#00246b',
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: '#00246b',
+                    },
+                  }}
+                >
+                  {months.map((month) => (
+                    <MenuItem key={month.month_year} value={month.month_year}>
+                      {month.month_year}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Box sx={{ display: 'flex', gap: 1, ml: 1 }}>
+                <Tooltip title="Download Selected Payslip">
                   <IconButton
-                    edge="end"
-                    aria-label="download"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent triggering the ListItem's onClick
-                      downloadPayslip(month.month_year);
-                    }}
+                    onClick={() => downloadPayslip(selectedMonth)}
+                    sx={{ color: '#00246b' }}
                   >
                     <DownloadIcon />
                   </IconButton>
                 </Tooltip>
-              </ListItem>
-            ))}
-          </List>
+                <Tooltip title="Download All Payslips">
+                  <IconButton
+                    onClick={downloadAllPayslips}
+                    sx={{
+                      color: '#00246b',
+                      '&:hover': {
+                        backgroundColor: 'rgba(0, 36, 107, 0.08)',
+                      },
+                      ml: 1,
+                    }}
+                  >
+                    <DownloadAllIcon />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </Box>
+          </Grid>
         </Grid>
+      </Box>
+
+      <Box>
         {/* Payslip Details */}
         <Box
-          id="pdf-container" // Add ref to the Box you want to convert to PDF
+          id="pdf-container"
           sx={{
             p: 2,
             border: '1px solid #ddd',
             borderRadius: '8px',
             maxWidth: '995px',
             mx: 'auto',
+            mt: 2,
           }}
         >
           {loading ? (
@@ -643,7 +663,7 @@ const Payslips = () => {
             <Typography variant="body1">No Data Found</Typography>
           )}
         </Box>
-      </Grid>
+      </Box>
     </Container>
   );
 };

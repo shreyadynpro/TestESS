@@ -1,0 +1,33 @@
+{
+  "app": {
+    "name": "DynPro India",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "success": "Success!",
+    "error": "Error",
+    "preferencesSaved": "Preferences saved successfully!",
+    "welcome": "Welcome"
+  },
+  "preferences": {
+    "title": "Preferences",
+    "dateFormat": "Date Format",
+    "language": "Language",
+    "languageChangeNote": "Language changes will be applied after clicking \"Apply\"",
+    "preview": "Preview"
+  },
+  "dateFormat": {
+    "dd/MM/yyyy": "DD/MM/YYYY (e.g., 25/12/2023)",
+    "MM/dd/yyyy": "MM/DD/YYYY (e.g., 12/25/2023)",
+    "yyyy-MM-dd": "YYYY-MM-DD (e.g., 2023-12-25)",
+    "dd MMM yyyy": "DD MMM YYYY (e.g., 25 Dec 2023)"
+  },
+  "language": {
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "hi": "हिंदी"
+  }
+}
