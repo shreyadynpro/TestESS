@@ -133,6 +133,50 @@ const CultureInitiativesPage = () => {
   const { settings } = useSettings();
   const isDark = settings.themes[settings.activeTheme].palette.mode === 'dark';
   const [activeIndices, setActiveIndices] = useState({});
+  const [openGalleryIndex, setOpenGalleryIndex] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showAllEventsGallery, setShowAllEventsGallery] = useState(false);
+  const [showAllImages, setShowAllImages] = useState(false);
+
+  const handleOpenGallery = (index) => {
+    setOpenGalleryIndex(index);
+    setCurrentImageIndex(0);
+  };
+
+  const handleCloseGallery = () => {
+    setShowAllEventsGallery(false);
+    setOpenGalleryIndex(null);
+  };
+
+  const handlePrevImage = () => {
+    if (showAllEventsGallery) {
+      const allImages = events.flatMap(event => event.images);
+      setCurrentImageIndex(prev => (prev - 1 + allImages.length) % allImages.length);
+    } else {
+      const event = events[openGalleryIndex];
+      setCurrentImageIndex(prev => (prev - 1 + event.images.length) % event.images.length);
+    }
+  };
+
+  const handleNextImage = () => {
+    if (showAllEventsGallery) {
+      const allImages = events.flatMap(event => event.images);
+      setCurrentImageIndex(prev => (prev + 1) % allImages.length);
+    } else {
+      const event = events[openGalleryIndex];
+      setCurrentImageIndex(prev => (prev + 1) % event.images.length);
+    }
+  };
+
+  const handleOpenAllEventsGallery = () => {
+    setShowAllEventsGallery(true);
+    setCurrentImageIndex(0);
+    setOpenGalleryIndex(0); // Use 0 as a flag for all events gallery
+  };
+
+  const toggleShowAllImages = () => {
+    setShowAllImages(!showAllImages);
+  };
 
   // Initialize active indices for each event
   useEffect(() => {
@@ -212,9 +256,9 @@ const CultureInitiativesPage = () => {
       images: [
          '/assets/team-spirit/pot1.png',
         '/assets/team-spirit/pot6.jpeg',
-        '/assets/team-spirit/pot5.jpeg',
+        '/assets/team-spirit/pot5.jpg',
         '/assets/team-spirit/pot4.jpeg',
-        '/assets/team-spirit/pot7.jpg',
+        '/assets/team-spirit/pot7.jpeg',
         '/assets/team-spirit/pot10.jpeg',
         '/assets/team-spirit/pot12.jpeg',
         '/assets/team-spirit/pot16.jpeg',
@@ -231,7 +275,10 @@ const CultureInitiativesPage = () => {
       tag: 'Cultural',
       images: [
         '/assets/festival/fest1.png',
-        '/assets/festival/ganapa.jpg'
+        '/assets/festival/ganapa.jpg',
+        '/assets/festival/fest3.jpeg',
+        '/assets/festival/fest4.jpeg',
+        '/assets/festival/fest5.jpeg',
       ]
     }
   ];
@@ -256,7 +303,7 @@ const CultureInitiativesPage = () => {
             Cultural Initiatives
           </Typography>
           <Typography variant="body1">
-            DynPro is a global leader in IT Solutions & Services with a workforce of more than 1200
+            DynPro is a global leader in IT Solutions & Services with a workforce of more than 1500
             practitioners across North America, EMEAS, and Asia. Our Culture Initiatives promote
             alignment with our mission, celebrate achievements, and reinforce DynPro’s identity as a
             trusted advisor to clients, consultants, and employees.
@@ -501,7 +548,7 @@ const CultureInitiativesPage = () => {
                     </IconBox>
                     <Typography variant="subtitle2" sx={{ 
                       ml: 0.5, 
-                      fontSize: '0.95rem', 
+                      fontSize: '1.5rem', 
                       fontWeight: 500, 
                       lineHeight: 1,
                       color: 'text.primary',
@@ -510,21 +557,112 @@ const CultureInitiativesPage = () => {
                       {event.tag}
                     </Typography>
                   </Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ 
-                    fontSize: '0.85rem', 
-                    lineHeight: 1.2, 
-                    mt: 0,
-                    pt: 0,
-                    display: 'block',
-                    transform: 'translateY(-2px)'
-                  }}>
-                    {event.description}
-                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <Typography variant="body2" color="text.secondary" sx={{ 
+                      fontSize: '0.85rem', 
+                      lineHeight: 1.4, 
+                      mt: 0,
+                      pt: 0,
+                      display: 'block',
+                    }}>
+                      {event.description}
+                    </Typography>
+                  </Box>
                 </CardContent>
               </StyledCard>
             </Grid>
           ))}
         </Grid>
+
+        {/* See All Images Button - Always Visible */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: 6 }}>
+          <button
+            onClick={toggleShowAllImages}
+            style={{
+              backgroundColor: theme.palette.primary.main,
+              color: '#0f0c0cff',
+              border: 'none',
+              padding: '10px 24px',
+              borderRadius: '4px',
+              fontSize: '1rem',
+              fontWeight: 500,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'all 0.3s ease',
+              boxShadow: theme.shadows[2],
+              '&:hover': {
+                backgroundColor: theme.palette.primary.dark,
+                transform: 'translateY(-2px)',
+                boxShadow: theme.shadows[4],
+              },
+            }}
+          >
+            <span className="material-icons">collections</span>
+            <span>See more images</span>
+          </button>
+        </Box>
+
+        {/* Grid View - Toggleable */}
+        <Box 
+          sx={{ 
+            display: showAllImages ? 'block' : 'none',
+            mt: 4,
+            mb: 6,
+          }}
+        >
+          <Grid container spacing={2}>
+            {events.flatMap((event, eventIndex) => 
+              event.images.map((img, imgIndex) => {
+                const flatIndex = events
+                  .slice(0, eventIndex)
+                  .reduce((sum, e) => sum + e.images.length, 0) + imgIndex;
+                
+                return (
+                  <Grid item xs={12} sm={6} md={4} lg={3} key={`${eventIndex}-${imgIndex}`}>
+                    <Box
+                      sx={{
+                        overflow: 'hidden',
+                        borderRadius: '8px',
+                        boxShadow: 2,
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-4px)',
+                          boxShadow: 6,
+                          '& img': {
+                            transform: 'scale(1.05)',
+                          }
+                        }
+                      }}
+                    >
+                      <img 
+                        src={img} 
+                        alt={`${event.title} ${imgIndex + 1}`}
+                        style={{
+                          width: '100%',
+                          height: '200px',
+                          objectFit: 'cover',
+                          cursor: 'pointer',
+                          transition: 'transform 0.5s ease',
+                        }}
+                        onClick={() => {
+                          handleOpenAllEventsGallery();
+                          setCurrentImageIndex(flatIndex);
+                        }}
+                      />
+                      <Box sx={{ p: 1, bgcolor: 'background.paper' }}>
+                        <Typography variant="caption" color="text.secondary">
+                          {event.title}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Grid>
+                );
+              })
+            )}
+          </Grid>
+        </Box>
 
         {/* Vision Section */}
         <Paper
@@ -637,6 +775,239 @@ const CultureInitiativesPage = () => {
           </Box>
         </Paper>
       </Container>
+
+      {/* Gallery Modal */}
+      {(openGalleryIndex !== null || showAllEventsGallery) && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            zIndex: 1300,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            p: 2,
+          }}
+          onClick={handleCloseGallery}
+        >
+          <Box
+            sx={{
+              position: 'relative',
+              width: '100%',
+              maxWidth: '1200px',
+              maxHeight: '90vh',
+              display: 'flex',
+              flexDirection: 'column',
+              '&:hover > button': {
+                opacity: 1,
+              },
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <IconButton
+              onClick={handleCloseGallery}
+              sx={{
+                position: 'absolute',
+                top: 16,
+                right: 16,
+                color: 'white',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                zIndex: 1,
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                },
+              }}
+            >
+              <span className="material-icons">close</span>
+            </IconButton>
+
+            {/* Main Image */}
+            <Box
+              sx={{
+                width: '100%',
+                height: '70vh',
+                position: 'relative',
+                borderRadius: 1,
+                overflow: 'hidden',
+                mb: 2,
+              }}
+            >
+              <img
+                src={showAllEventsGallery ? events.flatMap(event => event.images)[currentImageIndex] : events[openGalleryIndex].images[currentImageIndex]}
+                alt={showAllEventsGallery ? `Image ${currentImageIndex + 1}` : `${events[openGalleryIndex].title} ${currentImageIndex + 1}`}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                }}
+              />
+
+              {/* Navigation Arrows */}
+              <IconButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePrevImage();
+                }}
+                sx={{
+                  position: 'absolute',
+                  left: 16,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'white',
+                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                  },
+                }}
+              >
+                <span className="material-icons">chevron_left</span>
+              </IconButton>
+
+              <IconButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleNextImage();
+                }}
+                sx={{
+                  position: 'absolute',
+                  right: 16,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'white',
+                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                  },
+                }}
+              >
+                <span className="material-icons">chevron_right</span>
+              </IconButton>
+            </Box>
+
+            {/* Thumbnails */}
+            <Box
+              sx={{
+                display: 'flex',
+                gap: 1,
+                overflowX: 'auto',
+                py: 1,
+                px: 1,
+                '&::-webkit-scrollbar': {
+                  height: '6px',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                  borderRadius: '3px',
+                },
+              }}
+            >
+              {showAllEventsGallery ? (
+                events.flatMap((event, eventIdx) => 
+                  event.images.map((img, imgIdx) => {
+                    const flatIndex = events
+                      .slice(0, eventIdx)
+                      .reduce((sum, e) => sum + e.images.length, 0) + imgIdx;
+                    
+                    return (
+                      <Box
+                        key={`${eventIdx}-${imgIdx}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCurrentImageIndex(flatIndex);
+                        }}
+                        sx={{
+                          flex: '0 0 auto',
+                          width: 60,
+                          height: 40,
+                          borderRadius: '4px',
+                          overflow: 'hidden',
+                          cursor: 'pointer',
+                          border: `2px solid ${flatIndex === currentImageIndex ? theme.palette.primary.main : 'transparent'}`,
+                          opacity: flatIndex === currentImageIndex ? 1 : 0.7,
+                          transition: 'all 0.2s',
+                          '&:hover': {
+                            opacity: 1,
+                          },
+                        }}
+                      >
+                        <img
+                          src={img}
+                          alt={`Thumbnail ${eventIdx}-${imgIdx}`}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                          }}
+                        />
+                      </Box>
+                    );
+                  })
+                )
+              ) : (
+                events[openGalleryIndex].images.map((_, idx) => (
+                  <Box
+                    key={idx}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentImageIndex(idx);
+                    }}
+                    sx={{
+                      width: 60,
+                      height: 40,
+                      borderRadius: '4px',
+                      overflow: 'hidden',
+                      cursor: 'pointer',
+                      border: `2px solid ${idx === currentImageIndex ? theme.palette.primary.main : 'transparent'}`,
+                      opacity: idx === currentImageIndex ? 1 : 0.7,
+                      transition: 'all 0.2s',
+                      '&:hover': {
+                        opacity: 1,
+                      },
+                    }}
+                  >
+                    <img
+                      src={events[openGalleryIndex].images[idx]}
+                      alt={`Thumbnail ${idx + 1}`}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </Box>
+                ))
+              )}
+            </Box>
+
+            {/* Image Counter */}
+            <Typography
+              variant="body2"
+              sx={{
+                position: 'absolute',
+                bottom: 100,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                color: 'white',
+                px: 1.5,
+                py: 0.5,
+                borderRadius: 1,
+                fontSize: '0.875rem',
+              }}
+            >
+              {showAllEventsGallery 
+                ? `${currentImageIndex + 1} / ${events.flatMap(event => event.images).length}`
+                : `${currentImageIndex + 1} / ${events[openGalleryIndex].images.length}`}
+            </Typography>
+          </Box>
+        </Box>
+      )}
     </>
   );
 };

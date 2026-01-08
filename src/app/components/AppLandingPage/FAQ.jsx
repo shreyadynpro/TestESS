@@ -85,7 +85,7 @@ const faqSections = [
       {
         question: 'When is my salary credited?',
         answer:
-          'Salary is typically credited on the 3rd, 5th or 7th of the following month, subject to successful BGV completion and client confirmation.',
+          'Salary is typically credited on the 7th of the following month, subject to successful BGV completion and client confirmation.',
       },
     ],
   },
@@ -169,7 +169,7 @@ const faqSections = [
       {
         question: 'How do I raise an HR query?',
         answer:
-          'Go to "Support" → "Raise Ticket" → Select query category → Describe issue → Submit. Or email: Level 1: hrsupport-1@dynproindia.com, Level 2: hrsupport-2@dynproindia.com, Level 3 (escalation): hrsupport-3@dynproindia.com',
+          'Go to "Support" → "Raise Ticket" → Select query category → Describe issue → Submit. Or email: Level 1: hrsupport-pre-ob@dynproindia.com',
       },
       {
         question: 'How do I report technical issues with the portal?',
@@ -242,11 +242,11 @@ const FAQ = () => {
                 href="mailto:hrsupport-pre-ob@dynproindia.com"
                 style={{ color: 'inherit', textDecoration: 'underline' }}
               >
-                hrsupport-1@dynproindia.com
+                pre-ob@dynproindia.com
               </a>{' '}
               or call{' '}
               <a href="tel:07348940777" style={{ color: 'inherit', textDecoration: 'underline' }}>
-                06360786994
+                07348940777
               </a>
             </Typography>
           </Box>

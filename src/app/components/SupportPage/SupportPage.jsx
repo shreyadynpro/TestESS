@@ -489,7 +489,7 @@ const SupportPage = () => {
                   <ListItemIcon>
                     <EmailIcon />
                   </ListItemIcon>
-                  <ListItemText primary="HR support" secondary="hrsupport-pre-ob@dynproindia.com" />
+                  <ListItemText primary="HR support" secondary="pre-ob@dynproindia.com" />
                 </ListItem>
                 <ListItem>
                   <ListItemIcon>
