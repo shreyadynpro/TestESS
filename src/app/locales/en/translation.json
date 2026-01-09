@@ -23,11 +23,63 @@
     "yyyy-MM-dd": "YYYY-MM-DD (e.g., 2023-12-25)",
     "dd MMM yyyy": "DD MMM YYYY (e.g., 25 Dec 2023)"
   },
-  "language": {
+  "languages": {
     "en": "English",
-    "es": "Español",
-    "fr": "Français",
-    "de": "Deutsch",
+    "kn": "ಕನ್ನಡ",
     "hi": "हिंदी"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "groupMaster": "Group Master",
+    "roles": "Roles",
+    "userAccessControl": "User Access Control",
+    "users": "Users",
+    "employees": "Employees",
+    "powerBI": "Power BI",
+    "demo": "Demo",
+    "employeeReport": "Employee Report",
+    "zoho": "Zoho",
+    "documentsCenter": "Documents Center",
+    "projectInformation": "Project Information",
+    "timeTracking": "Time Tracking",
+    "cultureInitiatives": "Culture Initiatives",
+    "holidays": "Holidays",
+    "attenance": "Attendance",
+    "salarySlips": "Salary Slips",
+    "leave": "Leave",
+    "referral": "Referral",
+    "faq": "FAQ",
+    "timesheet": "Timesheet",
+    "gallery": "Our Gallery",
+    "seeMoreImages": "See more images",
+    "vision": "Vision",
+    "visionDescription": "At DynPro, we believe in fostering a culture of innovation, collaboration, and excellence. Our vision is to create an environment where every team member feels valued, empowered, and motivated to contribute their best work. We strive to build a community that embraces diversity, encourages continuous learning, and celebrates success together."
+  },
+  "cultureInitiatives": {
+    "description": "DynPro is a global leader in IT Solutions & Services with a workforce of more than 1500 practitioners across North America, EMEAS, and Asia. Our Culture Initiatives promote alignment with our mission, celebrate achievements, and reinforce DynPro's identity as a trusted advisor to clients, consultants, and employees.",
+    "gallery": "Our Gallery",
+    "events": {
+      "christmas": {
+        "title": "Christmas Celebration",
+        "description": "Join us for our annual Christmas celebration filled with joy, gifts, and festive cheer! A time for team bonding and creating wonderful memories together.",
+        "tag": "Festive"
+      },
+      "potluck": {
+        "title": "Potluck Party",
+        "description": "Our potluck events where team members bring dishes from their culture, celebrating diversity and enjoying delicious food together.",
+        "tag": "Food & Fun"
+      },
+      "festival": {
+        "title": "Festival Celebrations",
+        "description": "Celebrating various cultural festivals throughout the year, embracing our diverse workforce and learning about different traditions and customs.",
+        "tag": "Cultural"
+      }
+    },
+    "stats": {
+      "globalPractitioners": "Global Practitioners",
+      "yearsOfExcellence": "Years of Excellence",
+      "countriesServed": "Countries Served",
+      "enterpriseClients": "Enterprise Clients"
+    }
   }
 }

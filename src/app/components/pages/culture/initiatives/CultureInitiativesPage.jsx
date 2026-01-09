@@ -517,23 +517,6 @@ const CultureInitiativesPage = () => {
                       p: 2,
                     }}
                   >
-                    <Chip
-                      label={event.tag}
-                      size="small"
-                      sx={{
-                        mb: 1,
-                        alignSelf: 'flex-start',
-                        backgroundColor: 'primary.main',
-                        color: 'white',
-                        fontWeight: 500,
-                        height: '28px',
-                        '& .MuiChip-label': { 
-                          fontSize: '0.9rem',
-                          padding: '0 8px',
-                          fontWeight: 600
-                        }
-                      }}
-                    />
                     <Typography variant="h6" sx={{ color: 'white', fontWeight: 600, mb: 1 }}>
                       {event.title}
                     </Typography>

@@ -135,7 +135,7 @@ const faqSections = [
       {
         question: 'Where can I access my employment documents?',
         answer:
-          'Navigate to "Document Center" to access your Appointment Letter, salary slips, Form 16, and other employment-related documents.',
+          'Navigate to "Document Center" to access your Appointment Letter, salary slips, and other employment-related documents.',
       },
       {
         question: 'How do I download Form 16 for tax filing?',

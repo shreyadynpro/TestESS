@@ -1,8 +1,9 @@
 import { styled } from '@mui/system';
-import { Fragment, memo, useState } from 'react';
+import { Fragment, memo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Scrollbar from 'react-perfect-scrollbar';
 import { Box, Typography, Collapse, Avatar } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import GroupIcon from '@mui/icons-material/Group';
 import SecurityIcon from '@mui/icons-material/Security';
 import LockIcon from '@mui/icons-material/Lock';
@@ -111,9 +112,23 @@ const SubMenuItem = styled(MenuItem)(({ theme }) => ({
 }));
 
 const Sidenav = () => {
+  const { t } = useTranslation();
   const [openMenu, setOpenMenu] = useState({});
   const navigate = useNavigate();
   const user = useSelector((state) => state.userDetails?.user);
+
+  // Listen for language changes and force re-render
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      setOpenMenu({});
+    };
+    
+    window.addEventListener('languageChanged', handleLanguageChange);
+    
+    return () => {
+      window.removeEventListener('languageChanged', handleLanguageChange);
+    };
+  }, []);
 
   const { uaPermissions } = useSelector((state) => ({
     uaPermissions: state.userAccessPermissions.userPermissions,
@@ -130,7 +145,7 @@ const Sidenav = () => {
       icon: <InitialsIcon>{getInitials(user?.first_name, user?.last_name)}</InitialsIcon>, // Add the initials icon
     },
     {
-      title: 'Group Master',
+      title: t('navigation.groupMaster'),
       path: '/group-master',
       icon: <GroupIcon />,
       permissionKey: 'groups',
