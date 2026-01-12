@@ -41,7 +41,7 @@ const faqSections = [
       {
         question: 'What can I do on the Employee Self-Service Portal?',
         answer:
-          'You can view and update personal information, access pay slips, view company policies, update emergency contacts, and access your employment documents.',
+          'You can view and update personal information, access pay slips, view company policies, update emergency contacts,project information and access your employment documents.',
       },
       {
         question: 'Is my information secure on the portal?',
@@ -61,7 +61,7 @@ const faqSections = [
       {
         question: 'What documents do I need to submit when updating information?',
         answer:
-          'Provide relevant supporting documents such as address proof for address changes,NDA,Bank Account details.',
+          'Provide relevant supporting documents such as address proof for address changes,NDA,cancel/check/screenshots ofBank Account details.',
       },
       {
         question: 'How long does it take for my information updates to be approved?',
@@ -85,7 +85,7 @@ const faqSections = [
       {
         question: 'When is my salary credited?',
         answer:
-          'Salary is typically credited on the 7th of the following month, subject to successful BGV completion and client confirmation.',
+          'Salary is typically credited on the 7th of the following month. Please note any Employee apply joining for 22nd or later in a month will gets 1st salary technically together with the subsequent month.',
       },
     ],
   },
@@ -105,7 +105,7 @@ const faqSections = [
       {
         question: 'What types of leave are available?',
         answer:
-          'Leave entitlements are stated in your Appointment Letter. Common types include casual leave, sick leave, privilege leave, and statutory leaves like maternity leave.',
+          'Leave entitlements are informed in your Appointment Letter.please refer to the documents.',
       },
     ],
   },
@@ -159,7 +159,7 @@ const faqSections = [
       {
         question: 'How do I raise an HR query?',
         answer:
-          'Go to "Support" → "Raise Ticket" → Select query category → Describe issue → Submit. Or email: Level 1: hrsupport-pre-ob@dynproindia.com',
+          'Go to "Support" → "Raise Ticket" → Select query category → Describe issue → Submit. Or email: hrteam@dynproindia.com',
       },
       {
         question: 'How do I report technical issues with the portal?',
