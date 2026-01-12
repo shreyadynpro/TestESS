@@ -110,17 +110,12 @@ const faqSections = [
     ],
   },
   {
-    title: 'Attendance & Timesheets',
+    title: 'Attendance',
     items: [
       {
         question: 'How do I view my attendance record?',
         answer:
           'Access "Attendance" section to view daily attendance, and monthly attendance summary.',
-      },
-      {
-        question: 'How do I submit my timesheet?',
-        answer:
-          'Go to "Timesheet" → Fill in daily hours worked → Submit for approval. For queries, contact ts-ibm@dynproindia.com (IBM employees) or ts@dynproindia.com (all others).',
       },
       // {
       //   question: 'What if I forgot to mark attendance?',
@@ -136,11 +131,6 @@ const faqSections = [
         question: 'Where can I access my employment documents?',
         answer:
           'Navigate to "Document Center" to access your Appointment Letter, salary slips, and other employment-related documents.',
-      },
-      {
-        question: 'How do I download Form 16 for tax filing?',
-        answer:
-          'Go to "Document Center" → "Tax Documents" → Select financial year → Download Form 16. Available after financial year-end.',
       },
     ],
   },
