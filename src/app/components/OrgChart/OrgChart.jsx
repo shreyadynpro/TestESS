@@ -65,9 +65,9 @@ export default function DynProOrgChart() {
 
       {/* Level 3 */}
       <Box display="flex" justifyContent="center" gap={3} mt={3} flexWrap="wrap">
-        <Card title="Prabhu Kumar" subtitle="VP Business Development (Global)" />
-        <Card title="Rishikesh" subtitle="VP Business Development" />
-        <Card title="Ashok Kumar" subtitle="AVP" />
+        <Card title="Prabhu Kumar" subtitle="Chief Business Development" />
+        <Card title="Rishikesh" subtitle="Chief Sales Officer" />
+        <Card title="Ashok Kumar" subtitle="Vice president" />
         <Card title="Shefali Lall" subtitle="VP – HR" />
       </Box>
     </Box>

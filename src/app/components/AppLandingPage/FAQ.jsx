@@ -61,7 +61,7 @@ const faqSections = [
       {
         question: 'What documents do I need to submit when updating information?',
         answer:
-          'Provide relevant supporting documents such as address proof for address changes,NDA,cancel/check/screenshots ofBank Account details.',
+          'Provide relevant supporting documents such as address proof for address changes,NDA,Cancel/Check/Screenshots of Bank Account details.',
       },
       {
         question: 'How long does it take for my information updates to be approved?',
@@ -130,7 +130,7 @@ const faqSections = [
       {
         question: 'Where can I access my employment documents?',
         answer:
-          'Navigate to "Document Center" to access your Appointment Letter, salary slips, and other employment-related documents.',
+          'Navigate to "Document Center" to access your Appointment Letter, salary slips, and Other employment-related documents.',
       },
     ],
   },
