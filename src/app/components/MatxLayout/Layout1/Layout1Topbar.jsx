@@ -298,6 +298,7 @@ const Layout1Topbar = () => {
                           borderRadius: 999,
                           borderColor: isLightMode ? alpha('#0f172a', 0.15) : alpha('#94a3b8', 0.35),
                         },
+                        
                         '&:hover': {
                           boxShadow: isLightMode
                             ? '0 6px 18px rgba(15, 23, 42, 0.08)'

@@ -416,14 +416,10 @@ export default function Homepage() {
               marginBottom: "12px",
             }}
           >
-            <Typography variant="h6" style={{ color: "#3f51b5", marginBottom: "8px" }}>
+            <Typography variant="h6" style={{ fontWeight: 600 }}>
               Upcoming Events
             </Typography>
-            <Typography 
-              variant="body2" 
-              style={{ color: "#3f51b5", cursor: "pointer" }}
-              onClick={() => navigate('/events')}
-            >
+            <Typography variant="body2" style={{ color: "#3f51b5", cursor: "pointer" }}>
               See all
             </Typography>
           </div>
@@ -521,11 +517,7 @@ export default function Homepage() {
             <Typography variant="h6" style={{ fontWeight: 600 }}>
               Announcements
             </Typography>
-            <Typography 
-              variant="body2" 
-              style={{ color: "#3f51b5", cursor: "pointer" }}
-              onClick={() => navigate('/announcements')}
-            >
+            <Typography variant="body2" style={{ color: "#3f51b5", cursor: "pointer" }}>
               See all
             </Typography>
           </div>

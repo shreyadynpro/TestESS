@@ -36,8 +36,6 @@ import FAQ from './components/AppLandingPage/FAQ';
 import CultureInitiativesPage from './components/pages/culture/initiatives/CultureInitiativesPage';
 import SupportPage from './components/SupportPage/SupportPage';
 import  OrgChart from './components/OrgChart/OrgChart'
-import EventsPage from './components/EventsPage/EventsPage';
-import AnnouncementsPage from './components/AnnouncementsPage/AnnouncementsPage';
 
 const routes = [
   {
@@ -78,8 +76,6 @@ const routes = [
       { path: '/culture/initiatives', element: <CultureInitiativesPage /> },
       { path: '/support', element: <SupportPage /> },
       { path: '/orgchart', element: <OrgChart /> },
-      { path: '/events', element: <EventsPage /> },
-      { path: '/announcements', element: <AnnouncementsPage /> },
     ],
   },
   ...sessionRoutes,
