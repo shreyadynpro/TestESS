@@ -12,7 +12,10 @@ const StyledProfileCard = styled(Card)(({ theme }) => ({
   color: '#fff',
   textAlign: 'center',
   padding: '0px',
-  height: '94%',
+  display: 'flex',
+  flexDirection: 'column',
+  maxHeight: '320px',
+  overflow: 'hidden',
 }));
 
 const StyledTab = styled(Tab)(({ theme, selected }) => ({
@@ -76,7 +79,7 @@ const HolidayCard = () => {
         and employees working in these offices. Resources deployed on client projects must follow
         holiday list issued by respective client location.)
       </p>
-      <CardContent>
+      <CardContent sx={{ flex: 1, overflowY: 'auto', px: 3 }}>
         {/* Tab for locations */}
 
         <Tabs value={value} onChange={handleTabChange} aria-label="location tabs" sx={{ mb: 3 }}>
