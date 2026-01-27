@@ -36,6 +36,9 @@ import FAQ from './components/AppLandingPage/FAQ';
 import CultureInitiativesPage from './components/pages/culture/initiatives/CultureInitiativesPage';
 import SupportPage from './components/SupportPage/SupportPage';
 import  OrgChart from './components/OrgChart/OrgChart'
+import Learning from './components/Learning/Learning';
+import InternalTasks from './components/InternalTasks/InternalTasks';
+import ResourceAllocationNew from './components/ResourceAllocation/ResourceAllocationNew';
 
 const routes = [
   {
@@ -72,6 +75,9 @@ const routes = [
       { path: commonRoutes.tasks, element: <Tasks /> },
       { path: commonRoutes.payslips, element: <Payslips /> },
       { path: commonRoutes.payslipPDF, element: <PayslipPDF /> },
+      { path: commonRoutes.learning.learningList, element: <Learning /> },
+      { path: commonRoutes.internalTasks.internalTasksList, element: <InternalTasks /> },
+      { path: commonRoutes.resourceAllocation.resourceAllocationList, element: <ResourceAllocationNew /> },
       { path: '/faq', element: <FAQ /> },
       { path: '/culture/initiatives', element: <CultureInitiativesPage /> },
       { path: '/support', element: <SupportPage /> },

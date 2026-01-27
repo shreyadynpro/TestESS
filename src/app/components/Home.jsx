@@ -1072,6 +1072,7 @@ export default function Homepage() {
               width: "160px",
               marginBottom: "10px",
               transform: "scale(1.5)",
+              filter: "brightness(2.5) contrast(1.5) saturate(1.3) drop-shadow(0px 4px 12px rgba(255,255,255,0.4))",
             }}
           />
 

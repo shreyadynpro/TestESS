@@ -30,6 +30,9 @@ import commonRoutes from './commonRoutes';
 import Diversity3Icon from '@mui/icons-material/Diversity3';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import SchoolIcon from '@mui/icons-material/School';
+import TaskIcon from '@mui/icons-material/Task';
+import PieChartIcon from '@mui/icons-material/PieChart';
 
 
 const SidenavContainer = styled('div')(({ theme }) => ({
@@ -256,6 +259,24 @@ const Sidenav = () => {
       path: '/referral',
       icon: <GroupAddIcon />,
       permissionKey: 'referral',
+    },
+    {
+      title: 'Learning & Training',
+      path: '/learning',
+      icon: <SchoolIcon />,
+      allowAll: true,
+    },
+    {
+      title: 'Internal Tasks',
+      path: '/internal-tasks',
+      icon: <TaskIcon />,
+      allowAll: true,
+    },
+    {
+      title: 'Resource Allocation',
+      path: '/resource-allocation',
+      icon: <PieChartIcon />,
+      allowAll: true,
     },
      {
       title: 'Cultural Initiatives',
