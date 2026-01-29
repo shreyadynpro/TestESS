@@ -39,6 +39,7 @@ import  OrgChart from './components/OrgChart/OrgChart'
 import Learning from './components/Learning/Learning';
 import InternalTasks from './components/InternalTasks/InternalTasks';
 import ResourceAllocationNew from './components/ResourceAllocation/ResourceAllocationNew';
+import EmployeePerformance from './components/EmployeePerformance/EmployeePerformance';
 
 const routes = [
   {
@@ -78,6 +79,7 @@ const routes = [
       { path: commonRoutes.learning.learningList, element: <Learning /> },
       { path: commonRoutes.internalTasks.internalTasksList, element: <InternalTasks /> },
       { path: commonRoutes.resourceAllocation.resourceAllocationList, element: <ResourceAllocationNew /> },
+      { path: commonRoutes.employeePerformance.employeePerformanceList, element: <EmployeePerformance /> },
       { path: '/faq', element: <FAQ /> },
       { path: '/culture/initiatives', element: <CultureInitiativesPage /> },
       { path: '/support', element: <SupportPage /> },

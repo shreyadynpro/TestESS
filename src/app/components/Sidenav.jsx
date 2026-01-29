@@ -33,6 +33,7 @@ import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import SchoolIcon from '@mui/icons-material/School';
 import TaskIcon from '@mui/icons-material/Task';
 import PieChartIcon from '@mui/icons-material/PieChart';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 
 
 const SidenavContainer = styled('div')(({ theme }) => ({
@@ -276,6 +277,12 @@ const Sidenav = () => {
       title: 'Resource Allocation',
       path: '/resource-allocation',
       icon: <PieChartIcon />,
+      allowAll: true,
+    },
+    {
+      title: 'Employee Performance',
+      path: '/employee-performance',
+      icon: <AssessmentIcon />,
       allowAll: true,
     },
      {

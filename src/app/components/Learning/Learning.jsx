@@ -191,6 +191,32 @@ const Learning = () => {
     setActiveTab(newValue);
   };
 
+  const handleContinueCourse = (course) => {
+    // Show course details or navigate to course page
+    console.log('Continuing course:', course.title);
+    
+    // You can implement different actions based on course status
+    if (course.status === 'completed') {
+      // Review the course
+      console.log('Reviewing course:', course.title);
+      // Navigate to course review page or show review modal
+      alert(`Reviewing: ${course.title}\n\nThis would open the course review page.`);
+    } else if (course.status === 'in-progress') {
+      // Continue the course
+      console.log('Continuing course:', course.title);
+      // Navigate to course content or resume from last position
+      alert(`Continuing: ${course.title}\n\nThis would resume the course from where you left off.\nProgress: ${course.progress}%`);
+    } else {
+      // Start the course
+      console.log('Starting course:', course.title);
+      // Navigate to course start page
+      alert(`Starting: ${course.title}\n\nThis would open the course and begin your learning journey.`);
+    }
+    
+    // Alternative: Navigate to a specific course page
+    // window.location.href = `/learning/course/${course.id}`;
+  };
+
   const filteredData = trainingData.filter((item) => {
     switch (activeTab) {
       case 0:
@@ -383,6 +409,7 @@ const Learning = () => {
                     startIcon={
                       course.status === 'completed' ? <CheckCircle /> : <PlayArrow />
                     }
+                    onClick={() => handleContinueCourse(course)}
                     sx={{
                       backgroundColor: course.status === 'completed' ? '#4caf50' : '#0a2d82',
                       '&:hover': {
@@ -392,7 +419,11 @@ const Learning = () => {
                   >
                     {course.status === 'completed' ? 'Review' : 'Continue'}
                   </Button>
-                  <IconButton size="small" sx={{ color: '#0a2d82' }}>
+                  <IconButton 
+                    size="small" 
+                    sx={{ color: '#0a2d82' }}
+                    onClick={() => handleContinueCourse(course)}
+                  >
                     <ArrowForward />
                   </IconButton>
                 </Box>

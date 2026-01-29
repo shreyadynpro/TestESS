@@ -122,6 +122,9 @@ const commonRoutes = {
   resourceAllocation: {
     resourceAllocationList: '/resource-allocation',
   },
+  employeePerformance: {
+    employeePerformanceList: '/employee-performance',
+  },
   // powerBIClient: '/powerBIClient',
 };
 

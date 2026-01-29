@@ -756,7 +756,8 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew"
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos"
 
 import CalenderCard from "./CalenderCard"
-import HolidayCard from "./HolidayCard"
+import HolidayCard from "./HolidayCard.js"
+import NewsTrendsCard from "./NewsTrendsCard.js"
 
 /* ---------------------- Styled Components --------------------------- */
 
@@ -1056,7 +1057,7 @@ export default function Homepage() {
   const shouldShowPayslip = () => !["9", "10", "11"].includes(String(roleId))
 
   return (
-    <div style={{ padding: "20px", backgroundColor: "#f5f5f5", position: "relative" }}>
+    <div style={{ padding: "20px", backgroundColor: "#f5f5f5", position: "relative", minHeight: "100vh" }}>
       {/* Changelog Component */}
       <div style={{ position: "fixed", bottom: "20px", right: "20px", zIndex: 1000 }}>
         <Changelog />
@@ -1373,36 +1374,28 @@ export default function Homepage() {
 
       {/* ---------------- GRID CONTENT ---------------- */}
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={4}>
+        {/* First Row - Profile, Payslip, Calendar */}
+        <Grid item xs={12} sm={6} md={4}>
           <ProfileSummaryCard />
         </Grid>
 
         {user?.dynmis_empid && shouldShowPayslip() && (
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6} md={4}>
             <PayslipCard />
           </Grid>
         )}
 
-        <Grid item xs={12} sm={4}>
+        <Grid item xs={12} sm={6} md={4}>
           <CalenderCard />
         </Grid>
 
+        {/* Second Row - Holidays and News Feed */}
         <Grid item xs={12} md={8}>
           <HolidayCard />
         </Grid>
 
         <Grid item xs={12} md={4}>
-          <div style={{ marginTop: "24px" }}>
-            <img
-              src="/assets/images/311.jpg"
-              alt="Greeting"
-              style={{
-                width: "100%",
-                borderRadius: "15px",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-              }}
-            />
-          </div>
+          <NewsTrendsCard />
         </Grid>
       </Grid>
       {/* Floating What's New Button */}
