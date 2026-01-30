@@ -113,18 +113,6 @@ const commonRoutes = {
     leaveHistory: '/leave/history',
     applyLeave: '/leaveapply',
   },
-  learning: {
-    learningList: '/learning',
-  },
-  internalTasks: {
-    internalTasksList: '/internal-tasks',
-  },
-  resourceAllocation: {
-    resourceAllocationList: '/resource-allocation',
-  },
-  employeePerformance: {
-    employeePerformanceList: '/employee-performance',
-  },
   // powerBIClient: '/powerBIClient',
 };
 
