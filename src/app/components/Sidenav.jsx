@@ -262,30 +262,6 @@ const Sidenav = () => {
       permissionKey: 'referral',
     },
     {
-      title: 'Learning & Training',
-      path: '/learning',
-      icon: <SchoolIcon />,
-      allowAll: true,
-    },
-    {
-      title: 'Internal Tasks',
-      path: '/internal-tasks',
-      icon: <TaskIcon />,
-      allowAll: true,
-    },
-    {
-      title: 'Resource Allocation',
-      path: '/resource-allocation',
-      icon: <PieChartIcon />,
-      allowAll: true,
-    },
-    {
-      title: 'Employee Performance',
-      path: '/employee-performance',
-      icon: <AssessmentIcon />,
-      allowAll: true,
-    },
-     {
       title: 'Cultural Initiatives',
       path: '/culture/initiatives',
       icon: <Diversity3Icon />,

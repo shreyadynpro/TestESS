@@ -263,6 +263,35 @@ const NewsTrendsCard = () => {
     fetchNewsData(value);
   }, [value]);
 
+  // Auto-refresh news every 30 minutes and check for daily updates
+  useEffect(() => {
+    const refreshInterval = setInterval(() => {
+      fetchNewsData(value);
+    }, 30 * 60 * 1000); // 30 minutes
+
+    // Check for daily refresh (every 24 hours)
+    const checkDailyRefresh = () => {
+      const lastRefresh = localStorage.getItem(`news-last-refresh-${value}`);
+      const now = new Date();
+      const today = now.toDateString();
+      
+      if (!lastRefresh || new Date(lastRefresh).toDateString() !== today) {
+        console.log('Daily refresh triggered - new day detected');
+        fetchNewsData(value);
+        localStorage.setItem(`news-last-refresh-${value}`, now.toISOString());
+      }
+    };
+
+    // Check daily refresh on component mount and every hour
+    checkDailyRefresh();
+    const dailyCheckInterval = setInterval(checkDailyRefresh, 60 * 60 * 1000); // 1 hour
+
+    return () => {
+      clearInterval(refreshInterval);
+      clearInterval(dailyCheckInterval);
+    };
+  }, [value]);
+
   const handleTabChange = (event, newValue) => {
     setValue(newValue);
     fetchNewsData(newValue);
@@ -436,7 +465,7 @@ const NewsTrendsCard = () => {
         {/* Footer with last updated */}
         {!loading && lastUpdated && (
           <Typography variant="caption" color="rgba(255,255,255,0.5)" sx={{ mt: 2, textAlign: 'center' }}>
-            Last updated: {formatTimeAgo(lastUpdated.toISOString())} · Auto-refresh every 30 min
+            Last updated: {formatTimeAgo(lastUpdated.toISOString())} · Auto-refresh every 30 min · Daily updates at midnight
           </Typography>
         )}
       </CardContent>
